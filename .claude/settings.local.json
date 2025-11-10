@@ -7,7 +7,17 @@
       "Bash(flutter devices:*)",
       "Bash(flutter run:*)",
       "Bash(flutter clean:*)",
-      "Bash(flutter build:*)"
+      "Bash(flutter build:*)",
+      "Bash(dir /s /b *.go 2:*)",
+      "Bash(nul:*)",
+      "Bash(dir /s /b *.go:*)",
+      "Bash(findstr dingtalk:*)",
+      "Bash(flutter pub run build_runner build:*)",
+      "Bash(flutter analyze:*)",
+      "Bash(dir:*)",
+      "Bash(findstr /n \"accentGradientStart\" home_screen.dart)",
+      "Bash(git add:*)",
+      "Bash(rm nul)"
     ],
     "deny": [],
     "ask": []

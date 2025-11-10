@@ -54,59 +54,7 @@ class AppThemes {
     ],
   );
 
-  static final ThemeData ocean = ThemeData(
-    useMaterial3: true,
-    colorScheme: ColorScheme.fromSeed(
-        seedColor: Colors.teal, brightness: Brightness.light),
-    scaffoldBackgroundColor: const Color(0xFFE6F4F3),
-    appBarTheme: const AppBarTheme(
-        backgroundColor: Color(0xFF0B7A75), foregroundColor: Colors.white),
-    chipTheme: ChipThemeData(
-      backgroundColor: Colors.teal.shade50,
-      selectedColor: Colors.teal.shade200,
-      labelStyle: const TextStyle(color: Colors.teal),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-    ),
-    extensions: const [
-      TowerColors(
-        navBarBackground: Color(0xFF0B7A75),
-        navBarForeground: Colors.white,
-        navBarBorder: Color(0xFF0B6E69),
-        sideBarBackground: Color(0xFFF0FBFA),
-        sideBarBorder: Color(0xFFCCE7E5),
-        contentBackground: Color(0xFFE6F4F3),
-        subtleFill: Color(0xFFD9EFEE),
-        accentGradientStart: Color(0xFF14B8A6),
-        accentGradientEnd: Color(0xFF0D9488),
-      ),
-    ],
-  );
-
-  static final ThemeData forest = ThemeData(
-    useMaterial3: true,
-    colorScheme: ColorScheme.fromSeed(
-        seedColor: Colors.green, brightness: Brightness.light),
-    scaffoldBackgroundColor: const Color(0xFFF4F8F4),
-    appBarTheme: const AppBarTheme(
-        backgroundColor: Color(0xFF2E7D32), foregroundColor: Colors.white),
-    floatingActionButtonTheme:
-        const FloatingActionButtonThemeData(backgroundColor: Color(0xFF43A047)),
-    extensions: const [
-      TowerColors(
-        navBarBackground: Color(0xFF2E7D32),
-        navBarForeground: Colors.white,
-        navBarBorder: Color(0xFF256428),
-        sideBarBackground: Color(0xFFF2F9F2),
-        sideBarBorder: Color(0xFFD7E7D6),
-        contentBackground: Color(0xFFF4F8F4),
-        subtleFill: Color(0xFFE3EEE2),
-        accentGradientStart: Color(0xFF43A047),
-        accentGradientEnd: Color(0xFF2E7D32),
-      ),
-    ],
-  );
-
-  static List<ThemeData> all() => [defaultLight, dark, ocean, forest];
+  static List<ThemeData> all() => [defaultLight, dark];
   static const List<String> names = [
     '默认',
     '暗黑',

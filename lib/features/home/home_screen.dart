@@ -179,20 +179,20 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _envTag(String text) {
-    final tc = Theme.of(context).extension<TowerColors>()!;
+    final tc = Theme.of(context).extension<TowerColors>();
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
-        color: tc.subtleFill,
+        color: tc?.subtleFill ?? Colors.grey[200],
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: tc.navBarBorder),
+        border: Border.all(color: tc?.navBarBorder ?? Colors.grey[400]!),
       ),
       child: Text(
         text,
         style: TextStyle(
           fontSize: 11,
           fontWeight: FontWeight.w600,
-          color: tc.accentGradientStart,
+          color: tc?.accentGradientStart,
           letterSpacing: .5,
         ),
       ),

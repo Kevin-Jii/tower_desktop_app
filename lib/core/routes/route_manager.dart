@@ -3,7 +3,7 @@ import 'package:tower_desktop_app/features/menu/menu_management_page.dart';
 import 'package:tower_desktop_app/features/role/role_management_page.dart';
 import 'package:tower_desktop_app/features/dish/dish_management_page.dart';
 import 'package:tower_desktop_app/features/dingtalk/dingtalk_management_page.dart';
-import 'package:tower_desktop_app/features/report/report_management_page.dart';
+// import 'package:tower_desktop_app/features/report/report_management_page.dart';
 import '../../features/menu/models.dart';
 import '../icons/td_icon_mapper.dart';
 import '../constants/menu_types.dart';
@@ -47,13 +47,14 @@ class RouteManager {
       case 'dingtalk/robot/index':
         return const DingTalkManagementPage();
 
-      // 报菜管理
-      case 'report/list/index':
-        return const ReportManagementPage();
-      case 'report/statistics/index':
-        return _buildModulePage('数据统计', menuItem);
+      // // 报菜管理
+      // case 'report/list/index':
+      //   return const ReportManagementPage();
+      // case 'report/statistics/index':
+      //   return _buildModulePage('数据统计', menuItem);
 
       default:
+        debugPrint('未匹配到页面: $component');
         return _buildModulePage('未实现页面', menuItem);
     }
   }

@@ -113,4 +113,31 @@ class DishApi {
       return ApiResult.error(ErrorTexts.deleteDish, null);
     }
   }
+
+  /// Batch report dishes to DingTalk
+  Future<bool> batchReport({
+    required List<Dish> dishes,
+    String? message,
+    required String category,
+    required int storeId,
+  }) async {
+    try {
+      final data = {
+        'dishes': dishes.map((d) => {
+          'id': d.id,
+          'name': d.name,
+          'price': d.price,
+          'store_id': storeId,
+          'category': category,
+        }).toList(),
+        if (message != null && message.isNotEmpty) 'message': message,
+      };
+
+      final resp = await _dio.post('/api/dishes/batch-report', data: data);
+      final result = ResponseUtils.extractData(resp.data);
+      return result['success'] == true;
+    } catch (e) {
+      throw Exception('批量报菜失败: $e');
+    }
+  }
 }

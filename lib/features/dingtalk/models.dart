@@ -12,6 +12,9 @@ int? _parseIntFromDynamic(dynamic value) {
   return null;
 }
 
+// 辅助函数将 int? 转换为 dynamic
+dynamic _intToDynamic(int? value) => value;
+
 @freezed
 class DingTalkRobot with _$DingTalkRobot {
   const factory DingTalkRobot({
@@ -49,9 +52,16 @@ extension DingTalkRobotX on DingTalkRobot {
 class CreateDingTalkRobotRequest with _$CreateDingTalkRobotRequest {
   const factory CreateDingTalkRobotRequest({
     required String name,
-    required String token,
+    @JsonKey(name: 'bot_type') String? botType,
+    String? webhook,
+    String? secret,
+    @JsonKey(name: 'client_id') String? clientId,
+    @JsonKey(name: 'client_secret') String? clientSecret,
+    @JsonKey(name: 'agent_id', fromJson: _parseIntFromDynamic, toJson: _intToDynamic) int? agentId,
+    @JsonKey(name: 'robot_code') String? robotCode,
     @JsonKey(name: 'store_id') int? storeId,
-    int? status,
+    @JsonKey(name: 'is_enabled') bool? isEnabled,
+    @JsonKey(name: 'msg_type') String? msgType,
     String? remark,
   }) = _CreateDingTalkRobotRequest;
 
@@ -63,9 +73,16 @@ class CreateDingTalkRobotRequest with _$CreateDingTalkRobotRequest {
 class UpdateDingTalkRobotRequest with _$UpdateDingTalkRobotRequest {
   const factory UpdateDingTalkRobotRequest({
     String? name,
-    String? token,
+    @JsonKey(name: 'bot_type') String? botType,
+    String? webhook,
+    String? secret,
+    @JsonKey(name: 'client_id') String? clientId,
+    @JsonKey(name: 'client_secret') String? clientSecret,
+    @JsonKey(name: 'agent_id', fromJson: _parseIntFromDynamic, toJson: _intToDynamic) int? agentId,
+    @JsonKey(name: 'robot_code') String? robotCode,
     @JsonKey(name: 'store_id') int? storeId,
-    int? status,
+    @JsonKey(name: 'is_enabled') bool? isEnabled,
+    @JsonKey(name: 'msg_type') String? msgType,
     String? remark,
   }) = _UpdateDingTalkRobotRequest;
 

@@ -512,10 +512,25 @@ CreateDingTalkRobotRequest _$CreateDingTalkRobotRequestFromJson(
 /// @nodoc
 mixin _$CreateDingTalkRobotRequest {
   String get name => throw _privateConstructorUsedError;
-  String get token => throw _privateConstructorUsedError;
+  @JsonKey(name: 'bot_type')
+  String? get botType => throw _privateConstructorUsedError;
+  String? get webhook => throw _privateConstructorUsedError;
+  String? get secret => throw _privateConstructorUsedError;
+  @JsonKey(name: 'client_id')
+  String? get clientId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'client_secret')
+  String? get clientSecret => throw _privateConstructorUsedError;
+  @JsonKey(
+      name: 'agent_id', fromJson: _parseIntFromDynamic, toJson: _intToDynamic)
+  int? get agentId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'robot_code')
+  String? get robotCode => throw _privateConstructorUsedError;
   @JsonKey(name: 'store_id')
   int? get storeId => throw _privateConstructorUsedError;
-  int? get status => throw _privateConstructorUsedError;
+  @JsonKey(name: 'is_enabled')
+  bool? get isEnabled => throw _privateConstructorUsedError;
+  @JsonKey(name: 'msg_type')
+  String? get msgType => throw _privateConstructorUsedError;
   String? get remark => throw _privateConstructorUsedError;
 
   /// Serializes this CreateDingTalkRobotRequest to a JSON map.
@@ -537,9 +552,20 @@ abstract class $CreateDingTalkRobotRequestCopyWith<$Res> {
   @useResult
   $Res call(
       {String name,
-      String token,
+      @JsonKey(name: 'bot_type') String? botType,
+      String? webhook,
+      String? secret,
+      @JsonKey(name: 'client_id') String? clientId,
+      @JsonKey(name: 'client_secret') String? clientSecret,
+      @JsonKey(
+          name: 'agent_id',
+          fromJson: _parseIntFromDynamic,
+          toJson: _intToDynamic)
+      int? agentId,
+      @JsonKey(name: 'robot_code') String? robotCode,
       @JsonKey(name: 'store_id') int? storeId,
-      int? status,
+      @JsonKey(name: 'is_enabled') bool? isEnabled,
+      @JsonKey(name: 'msg_type') String? msgType,
       String? remark});
 }
 
@@ -560,9 +586,16 @@ class _$CreateDingTalkRobotRequestCopyWithImpl<$Res,
   @override
   $Res call({
     Object? name = null,
-    Object? token = null,
+    Object? botType = freezed,
+    Object? webhook = freezed,
+    Object? secret = freezed,
+    Object? clientId = freezed,
+    Object? clientSecret = freezed,
+    Object? agentId = freezed,
+    Object? robotCode = freezed,
     Object? storeId = freezed,
-    Object? status = freezed,
+    Object? isEnabled = freezed,
+    Object? msgType = freezed,
     Object? remark = freezed,
   }) {
     return _then(_value.copyWith(
@@ -570,18 +603,46 @@ class _$CreateDingTalkRobotRequestCopyWithImpl<$Res,
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      token: null == token
-          ? _value.token
-          : token // ignore: cast_nullable_to_non_nullable
-              as String,
+      botType: freezed == botType
+          ? _value.botType
+          : botType // ignore: cast_nullable_to_non_nullable
+              as String?,
+      webhook: freezed == webhook
+          ? _value.webhook
+          : webhook // ignore: cast_nullable_to_non_nullable
+              as String?,
+      secret: freezed == secret
+          ? _value.secret
+          : secret // ignore: cast_nullable_to_non_nullable
+              as String?,
+      clientId: freezed == clientId
+          ? _value.clientId
+          : clientId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      clientSecret: freezed == clientSecret
+          ? _value.clientSecret
+          : clientSecret // ignore: cast_nullable_to_non_nullable
+              as String?,
+      agentId: freezed == agentId
+          ? _value.agentId
+          : agentId // ignore: cast_nullable_to_non_nullable
+              as int?,
+      robotCode: freezed == robotCode
+          ? _value.robotCode
+          : robotCode // ignore: cast_nullable_to_non_nullable
+              as String?,
       storeId: freezed == storeId
           ? _value.storeId
           : storeId // ignore: cast_nullable_to_non_nullable
               as int?,
-      status: freezed == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as int?,
+      isEnabled: freezed == isEnabled
+          ? _value.isEnabled
+          : isEnabled // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      msgType: freezed == msgType
+          ? _value.msgType
+          : msgType // ignore: cast_nullable_to_non_nullable
+              as String?,
       remark: freezed == remark
           ? _value.remark
           : remark // ignore: cast_nullable_to_non_nullable
@@ -601,9 +662,20 @@ abstract class _$$CreateDingTalkRobotRequestImplCopyWith<$Res>
   @useResult
   $Res call(
       {String name,
-      String token,
+      @JsonKey(name: 'bot_type') String? botType,
+      String? webhook,
+      String? secret,
+      @JsonKey(name: 'client_id') String? clientId,
+      @JsonKey(name: 'client_secret') String? clientSecret,
+      @JsonKey(
+          name: 'agent_id',
+          fromJson: _parseIntFromDynamic,
+          toJson: _intToDynamic)
+      int? agentId,
+      @JsonKey(name: 'robot_code') String? robotCode,
       @JsonKey(name: 'store_id') int? storeId,
-      int? status,
+      @JsonKey(name: 'is_enabled') bool? isEnabled,
+      @JsonKey(name: 'msg_type') String? msgType,
       String? remark});
 }
 
@@ -623,9 +695,16 @@ class __$$CreateDingTalkRobotRequestImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? name = null,
-    Object? token = null,
+    Object? botType = freezed,
+    Object? webhook = freezed,
+    Object? secret = freezed,
+    Object? clientId = freezed,
+    Object? clientSecret = freezed,
+    Object? agentId = freezed,
+    Object? robotCode = freezed,
     Object? storeId = freezed,
-    Object? status = freezed,
+    Object? isEnabled = freezed,
+    Object? msgType = freezed,
     Object? remark = freezed,
   }) {
     return _then(_$CreateDingTalkRobotRequestImpl(
@@ -633,18 +712,46 @@ class __$$CreateDingTalkRobotRequestImplCopyWithImpl<$Res>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      token: null == token
-          ? _value.token
-          : token // ignore: cast_nullable_to_non_nullable
-              as String,
+      botType: freezed == botType
+          ? _value.botType
+          : botType // ignore: cast_nullable_to_non_nullable
+              as String?,
+      webhook: freezed == webhook
+          ? _value.webhook
+          : webhook // ignore: cast_nullable_to_non_nullable
+              as String?,
+      secret: freezed == secret
+          ? _value.secret
+          : secret // ignore: cast_nullable_to_non_nullable
+              as String?,
+      clientId: freezed == clientId
+          ? _value.clientId
+          : clientId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      clientSecret: freezed == clientSecret
+          ? _value.clientSecret
+          : clientSecret // ignore: cast_nullable_to_non_nullable
+              as String?,
+      agentId: freezed == agentId
+          ? _value.agentId
+          : agentId // ignore: cast_nullable_to_non_nullable
+              as int?,
+      robotCode: freezed == robotCode
+          ? _value.robotCode
+          : robotCode // ignore: cast_nullable_to_non_nullable
+              as String?,
       storeId: freezed == storeId
           ? _value.storeId
           : storeId // ignore: cast_nullable_to_non_nullable
               as int?,
-      status: freezed == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as int?,
+      isEnabled: freezed == isEnabled
+          ? _value.isEnabled
+          : isEnabled // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      msgType: freezed == msgType
+          ? _value.msgType
+          : msgType // ignore: cast_nullable_to_non_nullable
+              as String?,
       remark: freezed == remark
           ? _value.remark
           : remark // ignore: cast_nullable_to_non_nullable
@@ -658,9 +765,20 @@ class __$$CreateDingTalkRobotRequestImplCopyWithImpl<$Res>
 class _$CreateDingTalkRobotRequestImpl implements _CreateDingTalkRobotRequest {
   const _$CreateDingTalkRobotRequestImpl(
       {required this.name,
-      required this.token,
+      @JsonKey(name: 'bot_type') this.botType,
+      this.webhook,
+      this.secret,
+      @JsonKey(name: 'client_id') this.clientId,
+      @JsonKey(name: 'client_secret') this.clientSecret,
+      @JsonKey(
+          name: 'agent_id',
+          fromJson: _parseIntFromDynamic,
+          toJson: _intToDynamic)
+      this.agentId,
+      @JsonKey(name: 'robot_code') this.robotCode,
       @JsonKey(name: 'store_id') this.storeId,
-      this.status,
+      @JsonKey(name: 'is_enabled') this.isEnabled,
+      @JsonKey(name: 'msg_type') this.msgType,
       this.remark});
 
   factory _$CreateDingTalkRobotRequestImpl.fromJson(
@@ -670,18 +788,40 @@ class _$CreateDingTalkRobotRequestImpl implements _CreateDingTalkRobotRequest {
   @override
   final String name;
   @override
-  final String token;
+  @JsonKey(name: 'bot_type')
+  final String? botType;
+  @override
+  final String? webhook;
+  @override
+  final String? secret;
+  @override
+  @JsonKey(name: 'client_id')
+  final String? clientId;
+  @override
+  @JsonKey(name: 'client_secret')
+  final String? clientSecret;
+  @override
+  @JsonKey(
+      name: 'agent_id', fromJson: _parseIntFromDynamic, toJson: _intToDynamic)
+  final int? agentId;
+  @override
+  @JsonKey(name: 'robot_code')
+  final String? robotCode;
   @override
   @JsonKey(name: 'store_id')
   final int? storeId;
   @override
-  final int? status;
+  @JsonKey(name: 'is_enabled')
+  final bool? isEnabled;
+  @override
+  @JsonKey(name: 'msg_type')
+  final String? msgType;
   @override
   final String? remark;
 
   @override
   String toString() {
-    return 'CreateDingTalkRobotRequest(name: $name, token: $token, storeId: $storeId, status: $status, remark: $remark)';
+    return 'CreateDingTalkRobotRequest(name: $name, botType: $botType, webhook: $webhook, secret: $secret, clientId: $clientId, clientSecret: $clientSecret, agentId: $agentId, robotCode: $robotCode, storeId: $storeId, isEnabled: $isEnabled, msgType: $msgType, remark: $remark)';
   }
 
   @override
@@ -690,16 +830,39 @@ class _$CreateDingTalkRobotRequestImpl implements _CreateDingTalkRobotRequest {
         (other.runtimeType == runtimeType &&
             other is _$CreateDingTalkRobotRequestImpl &&
             (identical(other.name, name) || other.name == name) &&
-            (identical(other.token, token) || other.token == token) &&
+            (identical(other.botType, botType) || other.botType == botType) &&
+            (identical(other.webhook, webhook) || other.webhook == webhook) &&
+            (identical(other.secret, secret) || other.secret == secret) &&
+            (identical(other.clientId, clientId) ||
+                other.clientId == clientId) &&
+            (identical(other.clientSecret, clientSecret) ||
+                other.clientSecret == clientSecret) &&
+            (identical(other.agentId, agentId) || other.agentId == agentId) &&
+            (identical(other.robotCode, robotCode) ||
+                other.robotCode == robotCode) &&
             (identical(other.storeId, storeId) || other.storeId == storeId) &&
-            (identical(other.status, status) || other.status == status) &&
+            (identical(other.isEnabled, isEnabled) ||
+                other.isEnabled == isEnabled) &&
+            (identical(other.msgType, msgType) || other.msgType == msgType) &&
             (identical(other.remark, remark) || other.remark == remark));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, name, token, storeId, status, remark);
+  int get hashCode => Object.hash(
+      runtimeType,
+      name,
+      botType,
+      webhook,
+      secret,
+      clientId,
+      clientSecret,
+      agentId,
+      robotCode,
+      storeId,
+      isEnabled,
+      msgType,
+      remark);
 
   /// Create a copy of CreateDingTalkRobotRequest
   /// with the given fields replaced by the non-null parameter values.
@@ -722,9 +885,20 @@ abstract class _CreateDingTalkRobotRequest
     implements CreateDingTalkRobotRequest {
   const factory _CreateDingTalkRobotRequest(
       {required final String name,
-      required final String token,
+      @JsonKey(name: 'bot_type') final String? botType,
+      final String? webhook,
+      final String? secret,
+      @JsonKey(name: 'client_id') final String? clientId,
+      @JsonKey(name: 'client_secret') final String? clientSecret,
+      @JsonKey(
+          name: 'agent_id',
+          fromJson: _parseIntFromDynamic,
+          toJson: _intToDynamic)
+      final int? agentId,
+      @JsonKey(name: 'robot_code') final String? robotCode,
       @JsonKey(name: 'store_id') final int? storeId,
-      final int? status,
+      @JsonKey(name: 'is_enabled') final bool? isEnabled,
+      @JsonKey(name: 'msg_type') final String? msgType,
       final String? remark}) = _$CreateDingTalkRobotRequestImpl;
 
   factory _CreateDingTalkRobotRequest.fromJson(Map<String, dynamic> json) =
@@ -733,12 +907,34 @@ abstract class _CreateDingTalkRobotRequest
   @override
   String get name;
   @override
-  String get token;
+  @JsonKey(name: 'bot_type')
+  String? get botType;
+  @override
+  String? get webhook;
+  @override
+  String? get secret;
+  @override
+  @JsonKey(name: 'client_id')
+  String? get clientId;
+  @override
+  @JsonKey(name: 'client_secret')
+  String? get clientSecret;
+  @override
+  @JsonKey(
+      name: 'agent_id', fromJson: _parseIntFromDynamic, toJson: _intToDynamic)
+  int? get agentId;
+  @override
+  @JsonKey(name: 'robot_code')
+  String? get robotCode;
   @override
   @JsonKey(name: 'store_id')
   int? get storeId;
   @override
-  int? get status;
+  @JsonKey(name: 'is_enabled')
+  bool? get isEnabled;
+  @override
+  @JsonKey(name: 'msg_type')
+  String? get msgType;
   @override
   String? get remark;
 
@@ -758,10 +954,25 @@ UpdateDingTalkRobotRequest _$UpdateDingTalkRobotRequestFromJson(
 /// @nodoc
 mixin _$UpdateDingTalkRobotRequest {
   String? get name => throw _privateConstructorUsedError;
-  String? get token => throw _privateConstructorUsedError;
+  @JsonKey(name: 'bot_type')
+  String? get botType => throw _privateConstructorUsedError;
+  String? get webhook => throw _privateConstructorUsedError;
+  String? get secret => throw _privateConstructorUsedError;
+  @JsonKey(name: 'client_id')
+  String? get clientId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'client_secret')
+  String? get clientSecret => throw _privateConstructorUsedError;
+  @JsonKey(
+      name: 'agent_id', fromJson: _parseIntFromDynamic, toJson: _intToDynamic)
+  int? get agentId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'robot_code')
+  String? get robotCode => throw _privateConstructorUsedError;
   @JsonKey(name: 'store_id')
   int? get storeId => throw _privateConstructorUsedError;
-  int? get status => throw _privateConstructorUsedError;
+  @JsonKey(name: 'is_enabled')
+  bool? get isEnabled => throw _privateConstructorUsedError;
+  @JsonKey(name: 'msg_type')
+  String? get msgType => throw _privateConstructorUsedError;
   String? get remark => throw _privateConstructorUsedError;
 
   /// Serializes this UpdateDingTalkRobotRequest to a JSON map.
@@ -783,9 +994,20 @@ abstract class $UpdateDingTalkRobotRequestCopyWith<$Res> {
   @useResult
   $Res call(
       {String? name,
-      String? token,
+      @JsonKey(name: 'bot_type') String? botType,
+      String? webhook,
+      String? secret,
+      @JsonKey(name: 'client_id') String? clientId,
+      @JsonKey(name: 'client_secret') String? clientSecret,
+      @JsonKey(
+          name: 'agent_id',
+          fromJson: _parseIntFromDynamic,
+          toJson: _intToDynamic)
+      int? agentId,
+      @JsonKey(name: 'robot_code') String? robotCode,
       @JsonKey(name: 'store_id') int? storeId,
-      int? status,
+      @JsonKey(name: 'is_enabled') bool? isEnabled,
+      @JsonKey(name: 'msg_type') String? msgType,
       String? remark});
 }
 
@@ -806,9 +1028,16 @@ class _$UpdateDingTalkRobotRequestCopyWithImpl<$Res,
   @override
   $Res call({
     Object? name = freezed,
-    Object? token = freezed,
+    Object? botType = freezed,
+    Object? webhook = freezed,
+    Object? secret = freezed,
+    Object? clientId = freezed,
+    Object? clientSecret = freezed,
+    Object? agentId = freezed,
+    Object? robotCode = freezed,
     Object? storeId = freezed,
-    Object? status = freezed,
+    Object? isEnabled = freezed,
+    Object? msgType = freezed,
     Object? remark = freezed,
   }) {
     return _then(_value.copyWith(
@@ -816,18 +1045,46 @@ class _$UpdateDingTalkRobotRequestCopyWithImpl<$Res,
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String?,
-      token: freezed == token
-          ? _value.token
-          : token // ignore: cast_nullable_to_non_nullable
+      botType: freezed == botType
+          ? _value.botType
+          : botType // ignore: cast_nullable_to_non_nullable
+              as String?,
+      webhook: freezed == webhook
+          ? _value.webhook
+          : webhook // ignore: cast_nullable_to_non_nullable
+              as String?,
+      secret: freezed == secret
+          ? _value.secret
+          : secret // ignore: cast_nullable_to_non_nullable
+              as String?,
+      clientId: freezed == clientId
+          ? _value.clientId
+          : clientId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      clientSecret: freezed == clientSecret
+          ? _value.clientSecret
+          : clientSecret // ignore: cast_nullable_to_non_nullable
+              as String?,
+      agentId: freezed == agentId
+          ? _value.agentId
+          : agentId // ignore: cast_nullable_to_non_nullable
+              as int?,
+      robotCode: freezed == robotCode
+          ? _value.robotCode
+          : robotCode // ignore: cast_nullable_to_non_nullable
               as String?,
       storeId: freezed == storeId
           ? _value.storeId
           : storeId // ignore: cast_nullable_to_non_nullable
               as int?,
-      status: freezed == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as int?,
+      isEnabled: freezed == isEnabled
+          ? _value.isEnabled
+          : isEnabled // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      msgType: freezed == msgType
+          ? _value.msgType
+          : msgType // ignore: cast_nullable_to_non_nullable
+              as String?,
       remark: freezed == remark
           ? _value.remark
           : remark // ignore: cast_nullable_to_non_nullable
@@ -847,9 +1104,20 @@ abstract class _$$UpdateDingTalkRobotRequestImplCopyWith<$Res>
   @useResult
   $Res call(
       {String? name,
-      String? token,
+      @JsonKey(name: 'bot_type') String? botType,
+      String? webhook,
+      String? secret,
+      @JsonKey(name: 'client_id') String? clientId,
+      @JsonKey(name: 'client_secret') String? clientSecret,
+      @JsonKey(
+          name: 'agent_id',
+          fromJson: _parseIntFromDynamic,
+          toJson: _intToDynamic)
+      int? agentId,
+      @JsonKey(name: 'robot_code') String? robotCode,
       @JsonKey(name: 'store_id') int? storeId,
-      int? status,
+      @JsonKey(name: 'is_enabled') bool? isEnabled,
+      @JsonKey(name: 'msg_type') String? msgType,
       String? remark});
 }
 
@@ -869,9 +1137,16 @@ class __$$UpdateDingTalkRobotRequestImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? name = freezed,
-    Object? token = freezed,
+    Object? botType = freezed,
+    Object? webhook = freezed,
+    Object? secret = freezed,
+    Object? clientId = freezed,
+    Object? clientSecret = freezed,
+    Object? agentId = freezed,
+    Object? robotCode = freezed,
     Object? storeId = freezed,
-    Object? status = freezed,
+    Object? isEnabled = freezed,
+    Object? msgType = freezed,
     Object? remark = freezed,
   }) {
     return _then(_$UpdateDingTalkRobotRequestImpl(
@@ -879,18 +1154,46 @@ class __$$UpdateDingTalkRobotRequestImplCopyWithImpl<$Res>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String?,
-      token: freezed == token
-          ? _value.token
-          : token // ignore: cast_nullable_to_non_nullable
+      botType: freezed == botType
+          ? _value.botType
+          : botType // ignore: cast_nullable_to_non_nullable
+              as String?,
+      webhook: freezed == webhook
+          ? _value.webhook
+          : webhook // ignore: cast_nullable_to_non_nullable
+              as String?,
+      secret: freezed == secret
+          ? _value.secret
+          : secret // ignore: cast_nullable_to_non_nullable
+              as String?,
+      clientId: freezed == clientId
+          ? _value.clientId
+          : clientId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      clientSecret: freezed == clientSecret
+          ? _value.clientSecret
+          : clientSecret // ignore: cast_nullable_to_non_nullable
+              as String?,
+      agentId: freezed == agentId
+          ? _value.agentId
+          : agentId // ignore: cast_nullable_to_non_nullable
+              as int?,
+      robotCode: freezed == robotCode
+          ? _value.robotCode
+          : robotCode // ignore: cast_nullable_to_non_nullable
               as String?,
       storeId: freezed == storeId
           ? _value.storeId
           : storeId // ignore: cast_nullable_to_non_nullable
               as int?,
-      status: freezed == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as int?,
+      isEnabled: freezed == isEnabled
+          ? _value.isEnabled
+          : isEnabled // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      msgType: freezed == msgType
+          ? _value.msgType
+          : msgType // ignore: cast_nullable_to_non_nullable
+              as String?,
       remark: freezed == remark
           ? _value.remark
           : remark // ignore: cast_nullable_to_non_nullable
@@ -904,9 +1207,20 @@ class __$$UpdateDingTalkRobotRequestImplCopyWithImpl<$Res>
 class _$UpdateDingTalkRobotRequestImpl implements _UpdateDingTalkRobotRequest {
   const _$UpdateDingTalkRobotRequestImpl(
       {this.name,
-      this.token,
+      @JsonKey(name: 'bot_type') this.botType,
+      this.webhook,
+      this.secret,
+      @JsonKey(name: 'client_id') this.clientId,
+      @JsonKey(name: 'client_secret') this.clientSecret,
+      @JsonKey(
+          name: 'agent_id',
+          fromJson: _parseIntFromDynamic,
+          toJson: _intToDynamic)
+      this.agentId,
+      @JsonKey(name: 'robot_code') this.robotCode,
       @JsonKey(name: 'store_id') this.storeId,
-      this.status,
+      @JsonKey(name: 'is_enabled') this.isEnabled,
+      @JsonKey(name: 'msg_type') this.msgType,
       this.remark});
 
   factory _$UpdateDingTalkRobotRequestImpl.fromJson(
@@ -916,18 +1230,40 @@ class _$UpdateDingTalkRobotRequestImpl implements _UpdateDingTalkRobotRequest {
   @override
   final String? name;
   @override
-  final String? token;
+  @JsonKey(name: 'bot_type')
+  final String? botType;
+  @override
+  final String? webhook;
+  @override
+  final String? secret;
+  @override
+  @JsonKey(name: 'client_id')
+  final String? clientId;
+  @override
+  @JsonKey(name: 'client_secret')
+  final String? clientSecret;
+  @override
+  @JsonKey(
+      name: 'agent_id', fromJson: _parseIntFromDynamic, toJson: _intToDynamic)
+  final int? agentId;
+  @override
+  @JsonKey(name: 'robot_code')
+  final String? robotCode;
   @override
   @JsonKey(name: 'store_id')
   final int? storeId;
   @override
-  final int? status;
+  @JsonKey(name: 'is_enabled')
+  final bool? isEnabled;
+  @override
+  @JsonKey(name: 'msg_type')
+  final String? msgType;
   @override
   final String? remark;
 
   @override
   String toString() {
-    return 'UpdateDingTalkRobotRequest(name: $name, token: $token, storeId: $storeId, status: $status, remark: $remark)';
+    return 'UpdateDingTalkRobotRequest(name: $name, botType: $botType, webhook: $webhook, secret: $secret, clientId: $clientId, clientSecret: $clientSecret, agentId: $agentId, robotCode: $robotCode, storeId: $storeId, isEnabled: $isEnabled, msgType: $msgType, remark: $remark)';
   }
 
   @override
@@ -936,16 +1272,39 @@ class _$UpdateDingTalkRobotRequestImpl implements _UpdateDingTalkRobotRequest {
         (other.runtimeType == runtimeType &&
             other is _$UpdateDingTalkRobotRequestImpl &&
             (identical(other.name, name) || other.name == name) &&
-            (identical(other.token, token) || other.token == token) &&
+            (identical(other.botType, botType) || other.botType == botType) &&
+            (identical(other.webhook, webhook) || other.webhook == webhook) &&
+            (identical(other.secret, secret) || other.secret == secret) &&
+            (identical(other.clientId, clientId) ||
+                other.clientId == clientId) &&
+            (identical(other.clientSecret, clientSecret) ||
+                other.clientSecret == clientSecret) &&
+            (identical(other.agentId, agentId) || other.agentId == agentId) &&
+            (identical(other.robotCode, robotCode) ||
+                other.robotCode == robotCode) &&
             (identical(other.storeId, storeId) || other.storeId == storeId) &&
-            (identical(other.status, status) || other.status == status) &&
+            (identical(other.isEnabled, isEnabled) ||
+                other.isEnabled == isEnabled) &&
+            (identical(other.msgType, msgType) || other.msgType == msgType) &&
             (identical(other.remark, remark) || other.remark == remark));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, name, token, storeId, status, remark);
+  int get hashCode => Object.hash(
+      runtimeType,
+      name,
+      botType,
+      webhook,
+      secret,
+      clientId,
+      clientSecret,
+      agentId,
+      robotCode,
+      storeId,
+      isEnabled,
+      msgType,
+      remark);
 
   /// Create a copy of UpdateDingTalkRobotRequest
   /// with the given fields replaced by the non-null parameter values.
@@ -968,9 +1327,20 @@ abstract class _UpdateDingTalkRobotRequest
     implements UpdateDingTalkRobotRequest {
   const factory _UpdateDingTalkRobotRequest(
       {final String? name,
-      final String? token,
+      @JsonKey(name: 'bot_type') final String? botType,
+      final String? webhook,
+      final String? secret,
+      @JsonKey(name: 'client_id') final String? clientId,
+      @JsonKey(name: 'client_secret') final String? clientSecret,
+      @JsonKey(
+          name: 'agent_id',
+          fromJson: _parseIntFromDynamic,
+          toJson: _intToDynamic)
+      final int? agentId,
+      @JsonKey(name: 'robot_code') final String? robotCode,
       @JsonKey(name: 'store_id') final int? storeId,
-      final int? status,
+      @JsonKey(name: 'is_enabled') final bool? isEnabled,
+      @JsonKey(name: 'msg_type') final String? msgType,
       final String? remark}) = _$UpdateDingTalkRobotRequestImpl;
 
   factory _UpdateDingTalkRobotRequest.fromJson(Map<String, dynamic> json) =
@@ -979,12 +1349,34 @@ abstract class _UpdateDingTalkRobotRequest
   @override
   String? get name;
   @override
-  String? get token;
+  @JsonKey(name: 'bot_type')
+  String? get botType;
+  @override
+  String? get webhook;
+  @override
+  String? get secret;
+  @override
+  @JsonKey(name: 'client_id')
+  String? get clientId;
+  @override
+  @JsonKey(name: 'client_secret')
+  String? get clientSecret;
+  @override
+  @JsonKey(
+      name: 'agent_id', fromJson: _parseIntFromDynamic, toJson: _intToDynamic)
+  int? get agentId;
+  @override
+  @JsonKey(name: 'robot_code')
+  String? get robotCode;
   @override
   @JsonKey(name: 'store_id')
   int? get storeId;
   @override
-  int? get status;
+  @JsonKey(name: 'is_enabled')
+  bool? get isEnabled;
+  @override
+  @JsonKey(name: 'msg_type')
+  String? get msgType;
   @override
   String? get remark;
 

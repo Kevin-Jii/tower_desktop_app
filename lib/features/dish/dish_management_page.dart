@@ -50,6 +50,27 @@ class _DishManagementPageState extends State<DishManagementPage> {
     }
   }
 
+  void _openBatchReportDialog() async {
+    final dishList = context.read<DishListProvider>();
+    if (dishList.dishes.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('当前分类下没有菜品，请先添加菜品')),
+      );
+      return;
+    }
+
+    final bool? success = await showDialog<bool>(
+      context: context,
+      builder: (_) => BatchReportDialog(dishes: dishList.dishes),
+    );
+
+    if (success == true && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('批量报菜成功')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -438,7 +459,21 @@ class _DishManagementPageState extends State<DishManagementPage> {
                             .copyWith(fontWeight: FontWeight.w600)),
                     label: const Text(UITexts.dishAdd),
                   ),
-                )
+                ),
+                const SizedBox(width: DesignTokens.spaceMd),
+                ElevatedButton.icon(
+                  onPressed: _openBatchReportDialog,
+                  icon: const Icon(Icons.assignment_add),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 12),
+                    textStyle: DesignTokens.subtitle
+                        .copyWith(fontWeight: FontWeight.w600),
+                  ),
+                  label: const Text('批量报菜'),
+                ),
               ],
             ),
           ),
@@ -760,6 +795,187 @@ class DishManagementScope extends StatelessWidget {
         ),
       ],
       child: const DishManagementPage(),
+    );
+  }
+}
+
+/// 批量报菜对话框
+class BatchReportDialog extends StatefulWidget {
+  final List<Dish> dishes;
+
+  const BatchReportDialog({super.key, required this.dishes});
+
+  @override
+  State<BatchReportDialog> createState() => _BatchReportDialogState();
+}
+
+class _BatchReportDialogState extends State<BatchReportDialog> {
+  final _messageCtrl = TextEditingController();
+  final List<Dish> _selectedDishes = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedDishes.addAll(widget.dishes);
+  }
+
+  @override
+  void dispose() {
+    _messageCtrl.dispose();
+    super.dispose();
+  }
+
+  void _toggleDish(Dish dish) {
+    setState(() {
+      if (_selectedDishes.contains(dish)) {
+        _selectedDishes.remove(dish);
+      } else {
+        _selectedDishes.add(dish);
+      }
+    });
+  }
+
+  Future<void> _submit() async {
+    if (_selectedDishes.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('请至少选择一个菜品')),
+      );
+      return;
+    }
+
+    try {
+      final dishApi = context.read<DishApi>();
+      final categoryProvider = context.read<DishCategoryProvider>();
+      final storeSelector = context.read<StoreSelectorProvider>();
+
+      // Call API to batch report dishes
+      final success = await dishApi.batchReport(
+        dishes: _selectedDishes,
+        message: _messageCtrl.text.trim().isEmpty ? null : _messageCtrl.text.trim(),
+        category: categoryProvider.selectedCategory?.name ?? '未知分类',
+        storeId: storeSelector.selectedStoreId ?? 0,
+      );
+
+      if (mounted) {
+        Navigator.pop(context, success);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('批量报菜失败: $e')),
+        );
+        Navigator.pop(context, false);
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final categoryProvider = context.read<DishCategoryProvider>();
+
+    return Dialog(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 600, maxHeight: 700),
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      '批量报菜 - ${categoryProvider.selectedCategory?.name ?? ""}',
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Text(
+                '已选择 ${_selectedDishes.length} 个菜品（共 ${widget.dishes.length} 个）',
+                style: DesignTokens.bodySm.copyWith(
+                  color: DesignTokens.neutral600,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: theme.dividerColor),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: ListView.builder(
+                    itemCount: widget.dishes.length,
+                    itemBuilder: (context, index) {
+                      final dish = widget.dishes[index];
+                      final isSelected = _selectedDishes.contains(dish);
+                      return CheckboxListTile(
+                        value: isSelected,
+                        title: Text(
+                          dish.name,
+                          style: TextStyle(
+                            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                            color: isSelected ? theme.textTheme.bodyLarge?.color : DesignTokens.neutral600,
+                          ),
+                        ),
+                        subtitle: dish.price != null
+                            ? Text('¥${dish.price!.toStringAsFixed(2)}')
+                            : null,
+                        secondary: Icon(
+                          Icons.restaurant_menu,
+                          color: isSelected ? DesignTokens.brandPrimary : DesignTokens.neutral400,
+                        ),
+                        onChanged: (_) => _toggleDish(dish),
+                      );
+                    },
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: _messageCtrl,
+                decoration: const InputDecoration(
+                  labelText: '报菜备注（可选）',
+                  hintText: '请输入报菜备注信息',
+                  border: OutlineInputBorder(),
+                ),
+                maxLines: 3,
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('取消'),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: _submit,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: DesignTokens.brandPrimary,
+                      ),
+                      child: const Text('确认报菜'),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
