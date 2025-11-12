@@ -1,6 +1,12 @@
 /// UI 文案常量集中管理，统一后续做国际化或批量修改。
 /// 命名约定：模块_用途 或通用语义。
 class UITexts {
+  // 通用（用于通用管理模板按钮/状态）
+  static const String commonAdd = '新增';
+  static const String commonRetry = '重试';
+  static const String commonError = '错误';
+  static const String commonNoData = '暂无数据';
+
   // 登录页
   static const loginWelcome = '欢迎回来';
   static const loginSubtitle = '请登录您的账户';

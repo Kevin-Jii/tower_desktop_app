@@ -18,6 +18,22 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  static const TowerColors _fallbackColors = TowerColors(
+    navBarBackground: Colors.white,
+    navBarForeground: Color(0xFF1A1F29),
+    navBarBorder: Color(0xFFE3E8EF),
+    sideBarBackground: Color(0xFFF8FAFC),
+    sideBarBorder: Color(0xFFE2E8F0),
+    contentBackground: Color(0xFFF5F7FA),
+    subtleFill: Color(0xFFF1F5F9),
+    accentGradientStart: Color(0xFF3B82F6),
+    accentGradientEnd: Color(0xFF6366F1),
+  );
+
+  TowerColors _colors(BuildContext context) {
+    return Theme.of(context).extension<TowerColors>() ?? _fallbackColors;
+  }
+
   void _handleLogout() {
     SessionManager().clear(persist: true);
     Navigator.of(context).pushAndRemoveUntil(
@@ -66,18 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildTopBar(BuildContext context, UserInfo? user) {
-    final tc = Theme.of(context).extension<TowerColors>() ??
-        const TowerColors(
-          navBarBackground: Colors.white,
-          navBarForeground: Color(0xFF1A1F29),
-          navBarBorder: Color(0xFFE3E8EF),
-          sideBarBackground: Color(0xFFF8FAFC),
-          sideBarBorder: Color(0xFFE2E8F0),
-          contentBackground: Color(0xFFF5F7FA),
-          subtleFill: Color(0xFFF1F5F9),
-          accentGradientStart: Color(0xFF3B82F6),
-          accentGradientEnd: Color(0xFF6366F1),
-        );
+    final tc = _colors(context);
     return Container(
       height: 60,
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -135,7 +140,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _themeSwitcher(BuildContext context) {
     final tp = Provider.of<ThemeProvider>(context);
-    final tc = Theme.of(context).extension<TowerColors>()!;
+    final tc = _colors(context);
     return PopupMenuButton<int>(
       tooltip: '切换主题',
       onSelected: (i) => tp.setTheme(i),
@@ -179,20 +184,20 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _envTag(String text) {
-    final tc = Theme.of(context).extension<TowerColors>();
+    final tc = Theme.of(context).extension<TowerColors>() ?? _fallbackColors;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
-        color: tc?.subtleFill ?? Colors.grey[200],
+        color: tc.subtleFill,
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: tc?.navBarBorder ?? Colors.grey[400]!),
+        border: Border.all(color: tc.navBarBorder),
       ),
       child: Text(
         text,
         style: TextStyle(
           fontSize: 11,
           fontWeight: FontWeight.w600,
-          color: tc?.accentGradientStart,
+          color: tc.accentGradientStart,
           letterSpacing: .5,
         ),
       ),
@@ -201,7 +206,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _iconButton(
       BuildContext context, IconData icon, String tooltip, VoidCallback onTap) {
-    final tc = Theme.of(context).extension<TowerColors>()!;
+    final tc = _colors(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
       child: InkWell(
@@ -228,7 +233,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final displayName = (user != null && user.nickname.isNotEmpty)
         ? user.nickname
         : (user?.username ?? '未登录');
-    final tc = Theme.of(context).extension<TowerColors>()!;
+    final tc = _colors(context);
     return PopupMenuButton<String>(
       offset: const Offset(0, 50),
       onSelected: (value) {

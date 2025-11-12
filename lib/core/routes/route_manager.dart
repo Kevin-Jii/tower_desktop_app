@@ -46,10 +46,6 @@ class RouteManager {
       // 钉钉管理
       case 'dingtalk/robot/index':
         return const DingTalkManagementPage();
-
-      // // 报菜管理
-      // case 'report/list/index':
-      //   return const ReportManagementPage();
       // case 'report/statistics/index':
       //   return _buildModulePage('数据统计', menuItem);
 

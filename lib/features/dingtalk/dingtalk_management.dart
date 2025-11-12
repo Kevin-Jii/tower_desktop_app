@@ -19,19 +19,12 @@ class DingTalkManagement extends StatelessWidget {
     const AdminTableColumn(label: '操作', alignment: Alignment.centerRight),
   ];
 
+  // 加载机器人列表
   static Future<void> _loadRobots(BuildContext context) async {
-    final api = DingTalkApi(ApiClient());
-    await context.read<DingTalkProvider>().loadData(() async {
-      final response = await api.list();
-      return response.when(
-        success: (data) => data ?? [],
-        error: (message, code) {
-          throw Exception(message);
-        },
-      );
-    });
+    await context.read<DingTalkProvider>().loadRobots();
   }
 
+  // 每一行的构建
   static Widget _buildRow(DingTalkRobot robot, int index) {
     return Row(
       children: [
@@ -43,6 +36,7 @@ class DingTalkManagement extends StatelessWidget {
     );
   }
 
+  // 行内操作按钮
   static Widget _buildActions(DingTalkRobot robot) {
     return Consumer<DingTalkProvider>(
       builder: (context, provider, child) {
@@ -54,7 +48,8 @@ class DingTalkManagement extends StatelessWidget {
               onPressed: () => _handleEdit(context, robot),
             ),
             IconButton(
-              icon: const Icon(Icons.delete_outline, size: 20, color: Colors.red),
+              icon:
+                  const Icon(Icons.delete_outline, size: 20, color: Colors.red),
               onPressed: () => _handleDelete(context, robot),
             ),
           ],
@@ -63,11 +58,14 @@ class DingTalkManagement extends StatelessWidget {
     );
   }
 
+  // 状态标签
   static Widget _buildStatusTag(bool isActive) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: isActive ? Colors.green.withOpacity(0.1) : Colors.red.withOpacity(0.1),
+        color: isActive
+            ? Colors.green.withOpacity(0.1)
+            : Colors.red.withOpacity(0.1),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(
@@ -81,14 +79,18 @@ class DingTalkManagement extends StatelessWidget {
     );
   }
 
+  // 创建机器人
   static Future<void> _handleCreate(BuildContext context) async {
     const fields = <FormFieldConfig>[
-      FormFieldConfig(key: 'name', label: '机器人名称', required: true, maxLength: 50),
-      FormFieldConfig(key: 'webhook', label: 'Webhook地址', required: true, maxLength: 200),
+      FormFieldConfig(
+          key: 'name', label: '机器人名称', required: true, maxLength: 50),
+      FormFieldConfig(
+          key: 'webhook', label: 'Webhook地址', required: true, maxLength: 200),
       FormFieldConfig(key: 'secret', label: '密钥', maxLength: 100),
     ];
 
-    final result = await FormDialog.show(context, title: '新建钉钉机器人', fields: fields);
+    final result =
+        await FormDialog.show(context, title: '新建钉钉机器人', fields: fields);
     if (result != null) {
       try {
         final api = DingTalkApi(ApiClient());
@@ -112,7 +114,9 @@ class DingTalkManagement extends StatelessWidget {
           error: (message, code) {
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('创建失败: $message'), backgroundColor: Colors.red),
+                SnackBar(
+                    content: Text('创建失败: $message'),
+                    backgroundColor: Colors.red),
               );
             }
           },
@@ -127,14 +131,25 @@ class DingTalkManagement extends StatelessWidget {
     }
   }
 
-  static Future<void> _handleEdit(BuildContext context, DingTalkRobot robot) async {
+  // 编辑机器人
+  static Future<void> _handleEdit(
+      BuildContext context, DingTalkRobot robot) async {
     final fields = <FormFieldConfig>[
-      FormFieldConfig(key: 'name', label: '机器人名称', initialValue: robot.name, required: true),
-      FormFieldConfig(key: 'webhook', label: 'Webhook地址', initialValue: robot.webhook, required: true),
+      FormFieldConfig(
+          key: 'name',
+          label: '机器人名称',
+          initialValue: robot.name,
+          required: true),
+      FormFieldConfig(
+          key: 'webhook',
+          label: 'Webhook地址',
+          initialValue: robot.webhook,
+          required: true),
       FormFieldConfig(key: 'secret', label: '密钥', initialValue: robot.secret),
     ];
 
-    final result = await FormDialog.show(context, title: '编辑钉钉机器人', fields: fields);
+    final result =
+        await FormDialog.show(context, title: '编辑钉钉机器人', fields: fields);
     if (result != null) {
       try {
         final api = DingTalkApi(ApiClient());
@@ -159,7 +174,9 @@ class DingTalkManagement extends StatelessWidget {
           error: (message, code) {
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('更新失败: $message'), backgroundColor: Colors.red),
+                SnackBar(
+                    content: Text('更新失败: $message'),
+                    backgroundColor: Colors.red),
               );
             }
           },
@@ -174,15 +191,21 @@ class DingTalkManagement extends StatelessWidget {
     }
   }
 
-  static Future<void> _handleDelete(BuildContext context, DingTalkRobot robot) async {
+  // 删除机器人
+  static Future<void> _handleDelete(
+      BuildContext context, DingTalkRobot robot) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('确认删除'),
         content: Text('确定要删除钉钉机器人 "${robot.name}" 吗?'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('取消')),
-          ElevatedButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('删除')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('取消')),
+          ElevatedButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: const Text('删除')),
         ],
       ),
     );
@@ -204,7 +227,9 @@ class DingTalkManagement extends StatelessWidget {
           error: (message, code) {
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('删除失败: $message'), backgroundColor: Colors.red),
+                SnackBar(
+                    content: Text('删除失败: $message'),
+                    backgroundColor: Colors.red),
               );
             }
           },
@@ -219,16 +244,11 @@ class DingTalkManagement extends StatelessWidget {
     }
   }
 
+  // ✅ 页面主结构
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => DingTalkProvider()..loadData(() {
-        final api = DingTalkApi(ApiClient());
-        return api.list().then((response) => response.when(
-          success: (data) => data ?? [],
-          error: (message, code) => throw Exception(message),
-        ));
-      }),
+      create: (_) => DingTalkProvider(DingTalkApi(ApiClient()))..loadRobots(),
       child: Builder(
         builder: (context) {
           return ManagementTemplate<DingTalkRobot>(
@@ -237,11 +257,42 @@ class DingTalkManagement extends StatelessWidget {
             onCreate: () => _handleCreate(context),
             columns: _columns,
             rowBuilder: _buildRow,
+            provider: Consumer<DingTalkProvider>(
+              builder: (context, provider, child) {
+                if (provider.loading && provider.robots.isEmpty) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (provider.error != null) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('加载失败: ${provider.error}'),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: () => _loadRobots(context),
+                          child: Text(UITexts.commonRetry),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
+                if (provider.robots.isEmpty) {
+                  return Center(child: Text(UITexts.commonNoData));
+                }
+
+                return AdminTable<DingTalkRobot>(
+                  columns: _columns,
+                  data: provider.robots,
+                  rowBuilder: _buildRow,
+                );
+              },
+            ),
           );
         },
       ),
     );
   }
 }
-
-class DingTalkProvider extends ChangeNotifier with ListProviderMixin<DingTalkRobot> {}

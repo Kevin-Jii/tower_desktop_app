@@ -4,6 +4,9 @@ import 'package:tower_desktop_app/core/widgets/management_template.dart';
 import 'package:tower_desktop_app/core/widgets/form_dialog_builder.dart';
 import 'package:tower_desktop_app/core/widgets/admin_table.dart';
 import 'package:tower_desktop_app/core/network/api_client.dart';
+import 'package:tower_desktop_app/core/network/base_provider.dart';
+import 'package:tower_desktop_app/core/constants/ui_texts.dart';
+import 'package:tower_desktop_app/core/network/api_response.dart';
 import 'role_models.dart';
 import 'role_api.dart';
 
@@ -20,7 +23,8 @@ class RoleManagement extends StatelessWidget {
   static Future<void> _loadRoles(BuildContext context) async {
     final api = RoleApi(ApiClient());
     await context.read<RoleProvider>().loadData(() async {
-      return await api.getRoles();
+      final list = await api.getRoles();
+      return ApiResponse<List<RoleItem>>(code: 200, message: 'ok', data: list);
     });
   }
 
@@ -60,18 +64,20 @@ class RoleManagement extends StatelessWidget {
   static Future<void> _handleCreate(BuildContext context) async {
     const fields = [
       FormFieldConfig(key: 'name', label: '角色名', required: true, maxLength: 50),
-      FormFieldConfig(key: 'key', label: '权限标识', required: true, maxLength: 100),
+      FormFieldConfig(
+          key: 'key', label: '权限标识', required: true, maxLength: 100),
       FormFieldConfig(key: 'description', label: '描述', maxLength: 200),
     ];
 
-    final result = await FormDialog.show(context, title: '新建角色', fields: fields);
+    final result =
+        await FormDialog.show(context, title: '新建角色', fields: fields);
     if (result != null) {
       try {
         final api = RoleApi(ApiClient());
         await api.createRole(
           CreateRoleRequest(
             name: result['name']!,
-            key: result['key']!,
+            code: result['key']!,
             description: result['description'],
           ),
         );
@@ -94,12 +100,18 @@ class RoleManagement extends StatelessWidget {
 
   static Future<void> _handleEdit(BuildContext context, RoleItem role) async {
     final fields = [
-      FormFieldConfig(key: 'name', label: '角色名', initialValue: role.name, required: true),
-      FormFieldConfig(key: 'key', label: '权限标识', initialValue: role.key, required: true),
-      FormFieldConfig(key: 'description', label: '描述', initialValue: role.description ?? ''),
+      FormFieldConfig(
+          key: 'name', label: '角色名', initialValue: role.name, required: true),
+      FormFieldConfig(
+          key: 'key', label: '权限标识', initialValue: role.code, required: true),
+      FormFieldConfig(
+          key: 'description',
+          label: '描述',
+          initialValue: role.description ?? ''),
     ];
 
-    final result = await FormDialog.show(context, title: '编辑角色', fields: fields);
+    final result =
+        await FormDialog.show(context, title: '编辑角色', fields: fields);
     if (result != null) {
       try {
         final api = RoleApi(ApiClient());
@@ -107,7 +119,7 @@ class RoleManagement extends StatelessWidget {
           role.id,
           UpdateRoleRequest(
             name: result['name']!,
-            key: result['key']!,
+            code: result['key']!,
             description: result['description'],
           ),
         );
@@ -135,8 +147,12 @@ class RoleManagement extends StatelessWidget {
         title: const Text('确认删除'),
         content: Text('确定要删除角色 "${role.name}" 吗?'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('取消')),
-          ElevatedButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('删除')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('取消')),
+          ElevatedButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: const Text('删除')),
         ],
       ),
     );
@@ -165,11 +181,13 @@ class RoleManagement extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => RoleProvider()..loadData(() async {
-        final api = RoleApi(ApiClient());
-        final response = await api.getRoles();
-        return response.list;
-      }),
+      create: (_) => RoleProvider()
+        ..loadData(() async {
+          final api = RoleApi(ApiClient());
+          final list = await api.getRoles();
+          return ApiResponse<List<RoleItem>>(
+              code: 200, message: 'ok', data: list);
+        }),
       child: Builder(
         builder: (context) {
           return ManagementTemplate<RoleItem>(
@@ -178,13 +196,52 @@ class RoleManagement extends StatelessWidget {
             onCreate: () => _handleCreate(context),
             columns: _columns,
             rowBuilder: _buildRow,
-            headerBuilder: (context) => TextField(
-              decoration: const InputDecoration(
-                hintText: '搜索角色名',
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(),
-              ),
-              onSubmitted: (_) => _loadRoles(context),
+            provider: Consumer<RoleProvider>(
+              builder: (context, provider, child) {
+                if (provider.loading && provider.items.isEmpty) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (provider.error != null) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('加载失败: ${provider.error}'),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: () => _loadRoles(context),
+                          child: Text(UITexts.commonRetry),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+                if (provider.items.isEmpty) {
+                  return Center(child: Text(UITexts.commonNoData));
+                }
+                return Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: TextField(
+                        decoration: const InputDecoration(
+                          hintText: '搜索角色名',
+                          prefixIcon: Icon(Icons.search),
+                          border: OutlineInputBorder(),
+                        ),
+                        onSubmitted: (_) => _loadRoles(context),
+                      ),
+                    ),
+                    Expanded(
+                      child: AdminTable<RoleItem>(
+                        columns: _columns,
+                        data: provider.items,
+                        rowBuilder: _buildRow,
+                      ),
+                    ),
+                  ],
+                );
+              },
             ),
           );
         },

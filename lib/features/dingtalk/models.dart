@@ -46,6 +46,9 @@ extension DingTalkRobotX on DingTalkRobot {
 
   // 提供 status 属性（1:启用 0:禁用）
   int get status => isEnabled ? 1 : 0;
+
+  // 提供 isActive 属性用于 UI 组件
+  bool get isActive => isEnabled;
 }
 
 @freezed

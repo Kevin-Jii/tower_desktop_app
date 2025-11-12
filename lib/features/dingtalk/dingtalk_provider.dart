@@ -1,42 +1,40 @@
 import 'package:flutter/foundation.dart';
+import '../../core/network/api_response.dart';
+import '../../core/network/base_provider.dart';
 import 'dingtalk_api.dart';
 import 'models.dart';
 
-class DingTalkProvider extends ChangeNotifier {
+class DingTalkProvider extends ChangeNotifier with ListProviderMixin<DingTalkRobot> {
   final DingTalkApi _api;
   DingTalkProvider(this._api);
 
-  List<DingTalkRobot> _robots = [];
-  bool _loading = false;
-  String? _error;
-
-  List<DingTalkRobot> get robots => _robots;
-  bool get loading => _loading;
-  String? get error => _error;
+  List<DingTalkRobot> get robots => items;
 
   Future<void> loadRobots({int? storeId}) async {
-    print('🔄 开始加载钉钉机器人...');
-    _loading = true;
-    _error = null;
-    notifyListeners();
-
-    final result = await _api.list(storeId: storeId);
-    result.when(
-      success: (list) {
-        print('✅ 加载成功,机器人数量: ${list.length}');
-        _robots = list;
-        _error = null;
-      },
-      error: (msg, code) {
-        print('❌ 加载失败: $msg (code: $code)');
-        _error = msg;
-      },
-    );
-
-    _loading = false;
-    print(
-        '📊 状态更新: loading=$_loading, robots=${_robots.length}, error=$_error');
-    notifyListeners();
+    await loadData(() async {
+      try {
+        final resp = await _api.list(storeId: storeId);
+        return resp.when(
+          success: (data) => ApiResponse<List<DingTalkRobot>>(
+            code: 200,
+            message: 'success',
+            data: data,
+          ),
+          error: (message, statusCode) => ApiResponse<List<DingTalkRobot>>(
+            code: statusCode ?? 500,
+            message: message,
+            data: null,
+          ),
+        );
+      } catch (e, stack) {
+        debugPrint('API 异常: $e\n$stack');
+        return ApiResponse<List<DingTalkRobot>>(
+          code: 500,
+          message: '网络请求异常: $e',
+          data: null,
+        );
+      }
+    });
   }
 
   Future<bool> createRobot(CreateDingTalkRobotRequest payload) async {
@@ -45,16 +43,14 @@ class DingTalkProvider extends ChangeNotifier {
 
     result.when(
       success: (item) {
-        _error = null;
         ok = true;
-        loadRobots();
       },
       error: (msg, code) {
-        _error = msg;
+        ok = false;
       },
     );
 
-    if (!ok) notifyListeners();
+    if (ok) await loadRobots();
     return ok;
   }
 
@@ -65,16 +61,14 @@ class DingTalkProvider extends ChangeNotifier {
 
     result.when(
       success: (item) {
-        _error = null;
         ok = true;
-        loadRobots();
       },
       error: (msg, code) {
-        _error = msg;
+        ok = false;
       },
     );
 
-    if (!ok) notifyListeners();
+    if (ok) await loadRobots();
     return ok;
   }
 
@@ -84,16 +78,15 @@ class DingTalkProvider extends ChangeNotifier {
 
     result.when(
       success: (_) {
-        _robots.removeWhere((r) => r.id == robot.id);
-        _error = null;
+        items.removeWhere((r) => r.id == robot.id);
+        notifyListeners();
         ok = true;
       },
       error: (msg, code) {
-        _error = msg;
+        ok = false;
       },
     );
 
-    notifyListeners();
     return ok;
   }
 
@@ -103,15 +96,14 @@ class DingTalkProvider extends ChangeNotifier {
 
     result.when(
       success: (_) {
-        _error = null;
+        notifyListeners();
         ok = true;
       },
       error: (msg, code) {
-        _error = msg;
+        ok = false;
       },
     );
 
-    if (!ok) notifyListeners();
     return ok;
   }
 }

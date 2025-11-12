@@ -17,7 +17,8 @@
       "Bash(dir:*)",
       "Bash(findstr /n \"accentGradientStart\" home_screen.dart)",
       "Bash(git add:*)",
-      "Bash(rm nul)"
+      "Bash(rm nul)",
+      "Bash(git commit -m \"$(cat <<''EOF''\n重构钉钉和业务管理功能\n- 删除旧版审批报表模块(report)\n- 增强钉钉管理功能，添加完整CRUD操作\n- 优化钉钉模型结构，添加必要字段\n- 重构菜品管理页面实现\n- 新增基础管理模板组件和管理模板页面\n- 优化应用主题路由配置\n- 添加分页Provider基类\nEOF\n)\")"
     ],
     "deny": [],
     "ask": []

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../core/network/api_response.dart';
+import '../../core/network/base_provider.dart';
 import 'user_api.dart';
 import 'models.dart';
 import '../../core/widgets/management_template.dart';
@@ -8,6 +10,7 @@ import '../../core/widgets/admin_table.dart';
 import '../../features/auth/permission_gate.dart';
 import '../store/store_api.dart';
 import '../../core/network/api_client.dart';
+import '../../core/constants/ui_texts.dart';
 
 class UserProvider extends ChangeNotifier with ListProviderMixin<User> {}
 
@@ -33,7 +36,14 @@ class UserManagement extends StatelessWidget {
 
     await context.read<UserProvider>().loadData(() async {
       final response = await userApi.getUsers();
-      return response.list.map((u) => u.copyWith(storeName: storeNames[u.storeId])).toList();
+
+      return ApiResponse<List<User>>(
+        code: 200,
+        message: '加载成功',
+        data: response.list
+            .map((u) => u.copyWith(storeName: storeNames[u.storeId]))
+            .toList(),
+      );
     });
   }
 
@@ -54,7 +64,9 @@ class UserManagement extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: active ? Colors.green.withOpacity(0.1) : Colors.red.withOpacity(0.1),
+        color: active
+            ? Colors.green.withOpacity(0.1)
+            : Colors.red.withOpacity(0.1),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(
@@ -84,7 +96,8 @@ class UserManagement extends StatelessWidget {
             PermissionGate(
               required: 'system:user:delete',
               child: IconButton(
-                icon: const Icon(Icons.delete_outline, size: 18, color: Colors.red),
+                icon: const Icon(Icons.delete_outline,
+                    size: 18, color: Colors.red),
                 onPressed: () => _handleDelete(context, user),
               ),
             ),
@@ -96,14 +109,25 @@ class UserManagement extends StatelessWidget {
 
   static Future<void> _handleCreate(BuildContext context) async {
     const fields = <FormFieldConfig>[
-      FormFieldConfig(key: 'username', label: '用户名' , required: true, maxLength: 50),
-      FormFieldConfig(key: 'password', label: '密码', required: true, maxLength: 50),
+      FormFieldConfig(
+          key: 'username', label: '用户名', required: true, maxLength: 50),
+      FormFieldConfig(
+          key: 'password', label: '密码', required: true, maxLength: 50),
       FormFieldConfig(key: 'nickname', label: '昵称', maxLength: 50),
-      FormFieldConfig(key: 'phone', label: '手机号', keyboardType: TextInputType.phone, maxLength: 11),
-      FormFieldConfig(key: 'email', label: '邮箱', keyboardType: TextInputType.emailAddress, maxLength: 100),
+      FormFieldConfig(
+          key: 'phone',
+          label: '手机号',
+          keyboardType: TextInputType.phone,
+          maxLength: 11),
+      FormFieldConfig(
+          key: 'email',
+          label: '邮箱',
+          keyboardType: TextInputType.emailAddress,
+          maxLength: 100),
     ];
 
-    final result = await FormDialog.show(context, title: '新建用户', fields: fields);
+    final result =
+        await FormDialog.show(context, title: '新建用户', fields: fields);
     if (result != null) {
       try {
         final api = UserApi(ApiClient());
@@ -114,6 +138,7 @@ class UserManagement extends StatelessWidget {
             phone: result['phone'] ?? '',
             nickname: result['nickname'],
             email: result['email'],
+            status: 1, // 默认启用
           ),
         );
         await _loadUsers(context);
@@ -131,10 +156,20 @@ class UserManagement extends StatelessWidget {
 
   static Future<void> _handleEdit(BuildContext context, User user) async {
     final fields = <FormFieldConfig>[
-      FormFieldConfig(key: 'username', label: '用户名', initialValue: user.username, required: true),
-      FormFieldConfig(key: 'nickname', label: '昵称', initialValue: user.nickname ?? ''),
-      FormFieldConfig(key: 'phone', label: '手机号', initialValue: user.phone ?? ''),
-      FormFieldConfig(key: 'email', label: '邮箱', initialValue: user.email ?? '', keyboardType: TextInputType.emailAddress),
+      FormFieldConfig(
+          key: 'username',
+          label: '用户名',
+          initialValue: user.username,
+          required: true),
+      FormFieldConfig(
+          key: 'nickname', label: '昵称', initialValue: user.nickname ?? ''),
+      FormFieldConfig(
+          key: 'phone', label: '手机号', initialValue: user.phone ?? ''),
+      FormFieldConfig(
+          key: 'email',
+          label: '邮箱',
+          initialValue: user.email ?? '',
+          keyboardType: TextInputType.emailAddress),
       FormFieldConfig(key: 'password', label: '新密码(留空不修改)', maxLength: 50),
     ];
 
@@ -153,7 +188,9 @@ class UserManagement extends StatelessWidget {
             nickname: result['nickname'],
             phone: result['phone'],
             email: result['email'],
-            password: result['password']?.isNotEmpty == true ? result['password'] : null,
+            password: result['password']?.isNotEmpty == true
+                ? result['password']
+                : null,
           ),
         );
         await _loadUsers(context);
@@ -176,8 +213,12 @@ class UserManagement extends StatelessWidget {
         title: const Text('确认删除'),
         content: Text('确定要删除用户 "${user.username}" 吗?'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('取消')),
-          ElevatedButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('删除')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('取消')),
+          ElevatedButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: const Text('删除')),
         ],
       ),
     );
@@ -223,13 +264,38 @@ class UserManagement extends StatelessWidget {
             onCreate: () => _handleCreate(context),
             columns: _columns,
             rowBuilder: _buildRow,
-            headerBuilder: (context) => TextField(
-              decoration: const InputDecoration(
-                hintText: '搜索用户名/昵称/手机号',
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(),
-              ),
-              onSubmitted: (_) => _loadUsers(context),
+            provider: Consumer<UserProvider>(
+              builder: (context, provider, child) {
+                if (provider.loading && provider.items.isEmpty) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (provider.error != null) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('加载失败: ${provider.error}'),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: () => _loadUsers(context),
+                          child: const Text(UITexts.commonRetry),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
+                if (provider.items.isEmpty) {
+                  return const Center(child: Text(UITexts.commonNoData));
+                }
+
+                return AdminTable<User>(
+                  columns: _columns,
+                  data: provider.items,
+                  rowBuilder: _buildRow,
+                );
+              },
             ),
           );
         },

@@ -17,16 +17,11 @@ class DingTalkApi {
       if (storeId != null) params['store_id'] = storeId;
 
       final resp = await _dio.get(_basePath, queryParameters: params);
-      print('钉钉机器人列表响应: ${resp.data}');
 
       final list = ResponseUtils.payloadToList(resp.data);
-      print('解析后的列表: $list');
 
       final items = list.map((e) {
-        print('解析机器人数据: $e');
         final robot = DingTalkRobot.fromJson(Map<String, dynamic>.from(e));
-        print(
-            '解析后的机器人: id=${robot.id}, name=${robot.name}, webhook="${robot.webhook}", clientId="${robot.clientId}", token="${robot.token}"');
         return robot;
       }).toList();
 

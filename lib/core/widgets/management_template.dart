@@ -1,16 +1,59 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../features/auth/permission_gate.dart';
-import '../network/base_provider.dart';
 import '../providers/pagination_provider_base.dart';
 import 'admin_table.dart';
-import '../network/api_response.dart';
+import '../constants/ui_texts.dart';
 
-class UITexts {
-  static const String commonAdd = '新增';
-  static const String commonRetry = '重试';
-  static const String commonError = '错误';
-  static const String commonNoData = '暂无数据';
+class ManagementTemplate<T> extends StatelessWidget {
+  final String title;
+  final List<AdminTableColumn> columns;
+  final Widget Function(T item, int index) rowBuilder;
+  final VoidCallback? onCreate;
+  final String? createPermission;
+  final Widget provider;
+  final Widget Function(BuildContext)? headerBuilder;
+
+  const ManagementTemplate({
+    super.key,
+    required this.title,
+    required this.columns,
+    required this.rowBuilder,
+    required this.provider,
+    this.onCreate,
+    this.createPermission,
+    this.headerBuilder,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(title),
+        actions: [
+          if (onCreate != null)
+            Padding(
+              padding: const EdgeInsets.only(right: 16),
+              child: createPermission != null
+                  ? PermissionGate(
+                      required: createPermission!,
+                      child: ElevatedButton.icon(
+                        onPressed: onCreate,
+                        icon: const Icon(Icons.add),
+                        label: const Text(UITexts.commonAdd),
+                      ),
+                    )
+                  : ElevatedButton.icon(
+                      onPressed: onCreate,
+                      icon: const Icon(Icons.add),
+                      label: const Text(UITexts.commonAdd),
+                    ),
+            ),
+        ],
+      ),
+      body: provider,
+    );
+  }
 }
 
 class ManagementPaginationTemplate<T, P extends PaginationProviderBase<T>>
@@ -49,18 +92,18 @@ class ManagementPaginationTemplate<T, P extends PaginationProviderBase<T>>
                 padding: const EdgeInsets.only(right: 16),
                 child: createPermission != null
                     ? PermissionGate(
-                  required: createPermission!,
-                  child: ElevatedButton.icon(
-                    onPressed: onCreate,
-                    icon: const Icon(Icons.add),
-                    label: const Text(UITexts.commonAdd),
-                  ),
-                )
+                        required: createPermission!,
+                        child: ElevatedButton.icon(
+                          onPressed: onCreate,
+                          icon: const Icon(Icons.add),
+                          label: const Text(UITexts.commonAdd),
+                        ),
+                      )
                     : ElevatedButton.icon(
-                  onPressed: onCreate,
-                  icon: const Icon(Icons.add),
-                  label: const Text(UITexts.commonAdd),
-                ),
+                        onPressed: onCreate,
+                        icon: const Icon(Icons.add),
+                        label: const Text(UITexts.commonAdd),
+                      ),
               ),
           ],
         ),
