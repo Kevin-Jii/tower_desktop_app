@@ -90,5 +90,8 @@ class ApiPaths {
   static const String menus = '/menus';
   static const String dishes = '/dishes';
   static const String roles = '/roles';
+  static const String menuReports = '/menu-reports';
+  static const String menuReportOrders = '/menu-reports';
+  static const String menuReportItems = '/menu-report-items';
   // 如后端有统计/报表模块可继续补充：static const String reports = '/reports';
 }

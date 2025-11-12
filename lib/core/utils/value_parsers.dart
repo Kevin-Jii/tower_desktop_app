@@ -23,7 +23,7 @@ int? parseIntNullable(dynamic v) {
     if (t.isEmpty) return null;
     return int.tryParse(t);
   }
-  return null; // 保守返回 null 以避免抛异常
+  return null;
 }
 
 String? parseStringNullable(dynamic v) {
