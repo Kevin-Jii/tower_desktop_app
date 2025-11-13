@@ -60,7 +60,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      // 移除“功能菜单”标题，直接展示菜单树
                       const Expanded(child: MenuTree()),
                     ],
                   ),
@@ -88,10 +87,16 @@ class _HomeScreenState extends State<HomeScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       decoration: BoxDecoration(
         color: tc.navBarBackground,
+        border: Border(
+          bottom: BorderSide(
+            color: tc.navBarBorder.withOpacity(.5),
+            width: 1,
+          ),
+        ),
         boxShadow: [
           BoxShadow(
-            color: tc.navBarBorder.withOpacity(.35),
-            blurRadius: 8,
+            color: tc.navBarBorder.withOpacity(.18),
+            blurRadius: 6,
             offset: const Offset(0, 2),
           ),
         ],
@@ -101,24 +106,29 @@ class _HomeScreenState extends State<HomeScreen> {
           // 左侧项目名称与可选环境标签
           Row(
             children: [
-              Icon(Icons.dashboard_customize,
-                  color: Theme.of(context).colorScheme.primary, size: 26),
-              const SizedBox(width: 10),
-              ShaderMask(
-                shaderCallback: (r) => LinearGradient(
-                  colors: [tc.accentGradientStart, tc.accentGradientEnd],
-                ).createShader(r),
-                child: const Text(
-                  AppTexts.appName,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
-                    letterSpacing: .6,
-                  ),
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primary,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(
+                  Icons.restaurant_menu,
+                  color: Colors.white,
+                  size: 16,
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 8),
+              const Text(
+                AppTexts.appName,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
+                ),
+              ),
+              const SizedBox(width: 10),
               _envTag(AppTexts.envProd),
             ],
           ),

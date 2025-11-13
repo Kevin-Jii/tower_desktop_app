@@ -1,172 +1,337 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/tower_colors.dart';
 import 'package:provider/provider.dart';
+
+import '../../core/constants/menu_types.dart';
+import '../../core/icons/td_icon_mapper.dart';
+import '../../core/theme/tower_colors.dart';
 import 'menu_provider.dart';
 import 'models.dart';
-import '../../core/icons/td_icon_mapper.dart';
 
 class MenuTree extends StatelessWidget {
   final void Function(MenuItem item)? onSelect;
+
   const MenuTree({super.key, this.onSelect});
 
   @override
   Widget build(BuildContext context) {
+    final towerColors = Theme.of(context).extension<TowerColors>();
+    final accent = Theme.of(context).colorScheme.primary;
+    final borderColor = towerColors?.sideBarBorder ?? Colors.grey.shade300;
+
     return Consumer<MenuProvider>(
-      builder: (context, mp, _) {
-        if (mp.loading) {
+      builder: (context, provider, _) {
+        if (provider.loading) {
           return const Center(child: CircularProgressIndicator());
         }
-        if (mp.error != null) {
+        if (provider.error != null) {
           return Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text('加载失败: ${mp.error}',
-                    style: const TextStyle(color: Colors.red)),
+                Text(
+                  '加载失败: ${provider.error}',
+                  style: const TextStyle(color: Colors.red),
+                ),
                 const SizedBox(height: 8),
-                FilledButton(onPressed: mp.load, child: const Text('重试')),
+                FilledButton(onPressed: provider.load, child: const Text('重试')),
               ],
             ),
           );
         }
-        return ListView(
-          padding: const EdgeInsets.symmetric(vertical: 4),
-          children: mp.tree
-              .map((e) => _MenuNode(
-                  item: e,
-                  depth: 0,
-                  onTap: (m) {
-                    mp.select(m);
-                    onSelect?.call(m);
-                  }))
-              .toList(),
+        if (provider.tree.isEmpty) {
+          return const SizedBox.shrink();
+        }
+        return Container(
+          color: towerColors?.sideBarBackground ?? Colors.white,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: 8),
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 12,
+                    top: 12,
+                    bottom: 16,
+                  ),
+                  children: _buildMenuWidgets(
+                    provider: provider,
+                    towerColors: towerColors,
+                    accent: accent,
+                  ),
+                ),
+              ),
+            ],
+          ),
         );
       },
     );
   }
+
+  List<Widget> _buildMenuWidgets({
+    required MenuProvider provider,
+    required TowerColors? towerColors,
+    required Color accent,
+  }) {
+    final widgets = <Widget>[];
+    final roots = provider.tree;
+
+    for (int index = 0; index < roots.length; index++) {
+      final section = roots[index];
+      final hasChildren = section.children.isNotEmpty;
+      final inferredType =
+          section.type ?? (hasChildren ? MenuType.directory : MenuType.page);
+      final isDirectory = inferredType == MenuType.directory && hasChildren;
+
+      if (isDirectory) {
+        if (widgets.isNotEmpty) {
+          widgets.add(const SizedBox(height: 16));
+        }
+        widgets.add(_MenuSectionHeader(
+          title: section.title,
+          towerColors: towerColors,
+        ));
+        widgets.addAll(_buildChildren(
+          nodes: section.children,
+          provider: provider,
+          towerColors: towerColors,
+          accent: accent,
+          depth: 0,
+        ));
+      } else {
+        widgets.add(_MenuLeafTile(
+          item: section,
+          selected: provider.selected?.id == section.id,
+          towerColors: towerColors,
+          accent: accent,
+          depth: 0,
+          onTap: () {
+            provider.select(section);
+            onSelect?.call(section);
+          },
+        ));
+      }
+    }
+
+    return widgets;
+  }
+
+  List<Widget> _buildChildren({
+    required List<MenuItem> nodes,
+    required MenuProvider provider,
+    required TowerColors? towerColors,
+    required Color accent,
+    required int depth,
+  }) {
+    final widgets = <Widget>[];
+
+    for (final node in nodes) {
+      final hasChildren = node.children.isNotEmpty;
+      final inferredType =
+          node.type ?? (hasChildren ? MenuType.directory : MenuType.page);
+
+      if (inferredType == MenuType.directory && hasChildren) {
+        widgets.add(_MenuSubsectionHeader(
+          title: node.title,
+          towerColors: towerColors,
+          depth: depth + 1,
+        ));
+        widgets.addAll(_buildChildren(
+          nodes: node.children,
+          provider: provider,
+          towerColors: towerColors,
+          accent: accent,
+          depth: depth + 1,
+        ));
+      } else {
+        widgets.add(_MenuLeafTile(
+          item: node,
+          selected: provider.selected?.id == node.id,
+          towerColors: towerColors,
+          accent: accent,
+          depth: depth,
+          onTap: () {
+            provider.select(node);
+            onSelect?.call(node);
+          },
+        ));
+      }
+    }
+
+    return widgets;
+  }
 }
 
-class _MenuNode extends StatefulWidget {
-  final MenuItem item;
-  final int depth;
-  final void Function(MenuItem) onTap;
-  const _MenuNode(
-      {required this.item, required this.depth, required this.onTap});
+class _SidebarBrand extends StatelessWidget {
+  final Color accent;
+  final TowerColors? towerColors;
 
-  @override
-  State<_MenuNode> createState() => _MenuNodeState();
-}
-
-class _MenuNodeState extends State<_MenuNode> {
-  bool _expanded = true;
+  const _SidebarBrand({
+    required this.accent,
+    required this.towerColors,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final hasChildren = widget.item.children.isNotEmpty;
-    final mp = context.read<MenuProvider>();
-    final selected = mp.selected?.id == widget.item.id;
-    final isDirectory = hasChildren; // 目录节点
-    final canSelect = !isDirectory; // 只有叶子(页面)才触发 select
-
-    final tc = Theme.of(context).extension<TowerColors>();
-    final accent = Theme.of(context).colorScheme.primary;
-    final tile = InkWell(
-      borderRadius: BorderRadius.circular(8),
-      onTap: () {
-        if (isDirectory) {
-          setState(() => _expanded = !_expanded);
-        } else {
-          widget.onTap(widget.item);
-        }
-      },
-      child: Padding(
-        padding: EdgeInsets.only(
-          left: 6 + widget.depth * 14,
-          right: 8,
-          top: 4,
-          bottom: 4,
-        ),
-        child: Row(
-          children: [
-            // 图标 / 展开指示
-            if (isDirectory)
-              AnimatedRotation(
-                turns: _expanded ? 0.0 : -0.25,
-                duration: const Duration(milliseconds: 200),
-                child: Icon(
-                  Icons.expand_more,
-                  size: 18,
-                  color: tc?.navBarForeground.withOpacity(.6) ??
-                      Colors.blueGrey.shade600,
-                ),
-              )
-            else
-              TdIconMapper.build(
-                widget.item.icon,
-                size: 18,
-                color: selected
-                    ? (tc?.accentGradientStart ?? accent)
-                    : tc?.navBarForeground.withOpacity(.65) ??
-                        Colors.blueGrey.shade600,
-              ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                widget.item.title,
-                style: TextStyle(
-                  fontSize: 13.5,
-                  fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
-                  color: selected
-                      ? (tc?.accentGradientStart ?? accent)
-                      : tc?.navBarForeground.withOpacity(.75) ??
-                          Colors.blueGrey.shade700,
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-            if (canSelect && selected)
-              Container(
-                width: 6,
-                height: 6,
-                decoration: BoxDecoration(
-                  color: tc?.accentGradientStart ?? accent,
-                  borderRadius: BorderRadius.circular(3),
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
-    Widget styledTile = Theme(
-      data: Theme.of(context).copyWith(
-        listTileTheme: ListTileThemeData(
-          selectedColor: (tc?.navBarForeground ?? Colors.white),
-          selectedTileColor:
-              (tc?.accentGradientStart ?? accent).withOpacity(0.18),
-        ),
-      ),
-      child: tile,
-    );
-
-    if (!hasChildren) return styledTile;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        styledTile,
-        AnimatedCrossFade(
-          firstChild: const SizedBox.shrink(),
-          secondChild: Column(
-            children: widget.item.children
-                .map((c) => _MenuNode(
-                    item: c, depth: widget.depth + 1, onTap: widget.onTap))
-                .toList(),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 18, 20, 10),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Container(
+          width: 30,
+          height: 30,
+          decoration: BoxDecoration(
+            color: accent,
+            borderRadius: BorderRadius.circular(10),
           ),
-          crossFadeState:
-              _expanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
-          duration: const Duration(milliseconds: 180),
+          child: const Icon(
+            Icons.restaurant_menu,
+            color: Colors.white,
+            size: 16,
+          ),
         ),
-      ],
+      ),
     );
   }
 }
-// 类型标签组件已移除，目录/菜单不再显示额外徽章
+
+class _MenuSectionHeader extends StatelessWidget {
+  final String title;
+  final TowerColors? towerColors;
+
+  const _MenuSectionHeader({
+    required this.title,
+    required this.towerColors,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final baseColor =
+        towerColors?.navBarForeground ?? const Color(0xFF4B5563);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(4, 2, 4, 6),
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          letterSpacing: .4,
+          color: baseColor.withOpacity(.6),
+        ),
+      ),
+    );
+  }
+}
+
+class _MenuSubsectionHeader extends StatelessWidget {
+  final String title;
+  final TowerColors? towerColors;
+  final int depth;
+
+  const _MenuSubsectionHeader({
+    required this.title,
+    required this.towerColors,
+    required this.depth,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final baseColor =
+        towerColors?.navBarForeground ?? const Color(0xFF4B5563);
+    return Padding(
+      padding: EdgeInsets.fromLTRB(4 + depth * 14.0, 10, 4, 6),
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          color: baseColor.withOpacity(.55),
+        ),
+      ),
+    );
+  }
+}
+
+class _MenuLeafTile extends StatelessWidget {
+  final MenuItem item;
+  final bool selected;
+  final TowerColors? towerColors;
+  final Color accent;
+  final int depth;
+  final VoidCallback onTap;
+
+  const _MenuLeafTile({
+    required this.item,
+    required this.selected,
+    required this.towerColors,
+    required this.accent,
+    required this.depth,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final baseTextColor =
+        towerColors?.navBarForeground.withOpacity(.8) ??
+            Colors.blueGrey.shade700;
+    final iconColor = selected ? accent : baseTextColor;
+    final backgroundColor =
+        selected ? accent.withOpacity(.1) : Colors.transparent;
+
+    return Padding(
+      padding: EdgeInsets.only(left: depth * 14.0),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(9),
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          margin: const EdgeInsets.symmetric(vertical: 2.5),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            borderRadius: BorderRadius.circular(9),
+          ),
+          child: Row(
+            children: [
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 180),
+                width: 3,
+                height: 24,
+                decoration: BoxDecoration(
+                  color: selected ? accent : Colors.transparent,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(width: 9),
+              SizedBox(
+                width: 20,
+                height: 20,
+                child: Center(
+                  child: TdIconMapper.build(
+                    item.icon,
+                    size: 16,
+                    color: iconColor,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 9),
+              Expanded(
+                child: Text(
+                  item.title,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight:
+                        selected ? FontWeight.w600 : FontWeight.w500,
+                    color: selected ? accent : baseTextColor,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
