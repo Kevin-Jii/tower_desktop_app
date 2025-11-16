@@ -327,6 +327,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
             title: '操作',
             colKey: 'actions',
             width: 150,
+            fixed: TDTableColFixed.right,
             cellBuilder: (ctx, index) {
               final u = provider.users[index];
               return Row(

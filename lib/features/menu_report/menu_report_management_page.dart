@@ -388,7 +388,7 @@ class _MenuReportManagementPageState extends State<MenuReportManagementPage> {
                 onPressed: () => _openDetailsDialog(item),
                 child: const Text('查看详情'),
               ),
-              const SizedBox(width: 4),
+              const SizedBox(width: 8),
               PermissionGate(
                 required: PermissionCodes.reportDelete,
                 child: TextButton(
@@ -411,7 +411,7 @@ class _MenuReportManagementPageState extends State<MenuReportManagementPage> {
     AdminTableColumn(width: 160, label: '报菜时间'),
     AdminTableColumn(label: '备注'),
     AdminTableColumn(width: 120, label: '菜品详情', alignment: Alignment.center),
-    AdminTableColumn(width: 140, label: '操作', alignment: Alignment.centerRight),
+    AdminTableColumn(width: 180, label: '操作', alignment: Alignment.centerRight),
   ];
 
 }
