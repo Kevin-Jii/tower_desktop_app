@@ -10,7 +10,7 @@ class ApiClient {
   late final Dio dio;
 
   // 根据你的后端地址调整 (开发环境)
-  static const String baseUrl = 'http://127.0.0.1:10024/api/v1';
+  static const String baseUrl = 'http://47.120.27.64:10024/api/v1';
 
   String? _token;
   void setToken(String? token) {

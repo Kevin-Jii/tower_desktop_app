@@ -20,6 +20,7 @@ _$DingTalkRobotImpl _$$DingTalkRobotImplFromJson(Map<String, dynamic> json) =>
       isEnabled: json['is_enabled'] as bool? ?? true,
       msgType: json['msg_type'] as String? ?? '',
       robotCode: json['robot_code'] as String? ?? '',
+      openConversationId: json['open_conversation_id'] as String?,
       remark: json['remark'] as String?,
       createdAt: json['created_at'] as String?,
       updatedAt: json['updated_at'] as String?,
@@ -39,6 +40,7 @@ Map<String, dynamic> _$$DingTalkRobotImplToJson(_$DingTalkRobotImpl instance) =>
       'is_enabled': instance.isEnabled,
       'msg_type': instance.msgType,
       'robot_code': instance.robotCode,
+      'open_conversation_id': instance.openConversationId,
       'remark': instance.remark,
       'created_at': instance.createdAt,
       'updated_at': instance.updatedAt,
@@ -58,6 +60,7 @@ _$CreateDingTalkRobotRequestImpl _$$CreateDingTalkRobotRequestImplFromJson(
       storeId: (json['store_id'] as num?)?.toInt(),
       isEnabled: json['is_enabled'] as bool?,
       msgType: json['msg_type'] as String?,
+      openConversationId: json['open_conversation_id'] as String?,
       remark: json['remark'] as String?,
     );
 
@@ -75,6 +78,7 @@ Map<String, dynamic> _$$CreateDingTalkRobotRequestImplToJson(
       'store_id': instance.storeId,
       'is_enabled': instance.isEnabled,
       'msg_type': instance.msgType,
+      'open_conversation_id': instance.openConversationId,
       'remark': instance.remark,
     };
 
@@ -92,6 +96,7 @@ _$UpdateDingTalkRobotRequestImpl _$$UpdateDingTalkRobotRequestImplFromJson(
       storeId: (json['store_id'] as num?)?.toInt(),
       isEnabled: json['is_enabled'] as bool?,
       msgType: json['msg_type'] as String?,
+      openConversationId: json['open_conversation_id'] as String?,
       remark: json['remark'] as String?,
     );
 
@@ -109,5 +114,6 @@ Map<String, dynamic> _$$UpdateDingTalkRobotRequestImplToJson(
       'store_id': instance.storeId,
       'is_enabled': instance.isEnabled,
       'msg_type': instance.msgType,
+      'open_conversation_id': instance.openConversationId,
       'remark': instance.remark,
     };

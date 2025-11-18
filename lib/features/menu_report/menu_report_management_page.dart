@@ -11,7 +11,6 @@ import '../dish/models.dart';
 import 'menu_report_api.dart';
 import 'menu_report_provider.dart';
 import 'models.dart';
-
 class MenuReportManagementPage extends StatefulWidget {
   const MenuReportManagementPage({super.key});
 

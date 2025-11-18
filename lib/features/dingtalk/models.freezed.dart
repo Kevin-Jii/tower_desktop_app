@@ -40,6 +40,8 @@ mixin _$DingTalkRobot {
   String get msgType => throw _privateConstructorUsedError;
   @JsonKey(name: 'robot_code')
   String get robotCode => throw _privateConstructorUsedError;
+  @JsonKey(name: 'open_conversation_id')
+  String? get openConversationId => throw _privateConstructorUsedError;
   String? get remark => throw _privateConstructorUsedError;
   @JsonKey(name: 'created_at')
   String? get createdAt => throw _privateConstructorUsedError;
@@ -75,6 +77,7 @@ abstract class $DingTalkRobotCopyWith<$Res> {
       @JsonKey(name: 'is_enabled') bool isEnabled,
       @JsonKey(name: 'msg_type') String msgType,
       @JsonKey(name: 'robot_code') String robotCode,
+      @JsonKey(name: 'open_conversation_id') String? openConversationId,
       String? remark,
       @JsonKey(name: 'created_at') String? createdAt,
       @JsonKey(name: 'updated_at') String? updatedAt});
@@ -107,6 +110,7 @@ class _$DingTalkRobotCopyWithImpl<$Res, $Val extends DingTalkRobot>
     Object? isEnabled = null,
     Object? msgType = null,
     Object? robotCode = null,
+    Object? openConversationId = freezed,
     Object? remark = freezed,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
@@ -160,6 +164,10 @@ class _$DingTalkRobotCopyWithImpl<$Res, $Val extends DingTalkRobot>
           ? _value.robotCode
           : robotCode // ignore: cast_nullable_to_non_nullable
               as String,
+      openConversationId: freezed == openConversationId
+          ? _value.openConversationId
+          : openConversationId // ignore: cast_nullable_to_non_nullable
+              as String?,
       remark: freezed == remark
           ? _value.remark
           : remark // ignore: cast_nullable_to_non_nullable
@@ -197,6 +205,7 @@ abstract class _$$DingTalkRobotImplCopyWith<$Res>
       @JsonKey(name: 'is_enabled') bool isEnabled,
       @JsonKey(name: 'msg_type') String msgType,
       @JsonKey(name: 'robot_code') String robotCode,
+      @JsonKey(name: 'open_conversation_id') String? openConversationId,
       String? remark,
       @JsonKey(name: 'created_at') String? createdAt,
       @JsonKey(name: 'updated_at') String? updatedAt});
@@ -227,6 +236,7 @@ class __$$DingTalkRobotImplCopyWithImpl<$Res>
     Object? isEnabled = null,
     Object? msgType = null,
     Object? robotCode = null,
+    Object? openConversationId = freezed,
     Object? remark = freezed,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
@@ -280,6 +290,10 @@ class __$$DingTalkRobotImplCopyWithImpl<$Res>
           ? _value.robotCode
           : robotCode // ignore: cast_nullable_to_non_nullable
               as String,
+      openConversationId: freezed == openConversationId
+          ? _value.openConversationId
+          : openConversationId // ignore: cast_nullable_to_non_nullable
+              as String?,
       remark: freezed == remark
           ? _value.remark
           : remark // ignore: cast_nullable_to_non_nullable
@@ -312,6 +326,7 @@ class _$DingTalkRobotImpl implements _DingTalkRobot {
       @JsonKey(name: 'is_enabled') this.isEnabled = true,
       @JsonKey(name: 'msg_type') this.msgType = '',
       @JsonKey(name: 'robot_code') this.robotCode = '',
+      @JsonKey(name: 'open_conversation_id') this.openConversationId,
       this.remark,
       @JsonKey(name: 'created_at') this.createdAt,
       @JsonKey(name: 'updated_at') this.updatedAt});
@@ -355,6 +370,9 @@ class _$DingTalkRobotImpl implements _DingTalkRobot {
   @JsonKey(name: 'robot_code')
   final String robotCode;
   @override
+  @JsonKey(name: 'open_conversation_id')
+  final String? openConversationId;
+  @override
   final String? remark;
   @override
   @JsonKey(name: 'created_at')
@@ -365,7 +383,7 @@ class _$DingTalkRobotImpl implements _DingTalkRobot {
 
   @override
   String toString() {
-    return 'DingTalkRobot(id: $id, name: $name, botType: $botType, webhook: $webhook, secret: $secret, clientId: $clientId, clientSecret: $clientSecret, agentId: $agentId, storeId: $storeId, isEnabled: $isEnabled, msgType: $msgType, robotCode: $robotCode, remark: $remark, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'DingTalkRobot(id: $id, name: $name, botType: $botType, webhook: $webhook, secret: $secret, clientId: $clientId, clientSecret: $clientSecret, agentId: $agentId, storeId: $storeId, isEnabled: $isEnabled, msgType: $msgType, robotCode: $robotCode, openConversationId: $openConversationId, remark: $remark, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -389,6 +407,8 @@ class _$DingTalkRobotImpl implements _DingTalkRobot {
             (identical(other.msgType, msgType) || other.msgType == msgType) &&
             (identical(other.robotCode, robotCode) ||
                 other.robotCode == robotCode) &&
+            (identical(other.openConversationId, openConversationId) ||
+                other.openConversationId == openConversationId) &&
             (identical(other.remark, remark) || other.remark == remark) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
@@ -412,6 +432,7 @@ class _$DingTalkRobotImpl implements _DingTalkRobot {
       isEnabled,
       msgType,
       robotCode,
+      openConversationId,
       remark,
       createdAt,
       updatedAt);
@@ -434,23 +455,24 @@ class _$DingTalkRobotImpl implements _DingTalkRobot {
 
 abstract class _DingTalkRobot implements DingTalkRobot {
   const factory _DingTalkRobot(
-          {required final int id,
-          final String name,
-          @JsonKey(name: 'bot_type') final String botType,
-          final String webhook,
-          final String secret,
-          @JsonKey(name: 'client_id') final String clientId,
-          @JsonKey(name: 'client_secret') final String clientSecret,
-          @JsonKey(name: 'agent_id', fromJson: _parseIntFromDynamic)
-          final int? agentId,
-          @JsonKey(name: 'store_id') final int? storeId,
-          @JsonKey(name: 'is_enabled') final bool isEnabled,
-          @JsonKey(name: 'msg_type') final String msgType,
-          @JsonKey(name: 'robot_code') final String robotCode,
-          final String? remark,
-          @JsonKey(name: 'created_at') final String? createdAt,
-          @JsonKey(name: 'updated_at') final String? updatedAt}) =
-      _$DingTalkRobotImpl;
+      {required final int id,
+      final String name,
+      @JsonKey(name: 'bot_type') final String botType,
+      final String webhook,
+      final String secret,
+      @JsonKey(name: 'client_id') final String clientId,
+      @JsonKey(name: 'client_secret') final String clientSecret,
+      @JsonKey(name: 'agent_id', fromJson: _parseIntFromDynamic)
+      final int? agentId,
+      @JsonKey(name: 'store_id') final int? storeId,
+      @JsonKey(name: 'is_enabled') final bool isEnabled,
+      @JsonKey(name: 'msg_type') final String msgType,
+      @JsonKey(name: 'robot_code') final String robotCode,
+      @JsonKey(name: 'open_conversation_id') final String? openConversationId,
+      final String? remark,
+      @JsonKey(name: 'created_at') final String? createdAt,
+      @JsonKey(name: 'updated_at')
+      final String? updatedAt}) = _$DingTalkRobotImpl;
 
   factory _DingTalkRobot.fromJson(Map<String, dynamic> json) =
       _$DingTalkRobotImpl.fromJson;
@@ -487,6 +509,9 @@ abstract class _DingTalkRobot implements DingTalkRobot {
   @override
   @JsonKey(name: 'robot_code')
   String get robotCode;
+  @override
+  @JsonKey(name: 'open_conversation_id')
+  String? get openConversationId;
   @override
   String? get remark;
   @override
@@ -531,6 +556,8 @@ mixin _$CreateDingTalkRobotRequest {
   bool? get isEnabled => throw _privateConstructorUsedError;
   @JsonKey(name: 'msg_type')
   String? get msgType => throw _privateConstructorUsedError;
+  @JsonKey(name: 'open_conversation_id')
+  String? get openConversationId => throw _privateConstructorUsedError;
   String? get remark => throw _privateConstructorUsedError;
 
   /// Serializes this CreateDingTalkRobotRequest to a JSON map.
@@ -566,6 +593,7 @@ abstract class $CreateDingTalkRobotRequestCopyWith<$Res> {
       @JsonKey(name: 'store_id') int? storeId,
       @JsonKey(name: 'is_enabled') bool? isEnabled,
       @JsonKey(name: 'msg_type') String? msgType,
+      @JsonKey(name: 'open_conversation_id') String? openConversationId,
       String? remark});
 }
 
@@ -596,6 +624,7 @@ class _$CreateDingTalkRobotRequestCopyWithImpl<$Res,
     Object? storeId = freezed,
     Object? isEnabled = freezed,
     Object? msgType = freezed,
+    Object? openConversationId = freezed,
     Object? remark = freezed,
   }) {
     return _then(_value.copyWith(
@@ -643,6 +672,10 @@ class _$CreateDingTalkRobotRequestCopyWithImpl<$Res,
           ? _value.msgType
           : msgType // ignore: cast_nullable_to_non_nullable
               as String?,
+      openConversationId: freezed == openConversationId
+          ? _value.openConversationId
+          : openConversationId // ignore: cast_nullable_to_non_nullable
+              as String?,
       remark: freezed == remark
           ? _value.remark
           : remark // ignore: cast_nullable_to_non_nullable
@@ -676,6 +709,7 @@ abstract class _$$CreateDingTalkRobotRequestImplCopyWith<$Res>
       @JsonKey(name: 'store_id') int? storeId,
       @JsonKey(name: 'is_enabled') bool? isEnabled,
       @JsonKey(name: 'msg_type') String? msgType,
+      @JsonKey(name: 'open_conversation_id') String? openConversationId,
       String? remark});
 }
 
@@ -705,6 +739,7 @@ class __$$CreateDingTalkRobotRequestImplCopyWithImpl<$Res>
     Object? storeId = freezed,
     Object? isEnabled = freezed,
     Object? msgType = freezed,
+    Object? openConversationId = freezed,
     Object? remark = freezed,
   }) {
     return _then(_$CreateDingTalkRobotRequestImpl(
@@ -752,6 +787,10 @@ class __$$CreateDingTalkRobotRequestImplCopyWithImpl<$Res>
           ? _value.msgType
           : msgType // ignore: cast_nullable_to_non_nullable
               as String?,
+      openConversationId: freezed == openConversationId
+          ? _value.openConversationId
+          : openConversationId // ignore: cast_nullable_to_non_nullable
+              as String?,
       remark: freezed == remark
           ? _value.remark
           : remark // ignore: cast_nullable_to_non_nullable
@@ -779,6 +818,7 @@ class _$CreateDingTalkRobotRequestImpl implements _CreateDingTalkRobotRequest {
       @JsonKey(name: 'store_id') this.storeId,
       @JsonKey(name: 'is_enabled') this.isEnabled,
       @JsonKey(name: 'msg_type') this.msgType,
+      @JsonKey(name: 'open_conversation_id') this.openConversationId,
       this.remark});
 
   factory _$CreateDingTalkRobotRequestImpl.fromJson(
@@ -817,11 +857,14 @@ class _$CreateDingTalkRobotRequestImpl implements _CreateDingTalkRobotRequest {
   @JsonKey(name: 'msg_type')
   final String? msgType;
   @override
+  @JsonKey(name: 'open_conversation_id')
+  final String? openConversationId;
+  @override
   final String? remark;
 
   @override
   String toString() {
-    return 'CreateDingTalkRobotRequest(name: $name, botType: $botType, webhook: $webhook, secret: $secret, clientId: $clientId, clientSecret: $clientSecret, agentId: $agentId, robotCode: $robotCode, storeId: $storeId, isEnabled: $isEnabled, msgType: $msgType, remark: $remark)';
+    return 'CreateDingTalkRobotRequest(name: $name, botType: $botType, webhook: $webhook, secret: $secret, clientId: $clientId, clientSecret: $clientSecret, agentId: $agentId, robotCode: $robotCode, storeId: $storeId, isEnabled: $isEnabled, msgType: $msgType, openConversationId: $openConversationId, remark: $remark)';
   }
 
   @override
@@ -844,6 +887,8 @@ class _$CreateDingTalkRobotRequestImpl implements _CreateDingTalkRobotRequest {
             (identical(other.isEnabled, isEnabled) ||
                 other.isEnabled == isEnabled) &&
             (identical(other.msgType, msgType) || other.msgType == msgType) &&
+            (identical(other.openConversationId, openConversationId) ||
+                other.openConversationId == openConversationId) &&
             (identical(other.remark, remark) || other.remark == remark));
   }
 
@@ -862,6 +907,7 @@ class _$CreateDingTalkRobotRequestImpl implements _CreateDingTalkRobotRequest {
       storeId,
       isEnabled,
       msgType,
+      openConversationId,
       remark);
 
   /// Create a copy of CreateDingTalkRobotRequest
@@ -899,6 +945,7 @@ abstract class _CreateDingTalkRobotRequest
       @JsonKey(name: 'store_id') final int? storeId,
       @JsonKey(name: 'is_enabled') final bool? isEnabled,
       @JsonKey(name: 'msg_type') final String? msgType,
+      @JsonKey(name: 'open_conversation_id') final String? openConversationId,
       final String? remark}) = _$CreateDingTalkRobotRequestImpl;
 
   factory _CreateDingTalkRobotRequest.fromJson(Map<String, dynamic> json) =
@@ -935,6 +982,9 @@ abstract class _CreateDingTalkRobotRequest
   @override
   @JsonKey(name: 'msg_type')
   String? get msgType;
+  @override
+  @JsonKey(name: 'open_conversation_id')
+  String? get openConversationId;
   @override
   String? get remark;
 
@@ -973,6 +1023,8 @@ mixin _$UpdateDingTalkRobotRequest {
   bool? get isEnabled => throw _privateConstructorUsedError;
   @JsonKey(name: 'msg_type')
   String? get msgType => throw _privateConstructorUsedError;
+  @JsonKey(name: 'open_conversation_id')
+  String? get openConversationId => throw _privateConstructorUsedError;
   String? get remark => throw _privateConstructorUsedError;
 
   /// Serializes this UpdateDingTalkRobotRequest to a JSON map.
@@ -1008,6 +1060,7 @@ abstract class $UpdateDingTalkRobotRequestCopyWith<$Res> {
       @JsonKey(name: 'store_id') int? storeId,
       @JsonKey(name: 'is_enabled') bool? isEnabled,
       @JsonKey(name: 'msg_type') String? msgType,
+      @JsonKey(name: 'open_conversation_id') String? openConversationId,
       String? remark});
 }
 
@@ -1038,6 +1091,7 @@ class _$UpdateDingTalkRobotRequestCopyWithImpl<$Res,
     Object? storeId = freezed,
     Object? isEnabled = freezed,
     Object? msgType = freezed,
+    Object? openConversationId = freezed,
     Object? remark = freezed,
   }) {
     return _then(_value.copyWith(
@@ -1085,6 +1139,10 @@ class _$UpdateDingTalkRobotRequestCopyWithImpl<$Res,
           ? _value.msgType
           : msgType // ignore: cast_nullable_to_non_nullable
               as String?,
+      openConversationId: freezed == openConversationId
+          ? _value.openConversationId
+          : openConversationId // ignore: cast_nullable_to_non_nullable
+              as String?,
       remark: freezed == remark
           ? _value.remark
           : remark // ignore: cast_nullable_to_non_nullable
@@ -1118,6 +1176,7 @@ abstract class _$$UpdateDingTalkRobotRequestImplCopyWith<$Res>
       @JsonKey(name: 'store_id') int? storeId,
       @JsonKey(name: 'is_enabled') bool? isEnabled,
       @JsonKey(name: 'msg_type') String? msgType,
+      @JsonKey(name: 'open_conversation_id') String? openConversationId,
       String? remark});
 }
 
@@ -1147,6 +1206,7 @@ class __$$UpdateDingTalkRobotRequestImplCopyWithImpl<$Res>
     Object? storeId = freezed,
     Object? isEnabled = freezed,
     Object? msgType = freezed,
+    Object? openConversationId = freezed,
     Object? remark = freezed,
   }) {
     return _then(_$UpdateDingTalkRobotRequestImpl(
@@ -1194,6 +1254,10 @@ class __$$UpdateDingTalkRobotRequestImplCopyWithImpl<$Res>
           ? _value.msgType
           : msgType // ignore: cast_nullable_to_non_nullable
               as String?,
+      openConversationId: freezed == openConversationId
+          ? _value.openConversationId
+          : openConversationId // ignore: cast_nullable_to_non_nullable
+              as String?,
       remark: freezed == remark
           ? _value.remark
           : remark // ignore: cast_nullable_to_non_nullable
@@ -1221,6 +1285,7 @@ class _$UpdateDingTalkRobotRequestImpl implements _UpdateDingTalkRobotRequest {
       @JsonKey(name: 'store_id') this.storeId,
       @JsonKey(name: 'is_enabled') this.isEnabled,
       @JsonKey(name: 'msg_type') this.msgType,
+      @JsonKey(name: 'open_conversation_id') this.openConversationId,
       this.remark});
 
   factory _$UpdateDingTalkRobotRequestImpl.fromJson(
@@ -1259,11 +1324,14 @@ class _$UpdateDingTalkRobotRequestImpl implements _UpdateDingTalkRobotRequest {
   @JsonKey(name: 'msg_type')
   final String? msgType;
   @override
+  @JsonKey(name: 'open_conversation_id')
+  final String? openConversationId;
+  @override
   final String? remark;
 
   @override
   String toString() {
-    return 'UpdateDingTalkRobotRequest(name: $name, botType: $botType, webhook: $webhook, secret: $secret, clientId: $clientId, clientSecret: $clientSecret, agentId: $agentId, robotCode: $robotCode, storeId: $storeId, isEnabled: $isEnabled, msgType: $msgType, remark: $remark)';
+    return 'UpdateDingTalkRobotRequest(name: $name, botType: $botType, webhook: $webhook, secret: $secret, clientId: $clientId, clientSecret: $clientSecret, agentId: $agentId, robotCode: $robotCode, storeId: $storeId, isEnabled: $isEnabled, msgType: $msgType, openConversationId: $openConversationId, remark: $remark)';
   }
 
   @override
@@ -1286,6 +1354,8 @@ class _$UpdateDingTalkRobotRequestImpl implements _UpdateDingTalkRobotRequest {
             (identical(other.isEnabled, isEnabled) ||
                 other.isEnabled == isEnabled) &&
             (identical(other.msgType, msgType) || other.msgType == msgType) &&
+            (identical(other.openConversationId, openConversationId) ||
+                other.openConversationId == openConversationId) &&
             (identical(other.remark, remark) || other.remark == remark));
   }
 
@@ -1304,6 +1374,7 @@ class _$UpdateDingTalkRobotRequestImpl implements _UpdateDingTalkRobotRequest {
       storeId,
       isEnabled,
       msgType,
+      openConversationId,
       remark);
 
   /// Create a copy of UpdateDingTalkRobotRequest
@@ -1341,6 +1412,7 @@ abstract class _UpdateDingTalkRobotRequest
       @JsonKey(name: 'store_id') final int? storeId,
       @JsonKey(name: 'is_enabled') final bool? isEnabled,
       @JsonKey(name: 'msg_type') final String? msgType,
+      @JsonKey(name: 'open_conversation_id') final String? openConversationId,
       final String? remark}) = _$UpdateDingTalkRobotRequestImpl;
 
   factory _UpdateDingTalkRobotRequest.fromJson(Map<String, dynamic> json) =
@@ -1377,6 +1449,9 @@ abstract class _UpdateDingTalkRobotRequest
   @override
   @JsonKey(name: 'msg_type')
   String? get msgType;
+  @override
+  @JsonKey(name: 'open_conversation_id')
+  String? get openConversationId;
   @override
   String? get remark;
 

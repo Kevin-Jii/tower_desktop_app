@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tdesign_flutter/tdesign_flutter.dart';
 import '../../core/theme/design_tokens.dart';
 import '../../core/constants/ui_texts.dart';
 import '../../core/constants/error_texts.dart';
@@ -812,11 +813,13 @@ class BatchReportDialog extends StatefulWidget {
 class _BatchReportDialogState extends State<BatchReportDialog> {
   final _messageCtrl = TextEditingController();
   final List<Dish> _selectedDishes = [];
+  DateTime? _selectedDate;
 
   @override
   void initState() {
     super.initState();
     _selectedDishes.addAll(widget.dishes);
+    _selectedDate = DateTime.now(); // 默认选择今天
   }
 
   @override
@@ -938,6 +941,61 @@ class _BatchReportDialogState extends State<BatchReportDialog> {
                         onChanged: (_) => _toggleDish(dish),
                       );
                     },
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              InkWell(
+                onTap: () {
+                  final now = _selectedDate ?? DateTime.now();
+                  TDPicker.showDatePicker(
+                    context,
+                    title: '选择报菜日期',
+                    onConfirm: (selected) {
+                      setState(() {
+                        _selectedDate = DateTime(
+                          selected['year'] ?? now.year,
+                          selected['month'] ?? now.month,
+                          selected['day'] ?? now.day,
+                        );
+                      });
+                    },
+                    dateStart: [2020, 1, 1],
+                    dateEnd: [2030, 12, 31],
+                    initialDate: [now.year, now.month, now.day],
+                    useYear: true,
+                    useMonth: true,
+                    useDay: true,
+                    useHour: false,
+                    useMinute: false,
+                    useSecond: false,
+                  );
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: theme.dividerColor),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.calendar_today, size: 20),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          _selectedDate != null
+                              ? '${_selectedDate!.year}-${_selectedDate!.month.toString().padLeft(2, '0')}-${_selectedDate!.day.toString().padLeft(2, '0')}'
+                              : '请选择报菜日期',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: _selectedDate != null
+                                ? theme.textTheme.bodyLarge?.color
+                                : DesignTokens.neutral400,
+                          ),
+                        ),
+                      ),
+                      const Icon(Icons.arrow_drop_down),
+                    ],
                   ),
                 ),
               ),

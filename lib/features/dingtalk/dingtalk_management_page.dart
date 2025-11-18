@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import '../../core/theme/design_tokens.dart';
 import 'dingtalk_provider.dart';
 import 'models.dart';
+import '../store/store_provider.dart';
+import '../store/models.dart';
 
 class DingTalkManagementPage extends StatefulWidget {
   const DingTalkManagementPage({super.key});
@@ -17,6 +19,8 @@ class _DingTalkManagementPageState extends State<DingTalkManagementPage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<DingTalkProvider>().loadRobots();
+      // 加载门店列表（不分页）
+      context.read<StoreProvider>().loadStores(pageSize: 1000);
     });
   }
 
@@ -340,7 +344,6 @@ class _DingTalkManagementPageState extends State<DingTalkManagementPage> {
         onSubmit: (request) async {
           final provider = context.read<DingTalkProvider>();
           final updateRequest = UpdateDingTalkRobotRequest(
-            name: request.name,
             botType: request.botType,
             webhook: request.webhook,
             secret: request.secret,
@@ -351,6 +354,7 @@ class _DingTalkManagementPageState extends State<DingTalkManagementPage> {
             storeId: request.storeId,
             isEnabled: request.isEnabled,
             msgType: request.msgType,
+            openConversationId: request.openConversationId,
             remark: request.remark,
           );
           final success = await provider.updateRobot(robot, updateRequest);
@@ -481,9 +485,10 @@ class RobotFormDialog extends StatefulWidget {
   State<RobotFormDialog> createState() => _RobotFormDialogState();
 }
 
+
+
 class _RobotFormDialogState extends State<RobotFormDialog> {
   final _formKey = GlobalKey<FormState>();
-  late TextEditingController _nameController;
   late TextEditingController _tokenController;
   late TextEditingController _remarkController;
   late TextEditingController _webhookController;
@@ -492,16 +497,17 @@ class _RobotFormDialogState extends State<RobotFormDialog> {
   late TextEditingController _clientSecretController;
   late TextEditingController _agentIdController;
   late TextEditingController _robotCodeController;
+  late TextEditingController _openConversationIdController;
 
   String _botType = 'webhook';
   int? _storeId;
   bool _isEnabled = true;
   String _msgType = 'markdown';
+  List<Store> _stores = [];
 
   @override
   void initState() {
     super.initState();
-    _nameController = TextEditingController(text: widget.robot?.name ?? '');
     _tokenController = TextEditingController(text: widget.robot?.token ?? '');
     _remarkController = TextEditingController(text: widget.robot?.remark ?? '');
     _webhookController = TextEditingController(text: widget.robot?.webhook ?? '');
@@ -510,6 +516,7 @@ class _RobotFormDialogState extends State<RobotFormDialog> {
     _clientSecretController = TextEditingController(text: widget.robot?.clientSecret ?? '');
     _agentIdController = TextEditingController(text: widget.robot?.agentId?.toString() ?? '');
     _robotCodeController = TextEditingController(text: widget.robot?.robotCode ?? '');
+    _openConversationIdController = TextEditingController(text: widget.robot?.openConversationId ?? '');
 
     if (widget.robot != null) {
       _botType = widget.robot!.botType;
@@ -517,11 +524,21 @@ class _RobotFormDialogState extends State<RobotFormDialog> {
       _isEnabled = widget.robot!.isEnabled;
       _msgType = widget.robot!.msgType;
     }
+
+    // 加载门店列表
+    _loadStores();
+  }
+
+  Future<void> _loadStores() async {
+    final storeProvider = context.read<StoreProvider>();
+    await storeProvider.loadStores(pageSize: 1000);
+    setState(() {
+      _stores = storeProvider.stores;
+    });
   }
 
   @override
   void dispose() {
-    _nameController.dispose();
     _tokenController.dispose();
     _remarkController.dispose();
     _webhookController.dispose();
@@ -530,6 +547,7 @@ class _RobotFormDialogState extends State<RobotFormDialog> {
     _clientSecretController.dispose();
     _agentIdController.dispose();
     _robotCodeController.dispose();
+    _openConversationIdController.dispose();
     super.dispose();
   }
 
@@ -545,20 +563,6 @@ class _RobotFormDialogState extends State<RobotFormDialog> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                TextFormField(
-                  controller: _nameController,
-                  decoration: const InputDecoration(
-                    labelText: '机器人名称 *',
-                    hintText: '请输入机器人名称',
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return '请输入机器人名称';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
                 DropdownButtonFormField<String>(
                   value: _botType,
                   decoration: const InputDecoration(
@@ -597,7 +601,7 @@ class _RobotFormDialogState extends State<RobotFormDialog> {
                       hintText: 'SECxxxxxx',
                     ),
                   ),
-                ] else ...[
+                ] else if (_botType == 'stream') ...[
                   TextFormField(
                     controller: _clientIdController,
                     decoration: const InputDecoration(
@@ -660,6 +664,14 @@ class _RobotFormDialogState extends State<RobotFormDialog> {
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
+                  controller: _openConversationIdController,
+                  decoration: const InputDecoration(
+                    labelText: '通知群号 (可选)',
+                    hintText: '请输入钉钉群的 open_conversation_id',
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
                   controller: _remarkController,
                   decoration: const InputDecoration(
                     labelText: '备注',
@@ -673,12 +685,12 @@ class _RobotFormDialogState extends State<RobotFormDialog> {
                   decoration: const InputDecoration(
                     labelText: '所属门店 (可选)',
                   ),
-                  items: [
-                    const DropdownMenuItem<int>(value: null, child: Text('全局')),
-                    if (_storeId != null)
-                      DropdownMenuItem<int>(value: _storeId, child: Text('门店 $_storeId')),
-                    // TODO: 这里应该从后端加载门店列表
-                  ],
+                  items: _stores.map((store) {
+                    return DropdownMenuItem<int>(
+                      value: store.id,
+                      child: Text(store.name),
+                    );
+                  }).toList(),
                   onChanged: (value) {
                     setState(() {
                       _storeId = value;
@@ -709,7 +721,7 @@ class _RobotFormDialogState extends State<RobotFormDialog> {
           onPressed: () {
             if (_formKey.currentState!.validate()) {
               final request = CreateDingTalkRobotRequest(
-                name: _nameController.text,
+                name: '', // 后端自动生成
                 botType: _botType,
                 webhook: _webhookController.text,
                 secret: _secretController.text,
@@ -720,6 +732,9 @@ class _RobotFormDialogState extends State<RobotFormDialog> {
                 storeId: _storeId,
                 isEnabled: _isEnabled,
                 msgType: _msgType,
+                openConversationId: _openConversationIdController.text.isEmpty 
+                    ? null 
+                    : _openConversationIdController.text,
                 remark: _remarkController.text,
               );
               widget.onSubmit(request);

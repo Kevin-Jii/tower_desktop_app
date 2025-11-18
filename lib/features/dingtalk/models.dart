@@ -30,6 +30,7 @@ class DingTalkRobot with _$DingTalkRobot {
     @JsonKey(name: 'is_enabled') @Default(true) bool isEnabled,
     @JsonKey(name: 'msg_type') @Default('') String msgType,
     @JsonKey(name: 'robot_code') @Default('') String robotCode,
+    @JsonKey(name: 'open_conversation_id') String? openConversationId,
     String? remark,
     @JsonKey(name: 'created_at') String? createdAt,
     @JsonKey(name: 'updated_at') String? updatedAt,
@@ -65,6 +66,7 @@ class CreateDingTalkRobotRequest with _$CreateDingTalkRobotRequest {
     @JsonKey(name: 'store_id') int? storeId,
     @JsonKey(name: 'is_enabled') bool? isEnabled,
     @JsonKey(name: 'msg_type') String? msgType,
+    @JsonKey(name: 'open_conversation_id') String? openConversationId,
     String? remark,
   }) = _CreateDingTalkRobotRequest;
 
@@ -86,6 +88,7 @@ class UpdateDingTalkRobotRequest with _$UpdateDingTalkRobotRequest {
     @JsonKey(name: 'store_id') int? storeId,
     @JsonKey(name: 'is_enabled') bool? isEnabled,
     @JsonKey(name: 'msg_type') String? msgType,
+    @JsonKey(name: 'open_conversation_id') String? openConversationId,
     String? remark,
   }) = _UpdateDingTalkRobotRequest;
 
