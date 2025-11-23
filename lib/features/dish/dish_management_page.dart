@@ -1,16 +1,12 @@
-import 'package:flutter/material.dart';
+import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
-import 'package:tdesign_flutter/tdesign_flutter.dart';
-import '../../core/theme/design_tokens.dart';
 import '../../core/constants/ui_texts.dart';
 import '../../core/constants/error_texts.dart';
-import '../../core/constants/app_constants.dart';
-import '../../core/utils/value_parsers.dart';
-import '../../core/widgets/status_tag.dart';
-import '../../core/widgets/admin_table.dart';
-import '../store/store_api.dart';
+import '../../core/widgets/fluent_info_bar.dart';
+import '../../core/widgets/fluent_buttons.dart';
 import '../auth/permission_gate.dart';
 import '../auth/permission_provider.dart';
+import '../../core/constants/app_constants.dart';
 import 'dish_api.dart';
 import 'models.dart';
 import '../../core/network/api_client.dart';
@@ -18,6 +14,7 @@ import 'providers/store_selector_provider.dart';
 import 'providers/dish_category_provider.dart';
 import 'providers/dish_list_provider.dart';
 import 'dish_category_api.dart';
+import '../store/store_api.dart';
 
 class DishManagementPage extends StatefulWidget {
   const DishManagementPage({super.key});
@@ -37,25 +34,36 @@ class _DishManagementPageState extends State<DishManagementPage> {
   void _openCreateDish() async {
     final categoryProvider = context.read<DishCategoryProvider>();
     if (categoryProvider.selectedCategory == null) return;
+    
     final req = await showDialog<CreateDishRequest>(
       context: context,
       builder: (_) => const DishFormDialog(),
     );
+    
     if (req != null) {
       final ok = await context.read<DishListProvider>().createDish(req);
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content:
-            Text(ok ? UITexts.dishCreateSuccess : UITexts.dishCreateFailed),
-      ));
+      
+      if (ok) {
+        await FluentInfoBarHelper.showSuccess(
+          context,
+          UITexts.dishCreateSuccess,
+        );
+      } else {
+        await FluentInfoBarHelper.showError(
+          context,
+          UITexts.dishCreateFailed,
+        );
+      }
     }
   }
 
   void _openBatchReportDialog() async {
     final dishList = context.read<DishListProvider>();
     if (dishList.dishes.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('当前分类下没有菜品，请先添加菜品')),
+      await FluentInfoBarHelper.showWarning(
+        context,
+        '当前分类下没有菜品，请先添加菜品',
       );
       return;
     }
@@ -66,25 +74,26 @@ class _DishManagementPageState extends State<DishManagementPage> {
     );
 
     if (success == true && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('批量报菜成功')),
-      );
+      await FluentInfoBarHelper.showSuccess(context, '批量报菜成功');
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
-      body: Row(
+    return ScaffoldPage(
+      padding: EdgeInsets.zero,
+      content: Row(
         children: [
           _buildCategorySidebar(),
           Expanded(
             child: Container(
               decoration: BoxDecoration(
                 border: Border(
-                    left: BorderSide(color: theme.dividerColor, width: 1)),
+                  left: BorderSide(
+                    color: FluentTheme.of(context).resources.dividerStrokeColorDefault,
+                    width: 1,
+                  ),
+                ),
               ),
               child: _buildDishArea(),
             ),
@@ -96,536 +105,411 @@ class _DishManagementPageState extends State<DishManagementPage> {
 
   Widget _buildCategorySidebar() {
     return Consumer2<DishCategoryProvider, DishListProvider>(
-        builder: (context, categoryProvider, dishList, __) {
-      final theme = Theme.of(context);
+      builder: (context, categoryProvider, dishList, __) {
+        if (categoryProvider.error != null) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (context.mounted) {
+              FluentInfoBarHelper.showError(
+                context,
+                '${UITexts.dishCategoryError}: ${categoryProvider.error}',
+              );
+            }
+          });
+        }
 
-      // Show error as SnackBar instead of inline display
-      if (categoryProvider.error != null) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                    '${UITexts.dishCategoryError}: ${categoryProvider.error}'),
-                backgroundColor: DesignTokens.danger,
-                duration: const Duration(seconds: 1),
-              ),
-            );
-          }
-        });
-      }
-
-      return Container(
-        width: DesignTokens.sidebarWidth,
-        decoration: BoxDecoration(
-          color: theme.cardColor,
-          boxShadow: DesignTokens.shadowSm,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: const EdgeInsets.fromLTRB(16, 18, 16, 12),
-              child: Row(
-                children: [
-                  Text(
-                    UITexts.dishCategoryTitle,
-                    style: DesignTokens.heading3
-                        .copyWith(color: theme.textTheme.bodyLarge?.color),
-                  ),
-                  const Spacer(),
-                  PermissionGate(
-                    required: PermissionCodes.dishAdd,
-                    child: IconButton(
-                      icon: const Icon(Icons.add_circle_outline,
-                          color: DesignTokens.brandPrimary),
-                      tooltip: UITexts.dishCategoryAdd,
-                      onPressed: () async {
-                        final catProvider =
-                            context.read<DishCategoryProvider>();
-                        final name = await showDialog<String>(
-                          context: context,
-                          builder: (_) => ChangeNotifierProvider.value(
-                            value: catProvider,
-                            child: const DishCategoryFormDialog(),
-                          ),
-                        );
-                        if (name != null && name.trim().isNotEmpty) {
-                          final ok =
-                              await catProvider.createCategory(name.trim());
-                          if (!mounted) return;
-                          if (!ok) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text(ErrorTexts.createCategory)));
-                          }
-                        }
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Divider(height: 1, color: theme.dividerColor),
-            Expanded(
-              child: categoryProvider.loading
-                  ? Center(
-                      child: Text(UITexts.dishCategoryLoading,
-                          style: DesignTokens.body.copyWith(
-                              color: theme.textTheme.bodySmall?.color)))
-                  : categoryProvider.categories.isEmpty
-                      ? Center(
-                          child: Text(UITexts.dishCategoryEmpty,
-                              style: DesignTokens.body.copyWith(
-                                  color: theme.textTheme.bodySmall?.color)))
-                      : ListView.separated(
-                          itemCount: categoryProvider.categories.length,
-                          separatorBuilder: (_, __) =>
-                              Divider(height: 1, color: theme.dividerColor),
-                          itemBuilder: (_, i) {
-                            final c = categoryProvider.categories[i];
-                            final selected =
-                                categoryProvider.selectedCategory?.id == c.id;
-                            return InkWell(
-                              onTap: () => categoryProvider.selectCategory(c),
-                              child: AnimatedContainer(
-                                duration: const Duration(milliseconds: 160),
-                                decoration: BoxDecoration(
-                                  color: selected
-                                      ? DesignTokens.brandPrimarySoft
-                                      : null,
-                                  border: selected
-                                      ? const Border(
-                                          left: BorderSide(
-                                              color: DesignTokens.brandPrimary,
-                                              width: 4))
-                                      : const Border(
-                                          left: BorderSide(
-                                              color: Colors.transparent,
-                                              width: 4)),
-                                ),
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 14, vertical: 10),
-                                height: DesignTokens.categoryItemHeight,
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        c.name,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: (selected
-                                            ? DesignTokens.subtitle.copyWith(
-                                                fontWeight: FontWeight.w600,
-                                                color: DesignTokens
-                                                    .brandPrimaryHover)
-                                            : DesignTokens.subtitle.copyWith(
-                                                fontWeight: FontWeight.w500,
-                                                color:
-                                                    DesignTokens.neutral700)),
-                                      ),
-                                    ),
-                                    IconButton(
-                                      icon: const Icon(Icons.edit,
-                                          size: 18,
-                                          color: DesignTokens.neutral500),
-                                      tooltip: UITexts.dishCategoryEdit,
-                                      padding: EdgeInsets.zero,
-                                      onPressed: () async {
-                                        final catProvider = context
-                                            .read<DishCategoryProvider>();
-                                        final newName =
-                                            await showDialog<String>(
-                                          context: context,
-                                          builder: (_) =>
-                                              ChangeNotifierProvider.value(
-                                            value: catProvider,
-                                            child: DishCategoryFormDialog(
-                                                editing: c),
-                                          ),
-                                        );
-                                        if (newName != null &&
-                                            newName.trim().isNotEmpty &&
-                                            newName.trim() != c.name) {
-                                          final ok =
-                                              await catProvider.updateCategory(
-                                                  c, newName.trim());
-                                          if (!mounted) return;
-                                          if (!ok) {
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(const SnackBar(
-                                                    content: Text(ErrorTexts
-                                                        .updateCategory)));
-                                          }
-                                        }
-                                      },
-                                    ),
-                                    IconButton(
-                                      icon: const Icon(Icons.delete_outline,
-                                          size: 18, color: DesignTokens.danger),
-                                      tooltip: UITexts.dishCategoryDelete,
-                                      padding: EdgeInsets.zero,
-                                      onPressed: () async {
-                                        final confirm = await showDialog<bool>(
-                                          context: context,
-                                          builder: (_) => AlertDialog(
-                                            title: const Text(
-                                                UITexts.dishCategoryDelete),
-                                            content: const Text(UITexts
-                                                .dishCategoryDeleteConfirm),
-                                            actions: [
-                                              TextButton(
-                                                  onPressed: () =>
-                                                      Navigator.pop(
-                                                          context, false),
-                                                  child: const Text(
-                                                      UITexts.commonCancel)),
-                                              ElevatedButton(
-                                                  onPressed: () =>
-                                                      Navigator.pop(
-                                                          context, true),
-                                                  child: const Text(
-                                                      UITexts.commonOk)),
-                                            ],
-                                          ),
-                                        );
-                                        if (confirm == true) {
-                                          final dishProvider =
-                                              context.read<DishListProvider>();
-                                          final ok = await context
-                                              .read<DishCategoryProvider>()
-                                              .deleteCategory(
-                                            c,
-                                            hasDishes: (category) {
-                                              // Check if this category has dishes
-                                              final selectedCategory = context
-                                                  .read<DishCategoryProvider>()
-                                                  .selectedCategory;
-                                              if (selectedCategory?.id ==
-                                                  category.id) {
-                                                return dishProvider
-                                                    .dishes.isNotEmpty;
-                                              }
-                                              // If not currently selected, assume safe to delete
-                                              // Backend will validate
-                                              return false;
-                                            },
-                                          );
-                                          if (!mounted) return;
-                                          if (!ok) {
-                                            final errorMsg = context
-                                                    .read<
-                                                        DishCategoryProvider>()
-                                                    .error ??
-                                                ErrorTexts.deleteCategory;
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(SnackBar(
-                                                    content: Text(errorMsg)));
-                                          }
-                                        }
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-            ),
-          ],
-        ),
-      );
-    });
-  }
-
-  Widget _buildDishArea() {
-    return Builder(builder: (context) {
-      final theme = Theme.of(context);
-      final storeSelector = context.watch<StoreSelectorProvider>();
-      final categoryProvider = context.watch<DishCategoryProvider>();
-      final dishList = context.watch<DishListProvider>();
-
-      // Show dish list error as SnackBar
-      if (dishList.error != null) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('${UITexts.dishError}: ${dishList.error}'),
-                backgroundColor: DesignTokens.danger,
-                duration: const Duration(seconds: 3),
-              ),
-            );
-          }
-        });
-      }
-
-      return Column(
-        children: [
-          // 顶部工具栏：门店选择 + 当前分类 + 新增菜品
-          Container(
-            padding: const EdgeInsets.symmetric(
-                horizontal: DesignTokens.spaceLg,
-                vertical: DesignTokens.spaceMd),
-            decoration: BoxDecoration(
-              color: theme.cardColor,
-              boxShadow: DesignTokens.shadowSm,
-            ),
-            child: Row(
-              children: [
-                Text(UITexts.dishTitle,
-                    style: DesignTokens.heading2
-                        .copyWith(color: theme.textTheme.bodyLarge?.color)),
-                const SizedBox(width: DesignTokens.spaceLg),
-                // 只有 admin 角色才显示门店选择器
-                if (storeSelector.isAdmin)
-                  SizedBox(
-                    width: 220,
-                    child: storeSelector.loading
-                        ? const Align(
-                            alignment: Alignment.centerLeft,
-                            child: SizedBox(
-                                height: 18,
-                                width: 18,
-                                child:
-                                    CircularProgressIndicator(strokeWidth: 2)))
-                        : storeSelector.error != null
-                            ? Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      ErrorTexts.loadStores,
-                                      style: TextStyle(
-                                          color: Colors.red.shade600,
-                                          fontSize: 12),
-                                    ),
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(Icons.refresh, size: 18),
-                                    tooltip: '重试加载门店', // 可后续常量化
-                                    onPressed: () => storeSelector.loadStores(),
-                                  )
-                                ],
-                              )
-                            : DropdownButton<int>(
-                                isExpanded: true,
-                                value: storeSelector.selectedStoreId,
-                                hint: const Text(UITexts.dishStoreSelectLabel),
-                                items: storeSelector.stores
-                                    .map((s) => DropdownMenuItem<int>(
-                                        value: s.id, child: Text(s.name)))
-                                    .toList(),
-                                onChanged: (v) {
-                                  if (v != null) storeSelector.selectStore(v);
-                                },
-                              ),
-                  ),
-                const Spacer(),
-                // 临时调试:显示当前权限
-                Consumer<PermissionProvider>(
-                  builder: (context, permProvider, _) {
-                    final hasAdd = permProvider.has(PermissionCodes.dishAdd);
-                    final hasEdit = permProvider.has(PermissionCodes.dishEdit);
-                    final hasDelete =
-                        permProvider.has(PermissionCodes.dishDelete);
-                    return Tooltip(
-                      message:
-                          'Add:$hasAdd Edit:$hasEdit Delete:$hasDelete\nAll permissions: ${permProvider.all.join(", ")}',
-                      child: Icon(
-                        hasAdd && hasEdit && hasDelete
-                            ? Icons.check_circle
-                            : Icons.warning,
-                        color: hasAdd && hasEdit && hasDelete
-                            ? Colors.green
-                            : Colors.orange,
-                        size: 16,
-                      ),
-                    );
-                  },
-                ),
-                const SizedBox(width: DesignTokens.spaceMd),
-                PermissionGate(
-                  required: PermissionCodes.dishAdd,
-                  child: ElevatedButton.icon(
-                    onPressed: categoryProvider.selectedCategory == null
-                        ? null
-                        : _openCreateDish,
-                    icon: const Icon(Icons.add),
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: DesignTokens.brandPrimary,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 12),
-                        textStyle: DesignTokens.subtitle
-                            .copyWith(fontWeight: FontWeight.w600)),
-                    label: const Text(UITexts.dishAdd),
-                  ),
-                ),
-                const SizedBox(width: DesignTokens.spaceMd),
-                ElevatedButton.icon(
-                  onPressed: _openBatchReportDialog,
-                  icon: const Icon(Icons.assignment_add),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 12),
-                    textStyle: DesignTokens.subtitle
-                        .copyWith(fontWeight: FontWeight.w600),
-                  ),
-                  label: const Text('批量报菜'),
-                ),
-              ],
-            ),
+        return Container(
+          width: 260,
+          decoration: BoxDecoration(
+            color: FluentTheme.of(context).micaBackgroundColor,
           ),
-          Expanded(
-            child: categoryProvider.selectedCategory == null
-                ? Center(
-                    child: Text('请选择左侧分类',
-                        style: DesignTokens.subtitle
-                            .copyWith(color: DesignTokens.neutral500)))
-                : dishList.loading
-                    ? Center(
-                        child: Text(UITexts.dishLoading,
-                            style: DesignTokens.body.copyWith(
-                                color: theme.textTheme.bodySmall?.color)))
-                    : dishList.dishes.isEmpty
-                        ? Center(
-                            child: Text(UITexts.dishEmpty,
-                                style: DesignTokens.body.copyWith(
-                                    color: theme.textTheme.bodySmall?.color)))
-                        : _buildDishTable(dishList.dishes),
-          )
-        ],
-      );
-    });
-  }
-
-  Widget _buildDishTable(List<Dish> list) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: AdminTable<Dish>(
-        columns: const [
-          AdminTableColumn(width: 220, label: UITexts.dishColumnName),
-          AdminTableColumn(width: 120, label: UITexts.dishColumnPrice),
-          AdminTableColumn(width: 100, label: UITexts.dishColumnStatus),
-          AdminTableColumn(
-              label: UITexts.dishColumnActions,
-              alignment: Alignment.centerRight),
-        ],
-        data: list,
-        rowBuilder: (d, i) {
-          final active = (d.status ?? 1) == 1;
-          return Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
-                width: 220,
-                child: Text(d.name,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: DesignTokens.body.copyWith(
-                        fontWeight: FontWeight.w500,
-                        color: DesignTokens.neutral700)),
-              ),
-              SizedBox(
-                width: 120,
-                child: Text(d.price?.toStringAsFixed(2) ?? '-',
-                    style: DesignTokens.bodySm
-                        .copyWith(color: DesignTokens.neutral600)),
-              ),
-              SizedBox(
-                  width: 100,
-                  child: StatusTag(
-                      active: active,
-                      enabledText: UITexts.dishStatusEnabled,
-                      disabledText: UITexts.dishStatusDisabled)),
-              Expanded(
+              Container(
+                padding: const EdgeInsets.all(16),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    PermissionGate(
-                      required: PermissionCodes.dishEdit,
-                      child: TextButton(
-                          onPressed: () async {
-                            final dishProvider =
-                                context.read<DishListProvider>();
-                            final updated = await showDialog<UpdateDishRequest>(
-                              context: context,
-                              builder: (_) => DishFormDialog(editing: d),
-                            );
-                            if (updated != null) {
-                              final ok =
-                                  await dishProvider.updateDish(d, updated);
-                              if (!context.mounted) return;
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(ok
-                                      ? UITexts.dishUpdateSuccess
-                                      : UITexts.dishUpdateFailed),
-                                ),
-                              );
-                            }
-                          },
-                          style: TextButton.styleFrom(
-                              foregroundColor: DesignTokens.brandPrimary,
-                              textStyle: DesignTokens.body
-                                  .copyWith(fontWeight: FontWeight.w500)),
-                          child: const Text(UITexts.dishEdit)),
+                    Text(
+                      UITexts.dishCategoryTitle,
+                      style: FluentTheme.of(context).typography.subtitle,
                     ),
+                    const Spacer(),
                     PermissionGate(
-                      required: PermissionCodes.dishDelete,
-                      child: TextButton(
-                        onPressed: () async {
-                          final dishProvider = context.read<DishListProvider>();
-                          final confirm = await showDialog<bool>(
-                            context: context,
-                            builder: (ctx) => AlertDialog(
-                              title: Text(UITexts.dishDeleteConfirmTitle),
-                              content: Text(
-                                  '${UITexts.dishDeleteConfirmMessage} "${d.name}"?'),
-                              actions: [
-                                TextButton(
-                                    onPressed: () => Navigator.pop(ctx, false),
-                                    child: const Text(UITexts.commonCancel)),
-                                TextButton(
-                                    onPressed: () => Navigator.pop(ctx, true),
-                                    style: TextButton.styleFrom(
-                                        foregroundColor: DesignTokens.danger),
-                                    child: const Text(UITexts.commonOk)),
-                              ],
-                            ),
-                          );
-                          if (confirm == true) {
-                            final ok = await dishProvider.deleteDish(d);
-                            if (!context.mounted) return;
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(ok
-                                    ? UITexts.dishDeleteSuccess
-                                    : UITexts.dishDeleteFailed),
-                              ),
-                            );
-                          }
-                        },
-                        style: TextButton.styleFrom(
-                            foregroundColor: DesignTokens.danger,
-                            textStyle: DesignTokens.body
-                                .copyWith(fontWeight: FontWeight.w500)),
-                        child: const Text(UITexts.dishDelete),
+                      required: PermissionCodes.dishAdd,
+                      child: IconButton(
+                        icon: Icon(FluentIcons.add),
+                        onPressed: () => _addCategory(categoryProvider),
                       ),
                     ),
                   ],
                 ),
-              )
+              ),
+              const Divider(),
+              Expanded(
+                child: _buildCategoryList(categoryProvider, dishList),
+              ),
             ],
-          );
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildCategoryList(
+    DishCategoryProvider categoryProvider,
+    DishListProvider dishList,
+  ) {
+    if (categoryProvider.loading) {
+      return const Center(child: ProgressRing());
+    }
+
+    if (categoryProvider.categories.isEmpty) {
+      return Center(
+        child: Text(
+          UITexts.dishCategoryEmpty,
+          style: FluentTheme.of(context).typography.body,
+        ),
+      );
+    }
+
+    return ListView.builder(
+      itemCount: categoryProvider.categories.length,
+      itemBuilder: (context, index) {
+        final category = categoryProvider.categories[index];
+        final isSelected = categoryProvider.selectedCategory?.id == category.id;
+
+        return ListTile.selectable(
+          selected: isSelected,
+          title: Text(category.name),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconButton(
+                icon: const Icon(FluentIcons.edit, size: 16),
+                onPressed: () => _editCategory(categoryProvider, category),
+              ),
+              IconButton(
+                icon: const Icon(FluentIcons.delete, size: 16),
+                onPressed: () => _deleteCategory(categoryProvider, category, dishList),
+              ),
+            ],
+          ),
+          onPressed: () => categoryProvider.selectCategory(category),
+        );
+      },
+    );
+  }
+
+  Future<void> _addCategory(DishCategoryProvider provider) async {
+    final name = await _showCategoryDialog(context, null);
+    if (name != null && name.trim().isNotEmpty) {
+      final ok = await provider.createCategory(name.trim());
+      if (!mounted) return;
+      if (!ok) {
+        await FluentInfoBarHelper.showError(context, ErrorTexts.createCategory);
+      }
+    }
+  }
+
+  Future<void> _editCategory(
+    DishCategoryProvider provider,
+    dynamic category,
+  ) async {
+    final name = await _showCategoryDialog(context, category);
+    if (name != null && name.trim().isNotEmpty && name.trim() != category.name) {
+      final ok = await provider.updateCategory(category, name.trim());
+      if (!mounted) return;
+      if (!ok) {
+        await FluentInfoBarHelper.showError(context, ErrorTexts.updateCategory);
+      }
+    }
+  }
+
+  Future<void> _deleteCategory(
+    DishCategoryProvider provider,
+    dynamic category,
+    DishListProvider dishList,
+  ) async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => ContentDialog(
+        title: const Text(UITexts.dishCategoryDelete),
+        content: const Text(UITexts.dishCategoryDeleteConfirm),
+        actions: [
+          Button(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text(UITexts.commonCancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text(UITexts.commonOk),
+          ),
+        ],
+      ),
+    );
+
+    if (result == true) {
+      final ok = await provider.deleteCategory(
+        category,
+        hasDishes: (cat) {
+          final selected = provider.selectedCategory;
+          if (selected?.id == cat.id) {
+            return dishList.dishes.isNotEmpty;
+          }
+          return false;
         },
+      );
+      if (!mounted) return;
+      if (!ok) {
+        await FluentInfoBarHelper.showError(
+          context,
+          provider.error ?? ErrorTexts.deleteCategory,
+        );
+      }
+    }
+  }
+
+  Future<String?> _showCategoryDialog(
+    BuildContext context,
+    dynamic editing,
+  ) async {
+    final controller = TextEditingController(text: editing?.name ?? '');
+    
+    return await showDialog<String>(
+      context: context,
+      builder: (context) => ContentDialog(
+        title: Text(editing == null 
+            ? UITexts.dishCategoryAdd 
+            : UITexts.dishCategoryEdit),
+        content: TextBox(
+          controller: controller,
+          placeholder: '请输入分类名称',
+          autofocus: true,
+        ),
+        actions: [
+          Button(
+            onPressed: () => Navigator.pop(context),
+            child: const Text(UITexts.commonCancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, controller.text),
+            child: const Text(UITexts.commonOk),
+          ),
+        ],
       ),
     );
   }
+
+  Widget _buildDishArea() {
+    return Consumer3<StoreSelectorProvider, DishCategoryProvider, DishListProvider>(
+      builder: (context, storeSelector, categoryProvider, dishList, __) {
+        if (dishList.error != null) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (context.mounted) {
+              FluentInfoBarHelper.showError(
+                context,
+                '${UITexts.dishError}: ${dishList.error}',
+              );
+            }
+          });
+        }
+
+        return Column(
+          children: [
+            _buildToolbar(storeSelector, categoryProvider),
+            Expanded(
+              child: categoryProvider.selectedCategory == null
+                  ? const Center(child: Text('请选择左侧分类'))
+                  : dishList.loading
+                      ? const Center(child: ProgressRing())
+                      : dishList.dishes.isEmpty
+                          ? const Center(child: Text(UITexts.dishEmpty))
+                          : _buildDishList(dishList.dishes),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildToolbar(
+    StoreSelectorProvider storeSelector,
+    DishCategoryProvider categoryProvider,
+  ) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: FluentTheme.of(context).micaBackgroundColor,
+        border: Border(
+          bottom: BorderSide(
+            color: FluentTheme.of(context).resources.dividerStrokeColorDefault,
+          ),
+        ),
+      ),
+      child: Row(
+        children: [
+          Text(
+            UITexts.dishTitle,
+            style: FluentTheme.of(context).typography.subtitle,
+          ),
+          const SizedBox(width: 16),
+          if (storeSelector.isAdmin)
+            SizedBox(
+              width: 200,
+              child: storeSelector.loading
+                  ? const ProgressRing()
+                  : ComboBox<int>(
+                      value: storeSelector.selectedStoreId,
+                      placeholder: const Text(UITexts.dishStoreSelectLabel),
+                      items: storeSelector.stores
+                          .map((s) => ComboBoxItem<int>(
+                                value: s.id,
+                                child: Text(s.name),
+                              ))
+                          .toList(),
+                      onChanged: (v) {
+                        if (v != null) storeSelector.selectStore(v);
+                      },
+                    ),
+            ),
+          const Spacer(),
+          PermissionGate(
+            required: PermissionCodes.dishAdd,
+            child: FilledButton(
+              onPressed: categoryProvider.selectedCategory == null
+                  ? null
+                  : _openCreateDish,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  Icon(FluentIcons.add, size: 16),
+                  SizedBox(width: 8),
+                  Text(UITexts.dishAdd),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Button(
+            onPressed: _openBatchReportDialog,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: const [
+                Icon(FluentIcons.clipboard_list, size: 16),
+                SizedBox(width: 8),
+                Text('批量报菜'),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDishList(List<Dish> dishes) {
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: dishes.length,
+      itemBuilder: (context, index) {
+        final dish = dishes[index];
+        final active = (dish.status ?? 1) == 1;
+
+        return Card(
+          margin: const EdgeInsets.only(bottom: 8),
+          child: ListTile(
+            title: Text(dish.name),
+            subtitle: dish.price != null
+                ? Text('¥${dish.price!.toStringAsFixed(2)}')
+                : null,
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ToggleSwitch(
+                  checked: active,
+                  onChanged: (value) => _toggleDishStatus(dish, value),
+                ),
+                const SizedBox(width: 8),
+                PermissionGate(
+                  required: PermissionCodes.dishEdit,
+                  child: Button(
+                    onPressed: () => _editDish(dish),
+                    child: const Text(UITexts.dishEdit),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                PermissionGate(
+                  required: PermissionCodes.dishDelete,
+                  child: Button(
+                    onPressed: () => _deleteDish(dish),
+                    child: const Text(UITexts.dishDelete),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _toggleDishStatus(Dish dish, bool active) async {
+    final provider = context.read<DishListProvider>();
+    final updated = UpdateDishRequest(status: active ? 1 : 0);
+    final ok = await provider.updateDish(dish, updated);
+    if (!mounted) return;
+    if (!ok) {
+      await FluentInfoBarHelper.showError(context, UITexts.dishUpdateFailed);
+    }
+  }
+
+  Future<void> _editDish(Dish dish) async {
+    final updated = await showDialog<UpdateDishRequest>(
+      context: context,
+      builder: (_) => DishFormDialog(editing: dish),
+    );
+    if (updated != null) {
+      final ok = await context.read<DishListProvider>().updateDish(dish, updated);
+      if (!mounted) return;
+      if (ok) {
+        await FluentInfoBarHelper.showSuccess(context, UITexts.dishUpdateSuccess);
+      } else {
+        await FluentInfoBarHelper.showError(context, UITexts.dishUpdateFailed);
+      }
+    }
+  }
+
+  Future<void> _deleteDish(Dish dish) async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => ContentDialog(
+        title: Text(UITexts.dishDeleteConfirmTitle),
+        content: Text('${UITexts.dishDeleteConfirmMessage} "${dish.name}"?'),
+        actions: [
+          Button(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text(UITexts.commonCancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text(UITexts.commonOk),
+          ),
+        ],
+      ),
+    );
+
+    if (result == true) {
+      final ok = await context.read<DishListProvider>().deleteDish(dish);
+      if (!mounted) return;
+      if (ok) {
+        await FluentInfoBarHelper.showSuccess(context, UITexts.dishDeleteSuccess);
+      } else {
+        await FluentInfoBarHelper.showError(context, UITexts.dishDeleteFailed);
+      }
+    }
+  }
 }
 
-/// 菜品表单对话框（简化版）
+/// 菜品表单对话框
 class DishFormDialog extends StatefulWidget {
   final Dish? editing;
   const DishFormDialog({super.key, this.editing});
@@ -661,24 +545,19 @@ class _DishFormDialogState extends State<DishFormDialog> {
   }
 
   void _submit() {
-    if (!_formKey.currentState!.validate()) return;
     if (widget.editing != null) {
-      // Edit mode: return UpdateDishRequest
       final req = UpdateDishRequest(
         name: _nameCtrl.text.trim(),
-        description:
-            _descCtrl.text.trim().isEmpty ? null : _descCtrl.text.trim(),
-        price: parseDoubleNullable(_priceCtrl.text.trim()),
+        description: _descCtrl.text.trim().isEmpty ? null : _descCtrl.text.trim(),
+        price: double.tryParse(_priceCtrl.text.trim()),
         status: _status ? 1 : 0,
       );
       Navigator.pop(context, req);
     } else {
-      // Create mode: return CreateDishRequest
       final req = CreateDishRequest(
         name: _nameCtrl.text.trim(),
-        description:
-            _descCtrl.text.trim().isEmpty ? null : _descCtrl.text.trim(),
-        price: parseDoubleNullable(_priceCtrl.text.trim()),
+        description: _descCtrl.text.trim().isEmpty ? null : _descCtrl.text.trim(),
+        price: double.tryParse(_priceCtrl.text.trim()),
       );
       Navigator.pop(context, req);
     }
@@ -686,116 +565,57 @@ class _DishFormDialogState extends State<DishFormDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 480),
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                    widget.editing == null ? UITexts.dishAdd : UITexts.dishEdit,
-                    style: const TextStyle(
-                        fontSize: 20, fontWeight: FontWeight.w600)),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _nameCtrl,
-                  decoration:
-                      const InputDecoration(labelText: UITexts.dishFormName),
-                  maxLength: 64,
-                  validator: (v) {
-                    final value = v?.trim() ?? '';
-                    if (value.isEmpty) return '必填';
-                    if (value.length < 2) return '至少 2 个字符';
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  controller: _descCtrl,
-                  decoration:
-                      const InputDecoration(labelText: UITexts.dishFormDesc),
-                  maxLines: 3,
-                  maxLength: 200,
-                ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  controller: _priceCtrl,
-                  keyboardType:
-                      const TextInputType.numberWithOptions(decimal: true),
-                  decoration:
-                      const InputDecoration(labelText: UITexts.dishFormPrice),
-                  validator: (v) {
-                    final value = v?.trim() ?? '';
-                    if (value.isEmpty) return null; // 可选
-                    return double.tryParse(value) == null ? '请输入合法数字或留空' : null;
-                  },
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Switch(
-                        value: _status,
-                        onChanged: (v) => setState(() => _status = v)),
-                    const Text(UITexts.dishFormStatus),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text(UITexts.commonCancel),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: _submit,
-                        child: const Text(UITexts.commonOk),
-                      ),
-                    ),
-                  ],
-                )
-              ],
+    return ContentDialog(
+      title: Text(widget.editing == null ? UITexts.dishAdd : UITexts.dishEdit),
+      content: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            InfoLabel(
+              label: UITexts.dishFormName,
+              child: TextBox(
+                controller: _nameCtrl,
+                placeholder: '请输入菜品名称',
+              ),
             ),
-          ),
+            const SizedBox(height: 12),
+            InfoLabel(
+              label: UITexts.dishFormDesc,
+              child: TextBox(
+                controller: _descCtrl,
+                placeholder: '请输入描述',
+                maxLines: 3,
+              ),
+            ),
+            const SizedBox(height: 12),
+            InfoLabel(
+              label: UITexts.dishFormPrice,
+              child: TextBox(
+                controller: _priceCtrl,
+                placeholder: '请输入价格',
+              ),
+            ),
+            const SizedBox(height: 12),
+            Checkbox(
+              checked: _status,
+              onChanged: (v) => setState(() => _status = v ?? true),
+              content: const Text(UITexts.dishFormStatus),
+            ),
+          ],
         ),
       ),
-    );
-  }
-}
-
-class DishManagementScope extends StatelessWidget {
-  const DishManagementScope({super.key});
-  @override
-  Widget build(BuildContext context) {
-    final client = ApiClient();
-    return MultiProvider(
-      providers: [
-        // 门店 Provider
-        ChangeNotifierProvider<StoreSelectorProvider>(
-          create: (_) => StoreSelectorProvider(StoreApi(client)),
+      actions: [
+        Button(
+          onPressed: () => Navigator.pop(context),
+          child: const Text(UITexts.commonCancel),
         ),
-        // 分类 Provider 依赖门店：直接读取已存在的 StoreSelectorProvider 实例，避免重复实例导致状态不同步
-        ChangeNotifierProvider<DishCategoryProvider>(
-          create: (ctx) => DishCategoryProvider(
-              DishCategoryApi(client), ctx.read<StoreSelectorProvider>()),
-        ),
-        // 菜品列表 Provider 依赖门店与分类：同理复用实例
-        ChangeNotifierProvider<DishListProvider>(
-          create: (ctx) => DishListProvider(
-              DishApi(client),
-              ctx.read<StoreSelectorProvider>(),
-              ctx.read<DishCategoryProvider>()),
+        FilledButton(
+          onPressed: _submit,
+          child: const Text(UITexts.commonOk),
         ),
       ],
-      child: const DishManagementPage(),
     );
   }
 }
@@ -803,9 +623,7 @@ class DishManagementScope extends StatelessWidget {
 /// 批量报菜对话框
 class BatchReportDialog extends StatefulWidget {
   final List<Dish> dishes;
-
   const BatchReportDialog({super.key, required this.dishes});
-
   @override
   State<BatchReportDialog> createState() => _BatchReportDialogState();
 }
@@ -819,7 +637,7 @@ class _BatchReportDialogState extends State<BatchReportDialog> {
   void initState() {
     super.initState();
     _selectedDishes.addAll(widget.dishes);
-    _selectedDate = DateTime.now(); // 默认选择今天
+    _selectedDate = DateTime.now();
   }
 
   @override
@@ -840,9 +658,7 @@ class _BatchReportDialogState extends State<BatchReportDialog> {
 
   Future<void> _submit() async {
     if (_selectedDishes.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('请至少选择一个菜品')),
-      );
+      await FluentInfoBarHelper.showWarning(context, '请至少选择一个菜品');
       return;
     }
 
@@ -851,7 +667,6 @@ class _BatchReportDialogState extends State<BatchReportDialog> {
       final categoryProvider = context.read<DishCategoryProvider>();
       final storeSelector = context.read<StoreSelectorProvider>();
 
-      // Call API to batch report dishes
       final success = await dishApi.batchReport(
         dishes: _selectedDishes,
         message: _messageCtrl.text.trim().isEmpty ? null : _messageCtrl.text.trim(),
@@ -864,9 +679,7 @@ class _BatchReportDialogState extends State<BatchReportDialog> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('批量报菜失败: $e')),
-        );
+        await FluentInfoBarHelper.showError(context, '批量报菜失败: $e');
         Navigator.pop(context, false);
       }
     }
@@ -874,263 +687,97 @@ class _BatchReportDialogState extends State<BatchReportDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final categoryProvider = context.read<DishCategoryProvider>();
 
-    return Dialog(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 600, maxHeight: 700),
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      '批量报菜 - ${categoryProvider.selectedCategory?.name ?? ""}',
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                      ),
+    return ContentDialog(
+      title: Text('批量报菜 - ${categoryProvider.selectedCategory?.name ?? ""}'),
+      content: SizedBox(
+        width: 600,
+        height: 500,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('已选择 ${_selectedDishes.length} 个菜品（共 ${widget.dishes.length} 个）'),
+            const SizedBox(height: 16),
+            Expanded(
+              child: ListView.builder(
+                itemCount: widget.dishes.length,
+                itemBuilder: (context, index) {
+                  final dish = widget.dishes[index];
+                  final isSelected = _selectedDishes.contains(dish);
+                  return Checkbox(
+                    checked: isSelected,
+                    onChanged: (_) => _toggleDish(dish),
+                    content: Row(
+                      children: [
+                        Expanded(child: Text(dish.name)),
+                        if (dish.price != null)
+                          Text('¥${dish.price!.toStringAsFixed(2)}'),
+                      ],
                     ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Text(
-                '已选择 ${_selectedDishes.length} 个菜品（共 ${widget.dishes.length} 个）',
-                style: DesignTokens.bodySm.copyWith(
-                  color: DesignTokens.neutral600,
-                ),
-              ),
-              const SizedBox(height: 16),
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: theme.dividerColor),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: ListView.builder(
-                    itemCount: widget.dishes.length,
-                    itemBuilder: (context, index) {
-                      final dish = widget.dishes[index];
-                      final isSelected = _selectedDishes.contains(dish);
-                      return CheckboxListTile(
-                        value: isSelected,
-                        title: Text(
-                          dish.name,
-                          style: TextStyle(
-                            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                            color: isSelected ? theme.textTheme.bodyLarge?.color : DesignTokens.neutral600,
-                          ),
-                        ),
-                        subtitle: dish.price != null
-                            ? Text('¥${dish.price!.toStringAsFixed(2)}')
-                            : null,
-                        secondary: Icon(
-                          Icons.restaurant_menu,
-                          color: isSelected ? DesignTokens.brandPrimary : DesignTokens.neutral400,
-                        ),
-                        onChanged: (_) => _toggleDish(dish),
-                      );
-                    },
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              InkWell(
-                onTap: () {
-                  final now = _selectedDate ?? DateTime.now();
-                  TDPicker.showDatePicker(
-                    context,
-                    title: '选择报菜日期',
-                    onConfirm: (selected) {
-                      setState(() {
-                        _selectedDate = DateTime(
-                          selected['year'] ?? now.year,
-                          selected['month'] ?? now.month,
-                          selected['day'] ?? now.day,
-                        );
-                      });
-                    },
-                    dateStart: [2020, 1, 1],
-                    dateEnd: [2030, 12, 31],
-                    initialDate: [now.year, now.month, now.day],
-                    useYear: true,
-                    useMonth: true,
-                    useDay: true,
-                    useHour: false,
-                    useMinute: false,
-                    useSecond: false,
                   );
                 },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: theme.dividerColor),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.calendar_today, size: 20),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          _selectedDate != null
-                              ? '${_selectedDate!.year}-${_selectedDate!.month.toString().padLeft(2, '0')}-${_selectedDate!.day.toString().padLeft(2, '0')}'
-                              : '请选择报菜日期',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: _selectedDate != null
-                                ? theme.textTheme.bodyLarge?.color
-                                : DesignTokens.neutral400,
-                          ),
-                        ),
-                      ),
-                      const Icon(Icons.arrow_drop_down),
-                    ],
-                  ),
-                ),
               ),
-              const SizedBox(height: 16),
-              TextField(
+            ),
+            const SizedBox(height: 16),
+            InfoLabel(
+              label: '报菜日期',
+              child: DatePicker(
+                selected: _selectedDate,
+                onChanged: (date) {
+                  setState(() => _selectedDate = date);
+                },
+              ),
+            ),
+            const SizedBox(height: 16),
+            InfoLabel(
+              label: '报菜备注（可选）',
+              child: TextBox(
                 controller: _messageCtrl,
-                decoration: const InputDecoration(
-                  labelText: '报菜备注（可选）',
-                  hintText: '请输入报菜备注信息',
-                  border: OutlineInputBorder(),
-                ),
+                placeholder: '请输入报菜备注信息',
                 maxLines: 3,
               ),
-              const SizedBox(height: 20),
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text('取消'),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: _submit,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: DesignTokens.brandPrimary,
-                      ),
-                      child: const Text('确认报菜'),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
+      actions: [
+        Button(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('取消'),
+        ),
+        FilledButton(
+          onPressed: _submit,
+          child: const Text('确认报菜'),
+        ),
+      ],
     );
   }
 }
 
-/// 分类新增/编辑表单对话框
-class DishCategoryFormDialog extends StatefulWidget {
-  final DishCategory? editing;
-  const DishCategoryFormDialog({super.key, this.editing});
-  @override
-  State<DishCategoryFormDialog> createState() => _DishCategoryFormDialogState();
-}
-
-class _DishCategoryFormDialogState extends State<DishCategoryFormDialog> {
-  final _formKey = GlobalKey<FormState>();
-  final _nameCtrl = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    if (widget.editing != null) {
-      _nameCtrl.text = widget.editing!.name;
-    }
-  }
-
-  @override
-  void dispose() {
-    _nameCtrl.dispose();
-    super.dispose();
-  }
-
-  void _submit() {
-    if (!_formKey.currentState!.validate()) return;
-    Navigator.pop(context, _nameCtrl.text.trim());
-  }
-
+/// DishManagementScope
+class DishManagementScope extends StatelessWidget {
+  const DishManagementScope({super.key});
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 420),
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  widget.editing == null
-                      ? UITexts.dishCategoryAdd
-                      : UITexts.dishCategoryEdit,
-                  style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _nameCtrl,
-                  decoration: const InputDecoration(
-                      labelText: UITexts.dishCategoryFormName),
-                  maxLength: 40,
-                  validator: (v) {
-                    final value = v?.trim() ?? '';
-                    if (value.isEmpty) return '必填';
-                    if (value.length < 2) return '至少 2 个字符';
-                    // 唯一性校验（同门店下名称不重复）
-                    final provider = context.read<DishCategoryProvider>();
-                    final editingId = widget.editing?.id;
-                    final exists = provider.categories
-                        .any((c) => c.name == value && c.id != editingId);
-                    if (exists) return '该名称已存在';
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text(UITexts.commonCancel),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: _submit,
-                        child: const Text(UITexts.commonOk),
-                      ),
-                    ),
-                  ],
-                )
-              ],
-            ),
-          ),
+    final client = ApiClient();
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<StoreSelectorProvider>(
+          create: (_) => StoreSelectorProvider(StoreApi(client)),
         ),
-      ),
+        ChangeNotifierProvider<DishCategoryProvider>(
+          create: (ctx) => DishCategoryProvider(
+              DishCategoryApi(client), ctx.read<StoreSelectorProvider>()),
+        ),
+        ChangeNotifierProvider<DishListProvider>(
+          create: (ctx) => DishListProvider(
+              DishApi(client),
+              ctx.read<StoreSelectorProvider>(),
+              ctx.read<DishCategoryProvider>()),
+        ),
+      ],
+      child: const DishManagementPage(),
     );
   }
 }

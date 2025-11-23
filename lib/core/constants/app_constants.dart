@@ -49,11 +49,20 @@ class PermissionCodes {
   static const String reportDelete = 'report:delete';
   static const String reportStatistics = 'report:statistics';
 
+  // 钉钉机器人相关（dingtalk）
+  static const String dingtalkRobotList = 'dingtalk:robot:list';
+  static const String dingtalkRobotAdd = 'dingtalk:robot:add';
+  static const String dingtalkRobotEdit = 'dingtalk:robot:edit';
+  static const String dingtalkRobotDelete = 'dingtalk:robot:delete';
+  static const String dingtalkRobotTest = 'dingtalk:robot:test';
+  static const String dingtalkRobotStatus = 'dingtalk:robot:status';
+
   // 用于后续快速判断是否为按钮级(操作级)权限（Type=3）时可维护一个集合
   // static const Set<String> actionPermissions = {
   //   userAdd, userEdit, userDelete, roleAdd, roleEdit, roleDelete, roleMenu,
   //   menuAdd, menuEdit, menuDelete, storeAdd, storeEdit, storeDelete, storeMenu,
   //   dishAdd, dishEdit, dishDelete, dishStatus, reportAdd, reportEdit, reportDelete,
+  //   dingtalkRobotAdd, dingtalkRobotEdit, dingtalkRobotDelete, dingtalkRobotTest, dingtalkRobotStatus,
   // };
 }
 

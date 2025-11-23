@@ -1,14 +1,13 @@
-import 'package:flutter/material.dart';
+import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
 import '../auth/login_screen.dart';
 import '../auth/session_manager.dart';
 import '../auth/models.dart';
 import '../menu/menu_provider.dart';
-import '../menu/menu_tree.dart';
 import 'widgets/menu_content.dart';
-import '../../core/theme/theme_provider.dart';
-import '../../core/theme/tower_colors.dart';
+import '../../core/widgets/custom_window_title_bar.dart';
 import '../../core/constants/app_constants.dart';
+import '../../core/theme/fluent_theme_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -18,287 +17,542 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  static const TowerColors _fallbackColors = TowerColors(
-    navBarBackground: Colors.white,
-    navBarForeground: Color(0xFF1A1F29),
-    navBarBorder: Color(0xFFE3E8EF),
-    sideBarBackground: Color(0xFFF8FAFC),
-    sideBarBorder: Color(0xFFE2E8F0),
-    contentBackground: Color(0xFFF5F7FA),
-    subtleFill: Color(0xFFF1F5F9),
-    accentGradientStart: Color(0xFF3B82F6),
-    accentGradientEnd: Color(0xFF6366F1),
-  );
-
-  TowerColors _colors(BuildContext context) {
-    return Theme.of(context).extension<TowerColors>() ?? _fallbackColors;
-  }
+  int _selectedIndex = 0;
 
   void _handleLogout() {
     SessionManager().clear(persist: true);
     Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => const LoginScreen()), (_) => false);
+        FluentPageRoute(builder: (_) => const LoginScreen()), (_) => false);
   }
 
   @override
   Widget build(BuildContext context) {
     final mp = context.watch<MenuProvider>();
-
     final user = SessionManager().userInfo;
+    final theme = FluentTheme.of(context);
 
-    return Scaffold(
-      // 自定义顶部导航条替换默认 AppBar
-      body: Column(
-        children: [
-          _buildTopBar(context, user),
-          Expanded(
-            child: Row(
-              children: [
-                // 左侧菜单栏
-                SizedBox(
-                  width: 260,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      const Expanded(child: MenuTree()),
-                    ],
-                  ),
-                ),
-                const VerticalDivider(width: 1),
-                // 右侧内容区
-                Expanded(
-                  child: mp.selected == null
-                      ? const Center(
-                          child: Text(AppTexts.selectMenuPlaceholder))
-                      : MenuContent(menuItem: mp.selected!),
-                )
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+    // 自定义菜单样式：根据主题自动适配
+    final isDark = theme.brightness == Brightness.dark;
+    final customPaneTheme = NavigationPaneThemeData(
+      backgroundColor: isDark ? const Color(0xFF2D2D2D) : Colors.white,
+      // 选中时的背景色
+      highlightColor: isDark 
+          ? const Color.fromRGBO(59, 130, 246, 0.2)
+          : const Color.fromRGBO(231, 238, 255, 1.0),
 
-  Widget _buildTopBar(BuildContext context, UserInfo? user) {
-    final tc = _colors(context);
-    return Container(
-      height: 60,
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      decoration: BoxDecoration(
-        color: tc.navBarBackground,
-        border: Border(
-          bottom: BorderSide(
-            color: tc.navBarBorder.withOpacity(.5),
-            width: 1,
-          ),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: tc.navBarBorder.withOpacity(.18),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          // 左侧项目名称与可选环境标签
-          Row(
-            children: [
-              Container(
-                width: 32,
-                height: 32,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: const Icon(
-                  Icons.restaurant_menu,
-                  color: Colors.white,
-                  size: 16,
-                ),
-              ),
-              const SizedBox(width: 8),
-              const Text(
-                AppTexts.appName,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black87,
-                ),
-              ),
-              const SizedBox(width: 10),
-              _envTag(AppTexts.envProd),
-            ],
-          ),
-          const Spacer(),
-          // 搜索框占位
-          // 主题切换按钮组（替换原搜索框）
-          _themeSwitcher(context),
-          const SizedBox(width: 12),
-          // 通知
-          _iconButton(context, Icons.notifications_none, '通知', () {}),
-          _iconButton(context, Icons.settings_outlined, '设置', () {}),
-          const SizedBox(width: 8),
-          // 用户头像 + 下拉菜单
-          _userMenu(context, user),
-        ],
-      ),
-    );
-  }
+      // 背景色控制
+      tileColor: WidgetStateProperty.resolveWith<Color?>((states) {
+        if (states.contains(WidgetState.selected)) {
+          return isDark 
+              ? const Color.fromRGBO(59, 130, 246, 0.2)
+              : const Color.fromRGBO(231, 238, 255, 1.0);
+        }
+        return Colors.transparent;
+      }),
 
-  Widget _themeSwitcher(BuildContext context) {
-    final tp = Provider.of<ThemeProvider>(context);
-    final tc = _colors(context);
-    return PopupMenuButton<int>(
-      tooltip: '切换主题',
-      onSelected: (i) => tp.setTheme(i),
-      itemBuilder: (ctx) => List.generate(tp.names.length, (i) {
-        return PopupMenuItem<int>(
-          value: i,
-          child: Row(
-            children: [
-              Icon(
-                i == tp.index ? Icons.check_circle : Icons.circle_outlined,
-                size: 18,
-                color: i == tp.index
-                    ? tc.accentGradientStart
-                    : Colors.grey.shade500,
-              ),
-              const SizedBox(width: 8),
-              Text(tp.names[i]),
-            ],
-          ),
+      // 选中时文字颜色
+      selectedTextStyle: WidgetStateProperty.resolveWith<TextStyle?>((states) {
+        if (states.contains(WidgetState.selected)) {
+          return TextStyle(
+            color: isDark ? Colors.blue.lighter : const Color.fromRGBO(97, 145, 255, 1.0),
+            fontWeight: FontWeight.w600,
+            fontSize: 14,
+          );
+        }
+        return null;
+      }),
+      
+      // 未选中时文字颜色
+      unselectedTextStyle: WidgetStateProperty.resolveWith<TextStyle?>((states) {
+        return TextStyle(
+          color: isDark ? Colors.white : Colors.black,
+          fontWeight: FontWeight.normal,
+          fontSize: 14,
         );
       }),
-      child: Container(
-        height: 36,
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        decoration: BoxDecoration(
-          color: tc.subtleFill,
-          borderRadius: BorderRadius.circular(8),
+      
+      // 图标颜色
+      selectedIconColor: WidgetStateProperty.all(
+        isDark ? Colors.blue.lighter : const Color.fromRGBO(97, 145, 255, 1.0)
+      ),
+      unselectedIconColor: WidgetStateProperty.all(
+        isDark ? Colors.white : Colors.black
+      ),
+
+      // 内边距
+      labelPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      iconPadding: const EdgeInsets.only(left: 12, right: 8),
+    );
+
+    final customTheme = theme.copyWith(
+      navigationPaneTheme: customPaneTheme,
+      // 全局：accentColor 统一高亮（让选中更突出）
+      accentColor: AccentColor.swatch({
+        'normal': const Color.fromRGBO(59, 130, 246, 1.0),
+      }),
+    );
+
+    return FluentTheme(
+      data: customTheme,
+      child: NavigationView(
+        appBar: NavigationAppBar(
+          automaticallyImplyLeading: false,
+          title: const CustomWindowTitleBar(),
+          height: 32,
         ),
-        child: Row(
-          children: [
-            Icon(Icons.palette_outlined,
-                size: 18, color: tc.navBarForeground.withOpacity(.7)),
-            const SizedBox(width: 6),
-            Text(tp.names[tp.index],
-                style: TextStyle(fontSize: 13, color: tc.navBarForeground)),
-            const Icon(Icons.keyboard_arrow_down, size: 18),
+        paneBodyBuilder: (item, child) {
+          return child ?? const SizedBox.shrink();
+        },
+        pane: NavigationPane(
+          leading: _buildPaneHeader(theme, user),
+          selected: _selectedIndex,
+          onChanged: (index) {
+            setState(() => _selectedIndex = index);
+          },
+          displayMode: PaneDisplayMode.compact,
+          items: _buildNavigationItems(mp),
+          footerItems: [
+            PaneItemSeparator(),
+            PaneItem(
+              icon: const Icon(FluentIcons.settings),
+              title: const Text('设置'),
+              body: ScaffoldPage(
+                padding: EdgeInsets.zero,
+                content: _buildSettingsPage(),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _envTag(String text) {
-    final tc = Theme.of(context).extension<TowerColors>() ?? _fallbackColors;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-      decoration: BoxDecoration(
-        color: tc.subtleFill,
-        borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: tc.navBarBorder),
-      ),
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: 11,
-          fontWeight: FontWeight.w600,
-          color: tc.accentGradientStart,
-          letterSpacing: .5,
-        ),
-      ),
-    );
-  }
+  List<NavigationPaneItem> _buildNavigationItems(MenuProvider mp) {
+    final List<NavigationPaneItem> items = [];
 
-  Widget _iconButton(
-      BuildContext context, IconData icon, String tooltip, VoidCallback onTap) {
-    final tc = _colors(context);
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(30),
-        child: Tooltip(
-          message: tooltip,
-          child: Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: tc.subtleFill,
-              borderRadius: BorderRadius.circular(18),
-            ),
-            child: Icon(icon,
-                size: 20, color: tc.navBarForeground.withOpacity(.75)),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _userMenu(BuildContext context, UserInfo? user) {
-    final displayName = (user != null && user.nickname.isNotEmpty)
-        ? user.nickname
-        : (user?.username ?? '未登录');
-    final tc = _colors(context);
-    return PopupMenuButton<String>(
-      offset: const Offset(0, 50),
-      onSelected: (value) {
-        if (value == 'logout') {
-          _handleLogout();
-        } else if (value == 'profile') {
-          // 预留：跳转个人设置页面
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('个人设置功能待接入')),
-          );
-        }
-      },
-      itemBuilder: (ctx) => [
-        PopupMenuItem(
-          value: 'profile',
-          child: Row(
-            children: const [
-              Icon(Icons.person_outline, size: 18),
-              SizedBox(width: 8),
-              Text('个人设置'),
-            ],
-          ),
-        ),
-        const PopupMenuDivider(),
-        PopupMenuItem(
-          value: 'logout',
-          child: Row(
-            children: const [
-              Icon(Icons.logout, size: 18),
-              SizedBox(width: 8),
-              Text('退出登录'),
-            ],
-          ),
-        ),
-      ],
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: 16,
-            backgroundColor: tc.accentGradientStart,
+    for (var topMenu in mp.tree) {
+      // 添加分组标题（目录类型）
+      if (topMenu.type == 1) {
+        items.add(PaneItemHeader(
+          header: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 12, 20, 4),  // 紧凑 padding
             child: Text(
-              displayName.isNotEmpty ? displayName.characters.first : '?',
-              style: const TextStyle(color: Colors.white),
+              topMenu.title,
+              style: const TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w400,
+                color: Color(0xFF666666),
+              ),
             ),
           ),
-          const SizedBox(width: 8),
-          Text(
-            displayName,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: tc.navBarForeground,
+        ));
+
+        // 添加该分组下的子菜单
+        if (topMenu.children.isNotEmpty) {
+          for (var child in topMenu.children) {
+            if (child.type == 2) {
+              // 只添加页面类型
+              items.add(PaneItem(
+                icon: _getMenuIcon(child.icon),
+                title: Text(child.title),
+                body: ScaffoldPage(
+                  padding: EdgeInsets.zero,
+                  content: MenuContent(menuItem: child),
+                ),
+                onTap: () {
+                  mp.select(child);
+                },
+              ));
+            }
+          }
+        }
+      } else if (topMenu.type == 2) {
+        // 顶级页面（没有分组）
+        items.add(PaneItem(
+          icon: _getMenuIcon(topMenu.icon),
+          title: Text(topMenu.title),
+          body: ScaffoldPage(
+            padding: EdgeInsets.zero,
+            content: MenuContent(menuItem: topMenu),
+          ),
+          onTap: () {
+            mp.select(topMenu);
+          },
+        ));
+      }
+    }
+
+    return items;
+  }
+
+  Icon _getMenuIcon(String? iconName) {
+    switch (iconName) {
+      // 主菜单图标
+      case 'dashboard':
+      case 'home':
+        return const Icon(FluentIcons.home);
+
+      // 菜品相关
+      case 'food':
+      case 'restaurant':
+        return const Icon(FluentIcons.breakfast);
+
+      // 报菜相关
+      case 'file-paste':
+      case 'clipboard':
+        return const Icon(FluentIcons.clipboard_list);
+
+      // 统计相关
+      case 'chart':
+      case 'chart-bar':
+        return const Icon(FluentIcons.chart);
+
+      // 门店相关
+      case 'shop':
+      case 'store':
+        return const Icon(FluentIcons.shop);
+
+      // 用户相关
+      case 'user':
+      case 'people':
+        return const Icon(FluentIcons.people);
+
+      // 角色权限
+      case 'usergroup':
+      case 'permissions':
+        return const Icon(FluentIcons.permissions);
+
+      // 菜单管理
+      case 'menu':
+      case 'menu-fold':
+        return const Icon(FluentIcons.list);
+
+      // 设置
+      case 'setting':
+      case 'settings':
+        return const Icon(FluentIcons.settings);
+
+      // 钉钉
+      case 'link':
+      case 'robot':
+        return const Icon(FluentIcons.robot);
+
+      // 列表
+      case 'view-list':
+        return const Icon(FluentIcons.bulleted_list);
+
+      default:
+        return const Icon(FluentIcons.page);
+    }
+  }
+
+  Widget _buildUserMenu(UserInfo? user) {
+    final displayName = user?.nickname.isNotEmpty == true
+        ? user!.nickname
+        : (user?.username.isNotEmpty == true ? user!.username : '未知用户');
+
+    return DropDownButton(
+        leading: CircleAvatar(
+          radius: 16,
+          backgroundColor: const Color.fromRGBO(59, 130, 246, 1.0),
+          child: Text(
+            displayName.substring(0, 1),
+            style: const TextStyle(color: Colors.white, fontSize: 14),
+          ),
+        ),
+        title: Text(displayName),
+        items: [
+          MenuFlyoutItem(
+            leading: const Icon(FluentIcons.contact_info),
+            text: const Text('个人信息'),
+            onPressed: () {
+              // TODO: 打开个人信息页面
+            },
+          ),
+          MenuFlyoutItem(
+            leading: const Icon(FluentIcons.settings),
+            text: const Text('设置'),
+            onPressed: () {
+              // TODO: 打开设置页面
+            },
+          ),
+          const MenuFlyoutSeparator(),
+          MenuFlyoutItem(
+            leading: const Icon(FluentIcons.sign_out),
+            text: const Text('退出登录'),
+            onPressed: _handleLogout,
+          ),
+        ],
+    );
+  }
+
+  /// 构建侧边栏头部（应用图标、名称、用户菜单）——优化阴影和渐变
+  Widget _buildPaneHeader(FluentThemeData theme, UserInfo? user) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            theme.accentColor.withOpacity(0.06),  // 更 subtle 蓝渐变
+            Colors.transparent,
+          ],
+        ),
+        border: Border(
+          bottom: BorderSide(
+            color: theme.resources.dividerStrokeColorDefault,
+            width: 1,
+          ),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 应用图标和名称
+          Row(
+            children: [
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      theme.accentColor,
+                      theme.accentColor.withOpacity(0.8),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: theme.accentColor.withOpacity(0.25),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: const Icon(
+                  FluentIcons.app_icon_default,
+                  size: 20,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  AppTexts.appName,
+                  style: theme.typography.body?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          // 用户信息
+          _buildUserMenu(user),
+        ],
+      ),
+    );
+  }
+
+  /// 构建设置页面
+  Widget _buildSettingsPage() {
+    final theme = FluentTheme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
+    return Container(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 页面标题
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.blue, Colors.blue.lighter],
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.blue.withOpacity(0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: const Icon(
+                  FluentIcons.settings,
+                  size: 24,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '设置',
+                    style: theme.typography.title?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    '系统设置和个性化配置',
+                    style: theme.typography.caption?.copyWith(
+                      color: isDark ? Colors.grey[100] : Colors.grey[130],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 32),
+
+          // 主题设置
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: theme.cardColor,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(isDark ? 0.3 : 0.05),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(FluentIcons.color, size: 20, color: Colors.blue),
+                    const SizedBox(width: 12),
+                    Text(
+                      '主题模式',
+                      style: FluentTheme.of(context).typography.subtitle?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Consumer<FluentThemeProvider>(
+                  builder: (context, themeProvider, _) {
+                    return Row(
+                      children: [
+                        Expanded(
+                          child: RadioButton(
+                            checked: themeProvider.mode == ThemeMode.light,
+                            onChanged: (value) {
+                              if (value == true) {
+                                themeProvider.setThemeMode(ThemeMode.light);
+                              }
+                            },
+                            content: Row(
+                              children: [
+                                Icon(FluentIcons.sunny, size: 16, color: Colors.orange),
+                                const SizedBox(width: 8),
+                                const Text('浅色模式 (Light)'),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: RadioButton(
+                            checked: themeProvider.mode == ThemeMode.dark,
+                            onChanged: (value) {
+                              if (value == true) {
+                                themeProvider.setThemeMode(ThemeMode.dark);
+                              }
+                            },
+                            content: Row(
+                              children: [
+                                Icon(FluentIcons.clear_night, size: 16, color: Colors.blue),
+                                const SizedBox(width: 8),
+                                const Text('深色模式 (Dark)'),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ],
             ),
           ),
-          const Icon(Icons.keyboard_arrow_down, size: 18),
+          const SizedBox(height: 20),
+
+          // 退出登录
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: theme.cardColor,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(isDark ? 0.3 : 0.05),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(FluentIcons.sign_out, size: 20, color: Colors.red),
+                    const SizedBox(width: 12),
+                    Text(
+                      '账户操作',
+                      style: theme.typography.subtitle?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                FilledButton(
+                  onPressed: _handleLogout,
+                  style: ButtonStyle(
+                    backgroundColor: WidgetStateProperty.all(Colors.red),
+                    padding: WidgetStateProperty.all(
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: const [
+                      Icon(FluentIcons.sign_out, size: 16),
+                      SizedBox(width: 8),
+                      Text('退出登录'),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  '退出后需要重新登录才能访问系统',
+                  style: theme.typography.caption?.copyWith(
+                    color: isDark ? Colors.grey[100] : Colors.grey[130],
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );

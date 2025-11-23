@@ -1,7 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:fluent_ui/fluent_ui.dart';
 import 'role_models.dart';
-import 'role_provider.dart';
 
 class RoleFormDialog extends StatefulWidget {
   final RoleItem? editing;
@@ -14,8 +12,7 @@ class _RoleFormDialogState extends State<RoleFormDialog> {
   final _formKey = GlobalKey<FormState>();
   final _nameCtrl = TextEditingController();
   final _codeCtrl = TextEditingController();
-  final _remarkCtrl = TextEditingController();
-  bool _status = true;
+  final _descCtrl = TextEditingController();
 
   @override
   void initState() {
@@ -23,9 +20,8 @@ class _RoleFormDialogState extends State<RoleFormDialog> {
     if (widget.editing != null) {
       final r = widget.editing!;
       _nameCtrl.text = r.name;
-      _codeCtrl.text = r.code;
-      _remarkCtrl.text = r.description ?? '';
-      _status = (r.status ?? 1) == 1;
+      _codeCtrl.text = r.code ?? '';
+      _descCtrl.text = r.description ?? '';
     }
   }
 
@@ -33,30 +29,28 @@ class _RoleFormDialogState extends State<RoleFormDialog> {
   void dispose() {
     _nameCtrl.dispose();
     _codeCtrl.dispose();
-    _remarkCtrl.dispose();
+    _descCtrl.dispose();
     super.dispose();
   }
 
   void _submit() {
-    if (!_formKey.currentState!.validate()) return;
-    if (widget.editing == null) {
-      final req = CreateRoleRequest(
+    // 验证必填字段
+    if (_nameCtrl.text.trim().isEmpty) {
+      return;
+    }
+    
+    if (widget.editing != null) {
+      final req = UpdateRoleRequest(
         name: _nameCtrl.text.trim(),
-        code: _codeCtrl.text.trim(),
-        status: _status ? 1 : 0,
-        description:
-            _remarkCtrl.text.trim().isEmpty ? null : _remarkCtrl.text.trim(),
+        code: _codeCtrl.text.trim().isEmpty ? null : _codeCtrl.text.trim(),
+        description: _descCtrl.text.trim().isEmpty ? null : _descCtrl.text.trim(),
       );
       Navigator.pop(context, req);
     } else {
-      final e = widget.editing!;
-      final req = UpdateRoleRequest(
-        name: _nameCtrl.text.trim() == e.name ? null : _nameCtrl.text.trim(),
-        code: _codeCtrl.text.trim() == e.code ? null : _codeCtrl.text.trim(),
-        status: (_status ? 1 : 0) == (e.status ?? 1) ? null : (_status ? 1 : 0),
-        description: _remarkCtrl.text.trim() == (e.description ?? '')
-            ? null
-            : _remarkCtrl.text.trim(),
+      final req = CreateRoleRequest(
+        name: _nameCtrl.text.trim(),
+        code: _codeCtrl.text.trim().isNotEmpty ? _codeCtrl.text.trim() : 'default_code',
+        description: _descCtrl.text.trim().isEmpty ? null : _descCtrl.text.trim(),
       );
       Navigator.pop(context, req);
     }
@@ -64,96 +58,236 @@ class _RoleFormDialogState extends State<RoleFormDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 480),
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
+    final isEditing = widget.editing != null;
+    
+    return ContentDialog(
+      title: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: isEditing
+                ? [Colors.orange.withOpacity(0.1), Colors.orange.withOpacity(0.05)]
+                : [Colors.blue.withOpacity(0.1), Colors.blue.withOpacity(0.05)],
+          ),
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(8),
+            topRight: Radius.circular(8),
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: isEditing
+                      ? [Colors.orange, Colors.orange.lighter]
+                      : [Colors.blue, Colors.blue.lighter],
+                ),
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                    color: (isEditing ? Colors.orange : Colors.blue).withOpacity(0.3),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Icon(
+                isEditing ? FluentIcons.edit : FluentIcons.add,
+                size: 20,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(widget.editing == null ? '新增角色' : '编辑角色',
-                    style: const TextStyle(
-                        fontSize: 20, fontWeight: FontWeight.w600)),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _nameCtrl,
-                  decoration: const InputDecoration(labelText: '角色名称'),
-                  maxLength: 32,
-                  validator: (v) {
-                    final value = v?.trim() ?? '';
-                    if (value.isEmpty) return '必填';
-                    if (value.length < 2) return '至少 2 个字符';
-                    return null;
-                  },
+                Text(
+                  isEditing ? '编辑角色' : '新增角色',
+                  style: FluentTheme.of(context).typography.subtitle?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  controller: _codeCtrl,
-                  decoration: const InputDecoration(labelText: '角色编码'),
-                  maxLength: 40,
-                  validator: (v) {
-                    final value = v?.trim() ?? '';
-                    if (value.isEmpty) return '必填';
-                    final reg = RegExp(r'^[a-zA-Z0-9_:-]+$');
-                    if (!reg.hasMatch(value)) return '仅允许字母、数字、_、:、-';
-                    // 唯一性校验
-                    final provider = context.read<RoleProvider>();
-                    final editingId = widget.editing?.id;
-                    final exists = provider.list
-                        .any((r) => r.code == value && r.id != editingId);
-                    if (exists) return '编码已存在';
-                    return null;
-                  },
+                Text(
+                  isEditing ? '修改角色信息' : '创建新的系统角色',
+                  style: FluentTheme.of(context).typography.caption?.copyWith(
+                    color: Colors.grey[130],
+                  ),
                 ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  controller: _remarkCtrl,
-                  decoration: const InputDecoration(labelText: '备注(可选)'),
-                  maxLines: 3,
-                  maxLength: 200,
-                  validator: (v) {
-                    final value = v?.trim() ?? '';
-                    if (value.isEmpty) return null;
-                    if (value.length < 2) return '备注至少 2 个字符或留空';
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Switch(
-                        value: _status,
-                        onChanged: (v) => setState(() => _status = v)),
-                    const Text('启用'),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text('取消'),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: _submit,
-                        child: const Text('确定'),
-                      ),
-                    ),
-                  ],
-                )
               ],
             ),
+          ],
+        ),
+      ),
+      content: Container(
+        width: 500,
+        padding: const EdgeInsets.all(20),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              InfoLabel(
+                label: '角色名称 *',
+                child: Container(
+                  decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: TextBox(
+                    controller: _nameCtrl,
+                    placeholder: '例如：系统管理员、普通用户',
+                    autofocus: true,
+                    prefix: Padding(
+                      padding: const EdgeInsets.only(left: 10),
+                      child: Icon(FluentIcons.contact, size: 16, color: Colors.grey[130]),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              InfoLabel(
+                label: '角色编码',
+                child: Container(
+                  decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: TextBox(
+                    controller: _codeCtrl,
+                    placeholder: '例如：admin、user、guest',
+                    prefix: Padding(
+                      padding: const EdgeInsets.only(left: 10),
+                      child: Icon(FluentIcons.code, size: 16, color: Colors.grey[130]),
+                    ),
+                    style: const TextStyle(fontFamily: 'monospace'),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              InfoLabel(
+                label: '角色描述',
+                child: Container(
+                  decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: TextBox(
+                    controller: _descCtrl,
+                    placeholder: '描述该角色的职责和权限范围...',
+                    maxLines: 4,
+                    minLines: 3,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.blue.withOpacity(0.08),
+                      Colors.purple.withOpacity(0.08),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: Colors.blue.withOpacity(0.2),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.blue.withOpacity(0.15),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Icon(FluentIcons.lightbulb, size: 18, color: Colors.blue),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '💡 温馨提示',
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: Colors.blue.dark,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '角色编码用于系统内部识别，建议使用英文小写字母和下划线',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.blue.darker,
+                              height: 1.4,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),
+      actions: [
+        Button(
+          onPressed: () => Navigator.pop(context),
+          style: ButtonStyle(
+            padding: ButtonState.all(
+              const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: const [
+              Icon(FluentIcons.cancel, size: 14),
+              SizedBox(width: 6),
+              Text('取消'),
+            ],
+          ),
+        ),
+        FilledButton(
+          onPressed: _submit,
+          style: ButtonStyle(
+            padding: ButtonState.all(
+              const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: const [
+              Icon(FluentIcons.save, size: 14),
+              SizedBox(width: 6),
+              Text('保存'),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

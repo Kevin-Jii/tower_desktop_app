@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
 import 'features/auth/login_screen.dart';
 import 'features/auth/permission_provider.dart';
@@ -16,7 +16,7 @@ import 'features/user/user_provider.dart';
 import 'features/store/store_api.dart';
 import 'features/store/store_provider.dart';
 import 'core/network/api_client.dart';
-import 'core/theme/theme_provider.dart';
+import 'core/theme/fluent_theme_provider.dart';
 
 class TowerApp extends StatelessWidget {
   const TowerApp({super.key});
@@ -28,7 +28,7 @@ class TowerApp extends StatelessWidget {
     final userApi = UserApi(apiClient);
 
     return ChangeNotifierProvider(
-      create: (_) => ThemeProvider(),
+      create: (_) => FluentThemeProvider(),
       child: MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (_) => PermissionProvider()),
@@ -38,24 +38,23 @@ class TowerApp extends StatelessWidget {
           ChangeNotifierProvider(create: (_) => StoreProvider(storeApi)),
           ChangeNotifierProvider(
               create: (_) => DingTalkProvider(DingTalkApi(apiClient))),
-          // ChangeNotifierProvider(
-          //   create: (_) => ReportProvider(api: ReportApi(apiClient)),
-          // )
         ],
         child: FutureBuilder(
           future: _bootstrap(context),
           builder: (context, snap) {
             if (snap.connectionState != ConnectionState.done) {
-              return const MaterialApp(
-                home: Scaffold(
-                  body: Center(child: CircularProgressIndicator()),
+              return FluentApp(
+                home: ScaffoldPage(
+                  content: const Center(child: ProgressRing()),
                 ),
               );
             }
-            final themeProvider = Provider.of<ThemeProvider>(context);
-            return MaterialApp(
+            final themeProvider = Provider.of<FluentThemeProvider>(context);
+            return FluentApp(
               title: 'Tower Desktop',
-              theme: themeProvider.theme,
+              theme: themeProvider.lightTheme,
+              darkTheme: themeProvider.darkTheme,
+              themeMode: themeProvider.mode,
               home: snap.data == true
                   ? const _DeferredHome()
                   : const LoginScreen(),
@@ -93,9 +92,10 @@ class _DeferredHomeState extends State<_DeferredHome> {
   Future<void> _prepare() async {
     final sm = SessionManager();
     if (!sm.isLoggedIn || sm.isExpired) {
-      if (mounted)
+      if (mounted) {
         Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (_) => const LoginScreen()));
+            FluentPageRoute(builder: (_) => const LoginScreen()));
+      }
       return;
     }
     // 恢复权限到 provider
@@ -112,9 +112,10 @@ class _DeferredHomeState extends State<_DeferredHome> {
   @override
   Widget build(BuildContext context) {
     if (!_ready) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return ScaffoldPage(
+        content: const Center(child: ProgressRing()),
+      );
     }
-    // 直接复用 HomeScreen，不在此文件重复导入依赖以避免循环；延迟 import
     return const home.HomeScreen();
   }
 }

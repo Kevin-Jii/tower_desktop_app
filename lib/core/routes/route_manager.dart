@@ -1,12 +1,10 @@
-import 'package:flutter/material.dart';
+import 'package:fluent_ui/fluent_ui.dart';
 import 'package:tower_desktop_app/features/menu/menu_management_page.dart';
 import 'package:tower_desktop_app/features/role/role_management_page.dart';
 import 'package:tower_desktop_app/features/dish/dish_management_page.dart';
 import 'package:tower_desktop_app/features/dingtalk/dingtalk_management_page.dart';
 import 'package:tower_desktop_app/features/menu_report/menu_report_management_page.dart';
-// import 'package:tower_desktop_app/features/report/report_management_page.dart';
 import '../../features/menu/models.dart';
-import '../icons/td_icon_mapper.dart';
 import '../constants/menu_types.dart';
 import '../../features/user/user_management_page.dart';
 import '../../features/store/store_management_page.dart';
@@ -33,7 +31,7 @@ class RouteManager {
       case 'system/user/index':
         return const UserManagementPage();
       case 'system/role/index':
-        return RoleManagementScope();
+        return const RoleManagementScope();
       case 'system/menu/index':
         return const MenuManagementScope();
       // 门店管理
@@ -79,49 +77,43 @@ class _ModulePlaceholderPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
+    return ScaffoldPage(
+      content: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            TdIconMapper.build(menuItem.icon,
-                size: 64, color: Colors.blue.shade300),
+            Icon(FluentIcons.page, size: 64, color: Colors.blue),
             const SizedBox(height: 24),
             Text(
               moduleName,
-              style: Theme.of(context).textTheme.headlineMedium,
+              style: FluentTheme.of(context).typography.title,
             ),
             const SizedBox(height: 8),
             Text(
               '组件路径: ${menuItem.component}',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey[600],
-                  ),
+              style: FluentTheme.of(context).typography.body,
             ),
             const SizedBox(height: 4),
             Text(
               '路由路径: ${menuItem.path}',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.grey[500],
-                  ),
+              style: FluentTheme.of(context).typography.caption,
             ),
             const SizedBox(height: 24),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
-                color: Colors.orange.shade50,
+                color: Colors.orange.lightest,
                 borderRadius: BorderRadius.circular(4),
-                border: Border.all(color: Colors.orange.shade200),
+                border: Border.all(color: Colors.orange.light),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.info_outline,
-                      size: 16, color: Colors.orange.shade700),
+                  Icon(FluentIcons.info, size: 16, color: Colors.orange),
                   const SizedBox(width: 8),
                   Text(
                     '页面开发中...',
-                    style: TextStyle(color: Colors.orange.shade900),
+                    style: TextStyle(color: Colors.orange.dark),
                   ),
                 ],
               ),

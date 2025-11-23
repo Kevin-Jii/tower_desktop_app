@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/constants/menu_types.dart';
-import '../../core/icons/td_icon_mapper.dart';
 import '../../core/theme/tower_colors.dart';
 import 'menu_provider.dart';
 import 'models.dart';
@@ -276,8 +275,7 @@ class _MenuLeafTile extends StatelessWidget {
         towerColors?.navBarForeground.withOpacity(.8) ??
             Colors.blueGrey.shade700;
     final iconColor = selected ? accent : baseTextColor;
-    final backgroundColor =
-        selected ? accent.withOpacity(.1) : Colors.transparent;
+    final backgroundColor = selected ? accent.withOpacity(.15) : Colors.transparent;
 
     return Padding(
       padding: EdgeInsets.only(left: depth * 14.0),
@@ -285,22 +283,36 @@ class _MenuLeafTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(9),
         onTap: onTap,
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
+          duration: const Duration(milliseconds: 200),
           margin: const EdgeInsets.symmetric(vertical: 2.5),
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
           decoration: BoxDecoration(
             color: backgroundColor,
             borderRadius: BorderRadius.circular(9),
+            boxShadow: selected
+                ? [
+                    BoxShadow(
+                      color: accent.withOpacity(.1),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                      spreadRadius: 1,
+                    ),
+                  ]
+                : null,
           ),
           child: Row(
             children: [
               AnimatedContainer(
-                duration: const Duration(milliseconds: 180),
-                width: 3,
-                height: 24,
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.easeOut,
+                width: selected ? 4 : 2,
+                height: selected ? 28 : 24,
                 decoration: BoxDecoration(
                   color: selected ? accent : Colors.transparent,
-                  borderRadius: BorderRadius.circular(2),
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(selected ? 0 : 2),
+                    bottomRight: Radius.circular(selected ? 0 : 2),
+                  ),
                 ),
               ),
               const SizedBox(width: 9),
@@ -308,11 +320,27 @@ class _MenuLeafTile extends StatelessWidget {
                 width: 20,
                 height: 20,
                 child: Center(
-                  child: TdIconMapper.build(
-                    item.icon,
-                    size: 16,
-                    color: iconColor,
-                  ),
+                  child: selected
+                      ? Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            TdIconMapper.build(
+                              item.icon,
+                              size: 16,
+                              color: iconColor.withOpacity(.3),
+                            ),
+                            TdIconMapper.build(
+                              item.icon,
+                              size: 16,
+                              color: iconColor,
+                            ),
+                          ],
+                        )
+                      : TdIconMapper.build(
+                          item.icon,
+                          size: 16,
+                          color: iconColor,
+                        ),
                 ),
               ),
               const SizedBox(width: 9),
@@ -322,8 +350,7 @@ class _MenuLeafTile extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontSize: 13,
-                    fontWeight:
-                        selected ? FontWeight.w600 : FontWeight.w500,
+                    fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
                     color: selected ? accent : baseTextColor,
                   ),
                 ),

@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:tdesign_flutter/tdesign_flutter.dart';
+import 'package:fluent_ui/fluent_ui.dart';
 import '../../core/constants/menu_types.dart';
+import '../../core/widgets/fluent_buttons.dart';
 import 'models.dart';
 
 /// 菜单新增/编辑弹窗
@@ -150,25 +150,18 @@ class _MenuFormDialogState extends State<MenuFormDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      insetPadding: const EdgeInsets.all(40),
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 600),
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: SingleChildScrollView(
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.editing == null ? '新增菜单' : '编辑菜单',
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+    return ContentDialog(
+      constraints: const BoxConstraints(maxWidth: 600),
+      title: Text(widget.editing == null ? '新增菜单' : '编辑菜单'),
+      content: SizedBox(
+        width: 600,
+        height: 500,
+        child: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
                   const SizedBox(height: 20),
                   _buildParentField(),
                   _buildTypeField(),
@@ -217,30 +210,35 @@ class _MenuFormDialogState extends State<MenuFormDialog> {
                   Row(
                     children: [
                       Expanded(
-                        child: TDButton(
-                          text: '取消',
-                          type: TDButtonType.outline,
-                          size: TDButtonSize.large,
-                          onTap: () => Navigator.of(context).pop(),
+                        child: Button(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: const Text('取消'),
                         ),
                       ),
                       const SizedBox(width: 16),
                       Expanded(
-                        child: TDButton(
-                          text: '确定',
-                          theme: TDButtonTheme.primary,
-                          size: TDButtonSize.large,
-                          onTap: _submit,
+                        child: FilledButton(
+                          onPressed: _submit,
+                          child: const Text('确定'),
                         ),
                       ),
                     ],
                   ),
-                ],
-              ),
+              ],
             ),
           ),
         ),
       ),
+      actions: [
+        Button(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('取消'),
+        ),
+        FilledButton(
+          onPressed: _submit,
+          child: const Text('确定'),
+        ),
+      ],
     );
   }
 
@@ -254,17 +252,19 @@ class _MenuFormDialogState extends State<MenuFormDialog> {
     }
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
-      child: DropdownButtonFormField<int>(
-        value: _parentId == 0 ? 0 : _parentId,
-        items: [
-          const DropdownMenuItem(value: 0, child: Text('根节点')),
-          ...uniqueParents.map((m) => DropdownMenuItem<int>(
-                value: m.id,
-                child: Text('[${m.id}] ${m.title}'),
-              ))
-        ],
-        onChanged: (v) => setState(() => _parentId = v ?? 0),
-        decoration: const InputDecoration(labelText: '父级菜单'),
+      child: InfoLabel(
+        label: '父级菜单',
+        child: ComboBox<int>(
+          value: _parentId == 0 ? 0 : _parentId,
+          items: [
+            const ComboBoxItem(value: 0, child: Text('根节点')),
+            ...uniqueParents.map((m) => ComboBoxItem<int>(
+                  value: m.id,
+                  child: Text('[${m.id}] ${m.title}'),
+                ))
+          ],
+          onChanged: (v) => setState(() => _parentId = v ?? 0),
+        ),
       ),
     );
   }
@@ -272,15 +272,17 @@ class _MenuFormDialogState extends State<MenuFormDialog> {
   Widget _buildTypeField() {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
-      child: DropdownButtonFormField<int>(
-        value: _type,
-        items: const [
-          DropdownMenuItem(value: MenuType.directory, child: Text('目录(1)')),
-          DropdownMenuItem(value: MenuType.page, child: Text('页面(2)')),
-          DropdownMenuItem(value: MenuType.button, child: Text('按钮(3)')),
-        ],
-        onChanged: (v) => setState(() => _type = v ?? MenuType.page),
-        decoration: const InputDecoration(labelText: '类型'),
+      child: InfoLabel(
+        label: '类型',
+        child: ComboBox<int>(
+          value: _type,
+          items: const [
+            ComboBoxItem(value: MenuType.directory, child: Text('目录(1)')),
+            ComboBoxItem(value: MenuType.page, child: Text('页面(2)')),
+            ComboBoxItem(value: MenuType.button, child: Text('按钮(3)')),
+          ],
+          onChanged: (v) => setState(() => _type = v ?? MenuType.page),
+        ),
       ),
     );
   }
@@ -292,11 +294,12 @@ class _MenuFormDialogState extends State<MenuFormDialog> {
       TextInputType? keyboardType}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
-      child: TextFormField(
-        controller: ctrl,
-        decoration: InputDecoration(labelText: label, hintText: hint),
-        validator: validator,
-        keyboardType: keyboardType,
+      child: InfoLabel(
+        label: label,
+        child: TextBox(
+          controller: ctrl,
+          placeholder: hint,
+        ),
       ),
     );
   }
@@ -310,7 +313,8 @@ class _MenuFormDialogState extends State<MenuFormDialog> {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Switch(value: value, onChanged: onChanged),
+        ToggleSwitch(checked: value, onChanged: onChanged),
+        const SizedBox(width: 8),
         Text(label),
       ],
     );

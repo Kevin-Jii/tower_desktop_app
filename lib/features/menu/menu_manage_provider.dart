@@ -34,12 +34,16 @@ class MenuManageProvider extends ChangeNotifier {
     _error = null;
     notifyListeners();
     try {
-      _all = await _api.getMenuTree();
+      final rawList = await _api.getMenuTree();
       // 重建 parent -> children 映射
       _byParent.clear();
-      for (final m in _all) {
+      for (final m in rawList) {
         _byParent.putIfAbsent(m.parentId, () => []).add(m);
       }
+
+      // 填充每个 MenuItem 的 children 字段，构建真正的树形结构
+      _all = _buildTree(_byParent[0] ?? []);
+
       // 默认展开：根层 + 所有有子节点的非按钮（目录/页面）
       _expanded.clear();
       final roots = _byParent[0] ?? [];
@@ -47,7 +51,7 @@ class MenuManageProvider extends ChangeNotifier {
         final children = _byParent[r.id] ?? [];
         if (children.isNotEmpty) _expanded.add(r.id);
       }
-      for (final m in _all) {
+      for (final m in rawList) {
         final children = _byParent[m.id] ?? [];
         if (children.isNotEmpty && (m.type == null || m.type != 3)) {
           _expanded.add(m.id);
@@ -59,6 +63,19 @@ class MenuManageProvider extends ChangeNotifier {
       _loading = false;
       notifyListeners();
     }
+  }
+
+  /// 构建树形结构，填充每个 MenuItem 的 children 字段
+  List<MenuItem> _buildTree(List<MenuItem> nodes) {
+    return nodes.map((node) {
+      final children = _byParent[node.id] ?? [];
+      if (children.isNotEmpty) {
+        // 递归构建子树
+        final updatedChildren = _buildTree(children);
+        return node.copyWith(children: updatedChildren);
+      }
+      return node;
+    }).toList();
   }
 
   /// 树扁平化用于管理表格展示

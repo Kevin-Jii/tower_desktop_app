@@ -22,6 +22,7 @@ class UITexts {
   static const roleEditButton = '修改';
   static const roleDeleteButton = '删除';
   static const roleDeleteConfirmTitle = '确认删除';
+  static const roleDeleteConfirmMessage = '确定要删除角色';
   static const roleDeleteConfirmContentPrefix = '确定删除角色';
   static const roleDeleteConfirmCancel = '取消';
   static const roleDeleteConfirmOk = '删除';
@@ -82,6 +83,20 @@ class UITexts {
   static const dishUpdateFailed = '菜品更新失败';
   static const dishDeleteSuccess = '菜品删除成功';
   static const dishDeleteFailed = '菜品删除失败';
+
+  // 菜单管理
+  static const menuTitle = '菜单管理';
+  static const menuAddButton = '新增菜单';
+  static const menuEditButton = '修改';
+  static const menuDeleteButton = '删除';
+  static const menuDeleteConfirmTitle = '确认删除';
+  static const menuDeleteConfirmMessage = '确定要删除菜单';
+  static const menuCreateSuccess = '创建成功';
+  static const menuCreateFailed = '创建失败';
+  static const menuUpdateSuccess = '更新成功';
+  static const menuUpdateFailed = '更新失败';
+  static const menuDeleteSuccess = '删除成功';
+  static const menuDeleteFailed = '删除失败';
 
   // 通用
   static const commonCancel = '取消';
