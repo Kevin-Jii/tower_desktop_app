@@ -43,3 +43,10 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Markdown files (except README.md)
+*.md
+!README.md
+
+# Kiro specs
+.kiro/

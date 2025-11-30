@@ -50,6 +50,11 @@ class SessionManager {
         _expiresIn = savedExpiresIn;
         _issuedAt = savedIssuedAt;
         ApiClient().setToken(savedToken);
+        // 设置用户ID和门店ID到请求头
+        ApiClient().setUserInfo(
+          userId: ui.id,
+          storeId: ui.storeId > 0 ? ui.storeId : null,
+        );
         // 过期检查
         if (isExpired) {
           await clear(persist: true);
@@ -71,6 +76,11 @@ class SessionManager {
     _expiresIn = expiresIn;
     _issuedAt = DateTime.now().millisecondsSinceEpoch ~/ 1000;
     ApiClient().setToken(token);
+    // 设置用户ID和门店ID到请求头
+    ApiClient().setUserInfo(
+      userId: userInfo.id,
+      storeId: userInfo.storeId > 0 ? userInfo.storeId : null,
+    );
     _persist();
   }
 
@@ -91,6 +101,7 @@ class SessionManager {
     _expiresIn = null;
     _issuedAt = null;
     ApiClient().setToken(null);
+    ApiClient().setUserInfo(userId: null, storeId: null);
     if (persist) {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove(_kToken);

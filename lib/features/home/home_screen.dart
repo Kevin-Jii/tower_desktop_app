@@ -33,50 +33,55 @@ class _HomeScreenState extends State<HomeScreen> {
 
     // 自定义菜单样式：根据主题自动适配
     final isDark = theme.brightness == Brightness.dark;
+    
+    // 选中状态的颜色 - 更明显的蓝色
+    const selectedBgColor = Color.fromRGBO(59, 130, 246, 0.15);
+    const selectedBgColorDark = Color.fromRGBO(59, 130, 246, 0.25);
+    const selectedTextColor = Color.fromRGBO(59, 130, 246, 1.0);
+    
     final customPaneTheme = NavigationPaneThemeData(
       backgroundColor: isDark ? const Color(0xFF2D2D2D) : Colors.white,
-      // 选中时的背景色
-      highlightColor: isDark 
-          ? const Color.fromRGBO(59, 130, 246, 0.2)
-          : const Color.fromRGBO(231, 238, 255, 1.0),
+      
+      // 选中时的高亮色 - 更明显
+      highlightColor: isDark ? selectedBgColorDark : selectedBgColor,
 
-      // 背景色控制
+      // 背景色控制 - 选中时更明显
       tileColor: WidgetStateProperty.resolveWith<Color?>((states) {
         if (states.contains(WidgetState.selected)) {
+          return isDark ? selectedBgColorDark : selectedBgColor;
+        }
+        if (states.contains(WidgetState.hovered)) {
           return isDark 
-              ? const Color.fromRGBO(59, 130, 246, 0.2)
-              : const Color.fromRGBO(231, 238, 255, 1.0);
+              ? Colors.grey[150].withOpacity(0.1)
+              : Colors.grey[30];
         }
         return Colors.transparent;
       }),
 
-      // 选中时文字颜色
-      selectedTextStyle: WidgetStateProperty.resolveWith<TextStyle?>((states) {
-        if (states.contains(WidgetState.selected)) {
-          return TextStyle(
-            color: isDark ? Colors.blue.lighter : const Color.fromRGBO(97, 145, 255, 1.0),
-            fontWeight: FontWeight.w600,
-            fontSize: 14,
-          );
-        }
-        return null;
-      }),
+      // 选中时文字颜色 - 蓝色加粗（深色和浅色模式都用蓝色）
+      selectedTextStyle: WidgetStateProperty.all(
+        const TextStyle(
+          color: Color.fromRGBO(59, 130, 246, 1.0),  // 蓝色
+          fontWeight: FontWeight.w700,
+          fontSize: 14,
+        ),
+      ),
       
       // 未选中时文字颜色
-      unselectedTextStyle: WidgetStateProperty.resolveWith<TextStyle?>((states) {
-        return TextStyle(
-          color: isDark ? Colors.white : Colors.black,
+      unselectedTextStyle: WidgetStateProperty.all(
+        TextStyle(
+          color: isDark ? Colors.white : const Color(0xFF333333),
           fontWeight: FontWeight.normal,
           fontSize: 14,
-        );
-      }),
+        ),
+      ),
       
-      // 图标颜色
+      // 图标颜色 - 选中时蓝色
       selectedIconColor: WidgetStateProperty.all(
-        isDark ? Colors.blue.lighter : const Color.fromRGBO(97, 145, 255, 1.0)
+        const Color.fromRGBO(59, 130, 246, 1.0),  // 蓝色
       ),
       unselectedIconColor: WidgetStateProperty.all(
-        isDark ? Colors.white : Colors.black
+        isDark ? Colors.grey[100] : const Color(0xFF666666)
       ),
 
       // 内边距
@@ -109,8 +114,12 @@ class _HomeScreenState extends State<HomeScreen> {
           onChanged: (index) {
             setState(() => _selectedIndex = index);
           },
-          displayMode: PaneDisplayMode.compact,
+          displayMode: PaneDisplayMode.auto,
+          indicator: const StickyNavigationIndicator(
+            color: Color.fromRGBO(59, 130, 246, 1.0),
+          ),
           items: _buildNavigationItems(mp),
+          autoSuggestBoxReplacement: const Icon(FluentIcons.search),
           footerItems: [
             PaneItemSeparator(),
             PaneItem(

@@ -1,5 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
+import 'core/di/service_locator.dart';
 import 'features/auth/login_screen.dart';
 import 'features/auth/permission_provider.dart';
 import 'features/auth/session_manager.dart';
@@ -15,7 +16,6 @@ import 'features/user/user_api.dart';
 import 'features/user/user_provider.dart';
 import 'features/store/store_api.dart';
 import 'features/store/store_provider.dart';
-import 'core/network/api_client.dart';
 import 'core/theme/fluent_theme_provider.dart';
 
 class TowerApp extends StatelessWidget {
@@ -23,21 +23,23 @@ class TowerApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final apiClient = ApiClient();
-    final storeApi = StoreApi(apiClient);
-    final userApi = UserApi(apiClient);
+    // Get services from ServiceLocator
+    final storeApi = sl.get<StoreApi>();
+    final userApi = sl.get<UserApi>();
+    final menuApi = sl.get<MenuApi>();
+    final dingTalkApi = sl.get<DingTalkApi>();
 
     return ChangeNotifierProvider(
       create: (_) => FluentThemeProvider(),
       child: MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (_) => PermissionProvider()),
-          ChangeNotifierProvider(create: (_) => MenuProvider(MenuApi())),
+          ChangeNotifierProvider(create: (_) => MenuProvider(menuApi)),
           ChangeNotifierProvider(
               create: (_) => UserProvider(userApi, storeApi)),
           ChangeNotifierProvider(create: (_) => StoreProvider(storeApi)),
           ChangeNotifierProvider(
-              create: (_) => DingTalkProvider(DingTalkApi(apiClient))),
+              create: (_) => DingTalkProvider(dingTalkApi)),
         ],
         child: FutureBuilder(
           future: _bootstrap(context),

@@ -13,7 +13,6 @@ class UserManagementPage extends StatefulWidget {
 }
 
 class _UserManagementPageState extends State<UserManagementPage> {
-  // 超级管理员用户ID（通常是1）或用户名
   static const int superAdminId = 1;
   static const String superAdminUsername = 'admin';
   
@@ -25,7 +24,6 @@ class _UserManagementPageState extends State<UserManagementPage> {
     });
   }
   
-  /// 检查是否是超级管理员
   bool _isSuperAdmin(User user) {
     return user.id == superAdminId || user.username == superAdminUsername;
   }
@@ -47,12 +45,8 @@ class _UserManagementPageState extends State<UserManagementPage> {
   }
 
   void _handleEdit(User user) async {
-    // 超级管理员保护
     if (_isSuperAdmin(user)) {
-      await FluentInfoBarHelper.showWarning(
-        context,
-        '超级管理员账号不允许编辑',
-      );
+      await FluentInfoBarHelper.showWarning(context, '超级管理员账号不允许编辑');
       return;
     }
     
@@ -61,8 +55,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
       builder: (ctx) => UserFormDialog(user: user),
     );
     if (result != null && mounted) {
-      final success =
-          await context.read<UserProvider>().updateUser(user.id, result);
+      final success = await context.read<UserProvider>().updateUser(user.id, result);
       if (success && mounted) {
         await FluentInfoBarHelper.showSuccess(context, '用户更新成功');
       } else if (mounted) {
@@ -73,12 +66,8 @@ class _UserManagementPageState extends State<UserManagementPage> {
   }
 
   void _handleDelete(User user) async {
-    // 超级管理员保护
     if (_isSuperAdmin(user)) {
-      await FluentInfoBarHelper.showWarning(
-        context,
-        '超级管理员账号不允许删除',
-      );
+      await FluentInfoBarHelper.showWarning(context, '超级管理员账号不允许删除');
       return;
     }
     
@@ -94,6 +83,9 @@ class _UserManagementPageState extends State<UserManagementPage> {
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
+            style: ButtonStyle(
+              backgroundColor: WidgetStateProperty.all(Colors.red),
+            ),
             child: const Text('删除'),
           ),
         ],
@@ -112,20 +104,14 @@ class _UserManagementPageState extends State<UserManagementPage> {
   }
 
   void _handleStatusChange(User user, bool value) async {
-    // 超级管理员保护
     if (_isSuperAdmin(user)) {
-      await FluentInfoBarHelper.showWarning(
-        context,
-        '超级管理员账号不允许修改状态',
-      );
+      await FluentInfoBarHelper.showWarning(context, '超级管理员账号不允许修改状态');
       return;
     }
     
     final newStatus = value ? 1 : 0;
     final req = UpdateUserRequest(status: newStatus);
-
-    final success =
-        await context.read<UserProvider>().updateUser(user.id, req);
+    final success = await context.read<UserProvider>().updateUser(user.id, req);
 
     if (success && mounted) {
       await FluentInfoBarHelper.showSuccess(context, '状态已更新');
@@ -150,31 +136,83 @@ class _UserManagementPageState extends State<UserManagementPage> {
   }
 
   Widget _buildToolbar() {
+    final theme = FluentTheme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
       decoration: BoxDecoration(
-        color: FluentTheme.of(context).micaBackgroundColor,
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            theme.accentColor.withOpacity(0.05),
+            isDark ? const Color(0xFF2D2D2D) : theme.micaBackgroundColor,
+          ],
+        ),
         border: Border(
           bottom: BorderSide(
-            color: FluentTheme.of(context).resources.dividerStrokeColorDefault,
+            color: theme.resources.dividerStrokeColorDefault,
+            width: 1,
           ),
         ),
       ),
       child: Row(
         children: [
-          Text(
-            '用户管理',
-            style: FluentTheme.of(context).typography.subtitle,
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.blue, Colors.blue.lighter],
+              ),
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.blue.withOpacity(0.3),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: const Icon(
+              FluentIcons.people,
+              size: 24,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '用户管理',
+                style: theme.typography.title?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                '管理系统用户账号和权限',
+                style: theme.typography.caption?.copyWith(
+                  color: isDark ? Colors.grey[100] : Colors.grey[130],
+                ),
+              ),
+            ],
           ),
           const Spacer(),
           FilledButton(
             onPressed: _handleCreate,
+            style: ButtonStyle(
+              padding: WidgetStateProperty.all(
+                const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              ),
+            ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: const [
-                Icon(FluentIcons.add, size: 16),
+                Icon(FluentIcons.add, size: 18),
                 SizedBox(width: 8),
-                Text('新增用户'),
+                Text('新增用户', style: TextStyle(fontSize: 14)),
               ],
             ),
           ),
@@ -184,124 +222,437 @@ class _UserManagementPageState extends State<UserManagementPage> {
   }
 
   Widget _buildContent() {
+    final theme = FluentTheme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
     return Consumer<UserProvider>(
       builder: (context, provider, _) {
         if (provider.loading) {
-          return const Center(child: ProgressRing());
-        }
-
-        if (provider.error != null) {
           return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(provider.error!),
-                const SizedBox(height: 16),
-                Button(
-                  onPressed: () => provider.loadUsers(),
-                  child: const Text('重试'),
+                const ProgressRing(),
+                const SizedBox(height: 20),
+                Text(
+                  '加载中...',
+                  style: theme.typography.body?.copyWith(
+                    color: isDark ? Colors.grey[100] : Colors.grey[130],
+                  ),
                 ),
               ],
             ),
           );
         }
 
-        if (provider.users.isEmpty) {
-          return const Center(child: Text('暂无用户数据'));
+        if (provider.error != null) {
+          return _buildErrorState(provider);
         }
 
-        return _buildUserList(provider.users);
+        if (provider.users.isEmpty) {
+          return _buildEmptyState();
+        }
+
+        return _buildUserGrid(provider.users);
       },
     );
   }
 
-  Widget _buildUserList(List<User> users) {
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: users.length,
-      itemBuilder: (context, index) {
-        final user = users[index];
-        final isActive = user.status == 1;
-        final isSuperAdmin = _isSuperAdmin(user);
-
-        return Card(
-          margin: const EdgeInsets.only(bottom: 8),
-          child: ListTile(
-            leading: CircleAvatar(
-              backgroundColor: isSuperAdmin ? Colors.orange : Colors.blue,
-              child: Text(
-                user.username.substring(0, 1).toUpperCase(),
-                style: const TextStyle(color: Colors.white),
+  Widget _buildErrorState(UserProvider provider) {
+    final theme = FluentTheme.of(context);
+    
+    return Center(
+      child: Container(
+        padding: const EdgeInsets.all(32),
+        margin: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: Colors.red.withOpacity(0.05),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.red.withOpacity(0.2)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.red.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(FluentIcons.error_badge, size: 48, color: Colors.red),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              '加载失败',
+              style: theme.typography.subtitle?.copyWith(
+                color: Colors.red.dark,
+                fontWeight: FontWeight.bold,
               ),
             ),
-            title: Row(
-              children: [
-                Text(
-                  user.username,
-                  style: FluentTheme.of(context).typography.bodyStrong,
-                ),
-                if (isSuperAdmin) ...[
-                  const SizedBox(width: 8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFFFF6B35), Color(0xFFFF9F1C)],
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Text(
-                      '👑 超级管理员',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
+            const SizedBox(height: 8),
+            Text(
+              provider.error!,
+              style: theme.typography.body?.copyWith(color: Colors.red.darker),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            FilledButton(
+              onPressed: () => provider.loadUsers(),
+              style: ButtonStyle(backgroundColor: WidgetStateProperty.all(Colors.red)),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  Icon(FluentIcons.refresh, size: 16),
+                  SizedBox(width: 8),
+                  Text('重试'),
                 ],
-              ],
+              ),
             ),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (user.nickname?.isNotEmpty == true) Text('昵称: ${user.nickname}'),
-                if (user.phone.isNotEmpty) Text('手机: ${user.phone}'),
-                if (user.email?.isNotEmpty == true) Text('邮箱: ${user.email}'),
-                if (user.role != null) Text('角色: ${user.role!.name}'),
-                if (isSuperAdmin)
-                  Text(
-                    '⚠️ 此账号受保护，不允许编辑、删除或修改状态',
-                    style: TextStyle(
-                      color: Colors.orange,
-                      fontSize: 12,
-                      fontStyle: FontStyle.italic,
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    final theme = FluentTheme.of(context);
+    
+    return Center(
+      child: Container(
+        padding: const EdgeInsets.all(48),
+        margin: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.blue.withOpacity(0.05),
+              Colors.purple.withOpacity(0.05),
+            ],
+          ),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: Colors.blue.withOpacity(0.1), width: 2),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.blue.withOpacity(0.1), Colors.purple.withOpacity(0.1)],
+                ),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(FluentIcons.people, size: 72, color: Colors.blue),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              '暂无用户数据',
+              style: theme.typography.title?.copyWith(
+                color: Colors.grey[160],
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              '点击右上角"新增用户"按钮创建第一个用户',
+              style: theme.typography.body?.copyWith(color: Colors.grey[130]),
+            ),
+            const SizedBox(height: 24),
+            FilledButton(
+              onPressed: _handleCreate,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  Icon(FluentIcons.add, size: 18),
+                  SizedBox(width: 8),
+                  Text('创建第一个用户'),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildUserGrid(List<User> users) {
+    final theme = FluentTheme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
+    return Container(
+      color: isDark ? const Color(0xFF1F1F1F) : const Color(0xFFF5F7FA),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          // 根据宽度计算列数
+          final width = constraints.maxWidth;
+          final crossAxisCount = width > 900 ? 2 : 1;
+          
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: Wrap(
+              spacing: 16,
+              runSpacing: 16,
+              children: users.map((user) {
+                final cardWidth = crossAxisCount == 2 
+                    ? (width - 48 - 16) / 2  // 减去 padding 和 spacing
+                    : width - 48;
+                return SizedBox(
+                  width: cardWidth,
+                  child: _buildUserCard(user),
+                );
+              }).toList(),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildUserCard(User user) {
+    final theme = FluentTheme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final isActive = user.status == 1;
+    final isSuperAdmin = _isSuperAdmin(user);
+    
+    return Card(
+      padding: const EdgeInsets.all(20),
+      backgroundColor: isDark ? const Color(0xFF2D2D2D) : Colors.white,
+      borderRadius: BorderRadius.circular(12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              // 用户头像
+              Container(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: isSuperAdmin
+                        ? [const Color(0xFFFF6B35), const Color(0xFFFF9F1C)]
+                        : [Colors.blue, Colors.blue.lighter],
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: (isSuperAdmin ? Colors.orange : Colors.blue).withOpacity(0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Center(
+                  child: Text(
+                    user.username.substring(0, 1).toUpperCase(),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-              ],
+                ),
+              ),
+              const SizedBox(width: 16),
+              
+              // 用户信息
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            user.username,
+                            style: theme.typography.bodyLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        // 状态标签
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: isActive
+                                  ? [Colors.green.lighter, Colors.green]
+                                  : [Colors.grey[60]!, Colors.grey[80]!],
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: (isActive ? Colors.green : Colors.grey).withOpacity(0.3),
+                                blurRadius: 4,
+                                offset: const Offset(0, 1),
+                              ),
+                            ],
+                          ),
+                          child: Text(
+                            isActive ? '✓ 启用' : '✕ 禁用',
+                            style: const TextStyle(
+                              fontSize: 11,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    if (user.nickname?.isNotEmpty == true)
+                      Row(
+                        children: [
+                          Icon(FluentIcons.contact, size: 12, color: isDark ? Colors.grey[100] : Colors.grey[130]),
+                          const SizedBox(width: 4),
+                          Text(
+                            user.nickname!,
+                            style: theme.typography.caption?.copyWith(
+                              color: isDark ? Colors.grey[100] : Colors.grey[130],
+                            ),
+                          ),
+                        ],
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          
+          // 详细信息
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: isDark ? Colors.grey[150].withOpacity(0.1) : Colors.grey[20],
+              borderRadius: BorderRadius.circular(8),
             ),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
+            child: Column(
               children: [
-                ToggleSwitch(
-                  checked: isActive,
-                  onChanged: isSuperAdmin ? null : (value) => _handleStatusChange(user, value),
-                ),
-                const SizedBox(width: 8),
-                Button(
-                  onPressed: isSuperAdmin ? null : () => _handleEdit(user),
-                  child: const Text('编辑'),
-                ),
-                const SizedBox(width: 8),
-                Button(
-                  onPressed: isSuperAdmin ? null : () => _handleDelete(user),
-                  child: const Text('删除'),
-                ),
+                if (user.phone.isNotEmpty)
+                  _buildInfoRow(FluentIcons.phone, '手机', user.phone, isDark),
+                if (user.email?.isNotEmpty == true)
+                  _buildInfoRow(FluentIcons.mail, '邮箱', user.email!, isDark),
+                if (user.role != null)
+                  _buildInfoRow(FluentIcons.permissions, '角色', user.role!.name, isDark),
               ],
             ),
           ),
-        );
-      },
+          
+          // 超级管理员标签
+          if (isSuperAdmin) ...[
+            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFFFF6B35), Color(0xFFFF9F1C)],
+                ),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text('👑', style: TextStyle(fontSize: 11)),
+                  SizedBox(width: 4),
+                  Text(
+                    '超级管理员',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+          
+          const SizedBox(height: 12),
+          
+          // 操作按钮
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              ToggleSwitch(
+                checked: isActive,
+                onChanged: isSuperAdmin ? null : (value) => _handleStatusChange(user, value),
+              ),
+              const SizedBox(width: 12),
+              Button(
+                onPressed: isSuperAdmin ? null : () => _handleEdit(user),
+                style: ButtonStyle(
+                  padding: WidgetStateProperty.all(
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(FluentIcons.edit, size: 12, color: isSuperAdmin ? Colors.grey : Colors.blue),
+                    const SizedBox(width: 4),
+                    Text('编辑', style: TextStyle(fontSize: 12, color: isSuperAdmin ? Colors.grey : null)),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 6),
+              Button(
+                onPressed: isSuperAdmin ? null : () => _handleDelete(user),
+                style: ButtonStyle(
+                  padding: WidgetStateProperty.all(
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(FluentIcons.delete, size: 12, color: isSuperAdmin ? Colors.grey : Colors.red),
+                    const SizedBox(width: 4),
+                    Text('删除', style: TextStyle(fontSize: 12, color: isSuperAdmin ? Colors.grey : Colors.red)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(IconData icon, String label, String value, bool isDark) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: Row(
+        children: [
+          Icon(icon, size: 12, color: isDark ? Colors.grey[100] : Colors.grey[130]),
+          const SizedBox(width: 6),
+          Text(
+            '$label: ',
+            style: TextStyle(
+              fontSize: 12,
+              color: isDark ? Colors.grey[100] : Colors.grey[130],
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: TextStyle(
+                fontSize: 12,
+                color: isDark ? Colors.white : Colors.grey[160],
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -313,42 +664,105 @@ class _UserManagementPageState extends State<UserManagementPage> {
         }
 
         final totalPages = (provider.total / provider.pageSize).ceil();
-        final currentPage = provider.page;
+        if (totalPages <= 1) {
+          return const SizedBox.shrink();
+        }
+        
+        final theme = FluentTheme.of(context);
+        final isDark = theme.brightness == Brightness.dark;
 
         return Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           decoration: BoxDecoration(
-            color: FluentTheme.of(context).micaBackgroundColor,
+            color: isDark ? const Color(0xFF2D2D2D) : Colors.white,
             border: Border(
               top: BorderSide(
-                color:
-                    FluentTheme.of(context).resources.dividerStrokeColorDefault,
+                color: isDark ? Colors.grey[100].withOpacity(0.2) : Colors.grey[40]!,
+                width: 1,
               ),
             ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 8,
+                offset: const Offset(0, -2),
+              ),
+            ],
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('共 ${provider.total} 条记录'),
               Row(
                 children: [
-                  IconButton(
-                    icon: const Icon(FluentIcons.chevron_left),
-                    onPressed: currentPage > 1
-                        ? () => provider.loadUsers(page: currentPage - 1)
-                        : null,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Text('$currentPage / $totalPages'),
-                  ),
-                  IconButton(
-                    icon: const Icon(FluentIcons.chevron_right),
-                    onPressed: currentPage < totalPages
-                        ? () => provider.loadUsers(page: currentPage + 1)
-                        : null,
+                  Icon(FluentIcons.database, size: 16, color: isDark ? Colors.grey[100] : Colors.grey[130]),
+                  const SizedBox(width: 8),
+                  Text(
+                    '共 ${provider.total} 条记录',
+                    style: TextStyle(
+                      color: isDark ? Colors.grey[100] : const Color(0xFF666666),
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ],
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: isDark ? Colors.grey[150].withOpacity(0.1) : Colors.grey[20],
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: isDark ? Colors.grey[100].withOpacity(0.2) : Colors.grey[40]!),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: Icon(
+                        FluentIcons.chevron_left,
+                        size: 16,
+                        color: provider.page > 1 ? Colors.blue : (isDark ? Colors.grey[100] : Colors.grey[100]),
+                      ),
+                      onPressed: provider.page > 1
+                          ? () => provider.loadUsers(page: provider.page - 1)
+                          : null,
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [Colors.blue, Colors.blue.lighter],
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.blue.withOpacity(0.3),
+                            blurRadius: 4,
+                            offset: const Offset(0, 1),
+                          ),
+                        ],
+                      ),
+                      child: Text(
+                        '${provider.page} / $totalPages',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    IconButton(
+                      icon: Icon(
+                        FluentIcons.chevron_right,
+                        size: 16,
+                        color: provider.page < totalPages ? Colors.blue : (isDark ? Colors.grey[100] : Colors.grey[100]),
+                      ),
+                      onPressed: provider.page < totalPages
+                          ? () => provider.loadUsers(page: provider.page + 1)
+                          : null,
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

@@ -10,11 +10,20 @@ class ApiClient {
   late final Dio dio;
 
   // 根据你的后端地址调整 (开发环境)
-  static const String baseUrl = 'http://47.120.27.64:10024/api/v1';
+  static const String baseUrl = 'http://172.19.160.1:10024/api/v1';
 
   String? _token;
+  int? _userId;
+  int? _storeId;
+  
   void setToken(String? token) {
     _token = token;
+  }
+  
+  /// 设置用户信息（用于请求头）
+  void setUserInfo({int? userId, int? storeId}) {
+    _userId = userId;
+    _storeId = storeId;
   }
 
   ApiClient._internal() {
@@ -29,8 +38,17 @@ class ApiClient {
 
     dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) {
+        // 添加 Token
         if (_token != null && _token!.isNotEmpty) {
           options.headers['Authorization'] = 'Bearer $_token';
+        }
+        // 添加用户ID
+        if (_userId != null) {
+          options.headers['X-User-Id'] = _userId.toString();
+        }
+        // 添加门店ID
+        if (_storeId != null) {
+          options.headers['X-Store-Id'] = _storeId.toString();
         }
         return handler.next(options);
       },
