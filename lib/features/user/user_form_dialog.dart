@@ -43,9 +43,8 @@ class _UserFormDialogState extends State<UserFormDialog> {
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (isEditMode) {
-        context.read<StoreProvider>().loadStores(pageSize: 1000);
-      }
+      // 新增和编辑模式都需要加载门店列表
+      context.read<StoreProvider>().loadStores(pageSize: 1000);
       _loadRoles();
     });
   }
@@ -183,17 +182,11 @@ class _UserFormDialogState extends State<UserFormDialog> {
             ),
 
             const SizedBox(height: 16),
-            _buildSectionTitle('角色分配', FluentIcons.permissions, isDark),
+            _buildSectionTitle('角色与门店', FluentIcons.permissions, isDark),
             const SizedBox(height: 12),
             _buildRoleSelector(isDark),
-
-            // 编辑模式显示门店
-            if (isEditMode) ...[
-              const SizedBox(height: 16),
-              _buildSectionTitle('其他设置', FluentIcons.settings, isDark),
-              const SizedBox(height: 12),
-              _buildStoreSelector(isDark),
-            ],
+            const SizedBox(height: 16),
+            _buildStoreSelector(isDark),
           ],
         ),
       ),

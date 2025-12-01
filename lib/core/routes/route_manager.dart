@@ -1,9 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:tower_desktop_app/features/menu/menu_management_page.dart';
 import 'package:tower_desktop_app/features/role/role_management_page.dart';
-import 'package:tower_desktop_app/features/dish/dish_management_page.dart';
 import 'package:tower_desktop_app/features/dingtalk/dingtalk_management_page.dart';
-import 'package:tower_desktop_app/features/menu_report/menu_report_management_page.dart';
 import 'package:tower_desktop_app/features/supplier/supplier_management_page.dart';
 import 'package:tower_desktop_app/features/purchase_order/purchase_order_list_page.dart';
 import '../../features/menu/models.dart';
@@ -40,17 +38,9 @@ class RouteManager {
       case 'store/list/index':
         return const StoreManagementPage();
 
-      // 菜品管理
-      case 'dish/list/index':
-        return const DishManagementScope();
-
       // 钉钉管理
       case 'dingtalk/robot/index':
         return const DingTalkManagementPage();
-      case 'report/list/index':
-        return const MenuReportManagementScope();
-      // case 'report/statistics/index':
-      //   return _buildModulePage('数据统计', menuItem);
 
       // 供应商管理
       case 'store/supplier/index':

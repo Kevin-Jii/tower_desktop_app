@@ -14,6 +14,16 @@ class _RoleFormDialogState extends State<RoleFormDialog> {
   final _codeCtrl = TextEditingController();
   final _descCtrl = TextEditingController();
 
+  // 受保护的角色编码，不允许修改编码和名称
+  static const _protectedRoleCodes = ['store_admin', 'staff'];
+
+  /// 判断当前编辑的角色是否为受保护角色
+  bool get _isProtectedRole {
+    if (widget.editing == null) return false;
+    final code = widget.editing!.code;
+    return _protectedRoleCodes.contains(code);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -40,9 +50,10 @@ class _RoleFormDialogState extends State<RoleFormDialog> {
     }
     
     if (widget.editing != null) {
+      // 受保护角色不允许修改编码和名称
       final req = UpdateRoleRequest(
-        name: _nameCtrl.text.trim(),
-        code: _codeCtrl.text.trim().isEmpty ? null : _codeCtrl.text.trim(),
+        name: _isProtectedRole ? null : _nameCtrl.text.trim(),
+        code: _isProtectedRole ? null : (_codeCtrl.text.trim().isEmpty ? null : _codeCtrl.text.trim()),
         description: _descCtrl.text.trim().isEmpty ? null : _descCtrl.text.trim(),
       );
       Navigator.pop(context, req);
@@ -144,7 +155,8 @@ class _RoleFormDialogState extends State<RoleFormDialog> {
                   child: TextBox(
                     controller: _nameCtrl,
                     placeholder: '例如：系统管理员、普通用户',
-                    autofocus: true,
+                    autofocus: !_isProtectedRole,
+                    enabled: !_isProtectedRole,
                     prefix: Padding(
                       padding: const EdgeInsets.only(left: 10),
                       child: Icon(FluentIcons.contact, size: 16, color: Colors.grey[130]),
@@ -152,6 +164,27 @@ class _RoleFormDialogState extends State<RoleFormDialog> {
                   ),
                 ),
               ),
+              if (_isProtectedRole) ...[
+                const SizedBox(height: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(4),
+                    border: Border.all(color: Colors.orange.withOpacity(0.3)),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(FluentIcons.lock, size: 12, color: Colors.orange),
+                      const SizedBox(width: 6),
+                      Text(
+                        '系统内置角色，名称不可修改',
+                        style: TextStyle(fontSize: 11, color: Colors.orange.dark),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
               const SizedBox(height: 20),
               InfoLabel(
                 label: '角色编码',
@@ -168,6 +201,7 @@ class _RoleFormDialogState extends State<RoleFormDialog> {
                   child: TextBox(
                     controller: _codeCtrl,
                     placeholder: '例如：admin、user、guest',
+                    enabled: !_isProtectedRole,
                     prefix: Padding(
                       padding: const EdgeInsets.only(left: 10),
                       child: Icon(FluentIcons.code, size: 16, color: Colors.grey[130]),
@@ -176,6 +210,27 @@ class _RoleFormDialogState extends State<RoleFormDialog> {
                   ),
                 ),
               ),
+              if (_isProtectedRole) ...[
+                const SizedBox(height: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(4),
+                    border: Border.all(color: Colors.orange.withOpacity(0.3)),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(FluentIcons.lock, size: 12, color: Colors.orange),
+                      const SizedBox(width: 6),
+                      Text(
+                        '系统内置角色，编码不可修改',
+                        style: TextStyle(fontSize: 11, color: Colors.orange.dark),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
               const SizedBox(height: 20),
               InfoLabel(
                 label: '角色描述',

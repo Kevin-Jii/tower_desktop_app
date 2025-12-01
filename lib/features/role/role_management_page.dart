@@ -75,23 +75,17 @@ class _RoleManagementPageState extends State<RoleManagementPage> {
   }
 
   void _openMenuConfig(RoleItem r) async {
-    // TODO: 从后端获取该角色已配置的菜单ID列表
-    final initialMenuIds = <int>[];
-    
-    final selectedMenuIds = await showDialog<List<int>>(
+    final result = await showDialog<bool>(
       context: context,
       builder: (_) => RoleMenuDialog(
         roleId: r.id,
         roleName: r.name,
-        initialMenuIds: initialMenuIds,
       ),
     );
     
-    if (selectedMenuIds != null) {
-      // TODO: 调用API保存角色菜单配置
-      // await context.read<RoleProvider>().updateRoleMenus(r.id, selectedMenuIds);
-      if (!mounted) return;
-      await FluentInfoBarHelper.showSuccess(context, '角色菜单配置已保存');
+    if (result == true && mounted) {
+      // 刷新角色列表
+      context.read<RoleProvider>().loadRoles();
     }
   }
 
@@ -481,245 +475,194 @@ class _RoleManagementPageState extends State<RoleManagementPage> {
     );
   }
 
+  // 判断是否为超级管理员角色
+  bool _isSuperAdminRole(RoleItem role) {
+    return role.code == 'super_admin' || role.id == 1;
+  }
+
   Widget _buildRoleList(List<RoleItem> roles) {
-    return GridView.builder(
+    final theme = FluentTheme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    return ListView.builder(
       padding: const EdgeInsets.all(24),
-      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-        maxCrossAxisExtent: 450,
-        childAspectRatio: 2.5,
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
-      ),
       itemCount: roles.length,
       itemBuilder: (context, index) {
         final role = roles[index];
         final isActive = (role.status ?? 1) == 1;
-        
-        return MouseRegion(
-          cursor: SystemMouseCursors.click,
-          child: Card(
-            padding: const EdgeInsets.all(20),
-            backgroundColor: Colors.white,
+        final isSuperAdmin = _isSuperAdminRole(role);
+
+        return Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF2D2D2D) : Colors.white,
             borderRadius: BorderRadius.circular(12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            border: Border.all(
+              color: isSuperAdmin
+                  ? Colors.orange.withOpacity(0.5)
+                  : (isDark ? Colors.grey[100].withOpacity(0.2) : Colors.grey[40]!),
+              width: isSuperAdmin ? 2 : 1,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(isDark ? 0.2 : 0.05),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
               children: [
-                Row(
-                  children: [
-                    // 角色图标
-                    Container(
-                      width: 56,
-                      height: 56,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: isActive
+                // 左侧图标
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: isSuperAdmin
+                          ? [const Color(0xFFFF6B35), const Color(0xFFFF9F1C)]
+                          : isActive
                               ? [Colors.blue, Colors.blue.lighter]
                               : [Colors.grey[100]!, Colors.grey[80]!],
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: (isActive ? Colors.blue : Colors.grey).withOpacity(0.2),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Icon(
-                        FluentIcons.permissions,
-                        size: 28,
-                        color: isActive ? Colors.white : Colors.grey[130],
-                      ),
                     ),
-                    const SizedBox(width: 16),
-                    
-                    // 角色信息
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  role.name,
-                                  style: FluentTheme.of(context).typography.bodyLarge?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: isActive
-                                        ? [Colors.green.lighter, Colors.green]
-                                        : [Colors.grey[60]!, Colors.grey[80]!],
-                                  ),
-                                  borderRadius: BorderRadius.circular(12),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: (isActive ? Colors.green : Colors.grey).withOpacity(0.3),
-                                      blurRadius: 4,
-                                      offset: const Offset(0, 1),
-                                    ),
-                                  ],
-                                ),
-                                child: Text(
-                                  isActive ? '✓ 启用' : '✕ 禁用',
-                                  style: const TextStyle(
-                                    fontSize: 11,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 6),
-                          if (role.code?.isNotEmpty == true)
-                            Row(
-                              children: [
-                                Icon(FluentIcons.code, size: 12, color: Colors.grey[130]),
-                                const SizedBox(width: 4),
-                                Text(
-                                  role.code!,
-                                  style: FluentTheme.of(context).typography.caption?.copyWith(
-                                    color: Colors.grey[130],
-                                    fontFamily: 'monospace',
-                                  ),
-                                ),
-                              ],
-                            ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                
-                // 描述
-                if (role.description?.isNotEmpty == true)
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[20],
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      role.description!,
-                      style: FluentTheme.of(context).typography.caption?.copyWith(
-                        color: Colors.grey[140],
-                        height: 1.4,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  )
-                else
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[20],
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.grey[40]!, style: BorderStyle.solid),
-                    ),
-                    child: Text(
-                      '暂无描述',
-                      style: FluentTheme.of(context).typography.caption?.copyWith(
-                        color: Colors.grey[100],
-                        fontStyle: FontStyle.italic,
-                      ),
-                    ),
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                
-                const Spacer(),
-                
-                // 底部信息和操作
-                Row(
-                  children: [
-                    if (role.createdAt != null)
-                      Expanded(
-                        child: Row(
-                          children: [
-                            Icon(FluentIcons.calendar, size: 12, color: Colors.grey[100]),
+                  child: Icon(
+                    isSuperAdmin ? FluentIcons.shield : FluentIcons.permissions,
+                    size: 22,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                // 中间信息
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            role.name,
+                            style: theme.typography.bodyStrong?.copyWith(fontSize: 15),
+                          ),
+                          if (isSuperAdmin) ...[
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: [Color(0xFFFF6B35), Color(0xFFFF9F1C)],
+                                ),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: const Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text('👑', style: TextStyle(fontSize: 10)),
+                                  SizedBox(width: 2),
+                                  Text('超管', style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+                                ],
+                              ),
+                            ),
+                          ],
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                            decoration: BoxDecoration(
+                              color: (isActive ? Colors.green : Colors.grey).withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Text(
+                              isActive ? '启用' : '禁用',
+                              style: TextStyle(fontSize: 11, color: isActive ? Colors.green : Colors.grey),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          if (role.code?.isNotEmpty == true) ...[
+                            Icon(FluentIcons.code, size: 11, color: Colors.grey[100]),
                             const SizedBox(width: 4),
+                            Text(
+                              role.code!,
+                              style: TextStyle(fontSize: 12, color: Colors.grey[100], fontFamily: 'monospace'),
+                            ),
+                            const SizedBox(width: 16),
+                          ],
+                          if (role.description?.isNotEmpty == true)
                             Expanded(
                               child: Text(
-                                role.createdAt!,
-                                style: FluentTheme.of(context).typography.caption?.copyWith(
-                                  color: Colors.grey[100],
-                                  fontSize: 11,
-                                ),
+                                role.description!,
+                                style: TextStyle(fontSize: 12, color: Colors.grey[130]),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
-                          ],
-                        ),
-                      ),
-                    const SizedBox(width: 8),
-                    // 操作按钮
-                    Button(
-                      onPressed: () => _openMenuConfig(role),
-                      style: ButtonStyle(
-                        padding: ButtonState.all(
-                          const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(FluentIcons.list, size: 12, color: Colors.blue),
-                          const SizedBox(width: 4),
-                          const Text('菜单', style: TextStyle(fontSize: 12)),
                         ],
                       ),
-                    ),
-                    const SizedBox(width: 6),
-                    Button(
-                      onPressed: () => _openEdit(role),
-                      style: ButtonStyle(
-                        padding: ButtonState.all(
-                          const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: const [
-                          Icon(FluentIcons.edit, size: 12),
-                          SizedBox(width: 4),
-                          Text('编辑', style: TextStyle(fontSize: 12)),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                    Button(
-                      onPressed: () => _delete(role),
-                      style: ButtonStyle(
-                        padding: ButtonState.all(
-                          const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(FluentIcons.delete, size: 12, color: Colors.red),
-                          const SizedBox(width: 4),
-                          Text('删除', style: TextStyle(fontSize: 12, color: Colors.red)),
-                        ],
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
+                // 右侧操作按钮（超级管理员不显示）
+                if (!isSuperAdmin) ...[
+                  _buildActionButton(
+                    icon: FluentIcons.list,
+                    label: '菜单',
+                    color: Colors.blue,
+                    onPressed: () => _openMenuConfig(role),
+                  ),
+                  const SizedBox(width: 8),
+                  _buildActionButton(
+                    icon: FluentIcons.edit,
+                    label: '编辑',
+                    color: Colors.teal,
+                    onPressed: () => _openEdit(role),
+                  ),
+                  const SizedBox(width: 8),
+                  _buildActionButton(
+                    icon: FluentIcons.delete,
+                    label: '删除',
+                    color: Colors.red,
+                    onPressed: () => _delete(role),
+                  ),
+                ],
               ],
             ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildActionButton({
+    required IconData icon,
+    required String label,
+    required Color color,
+    required VoidCallback onPressed,
+  }) {
+    return HoverButton(
+      onPressed: onPressed,
+      builder: (context, states) {
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          decoration: BoxDecoration(
+            color: states.isHovered ? color.withOpacity(0.1) : Colors.transparent,
+            borderRadius: BorderRadius.circular(6),
+            border: Border.all(color: color.withOpacity(0.3)),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, size: 14, color: color),
+              const SizedBox(width: 4),
+              Text(label, style: TextStyle(fontSize: 12, color: color)),
+            ],
           ),
         );
       },

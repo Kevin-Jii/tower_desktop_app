@@ -7,11 +7,8 @@ import 'package:tower_desktop_app/features/store/store_api.dart';
 import 'package:tower_desktop_app/features/store/store_repository.dart';
 import 'package:tower_desktop_app/features/role/role_api.dart';
 import 'package:tower_desktop_app/features/role/role_repository.dart';
-import 'package:tower_desktop_app/features/dish/dish_api.dart';
-import 'package:tower_desktop_app/features/dish/dish_category_api.dart';
 import 'package:tower_desktop_app/features/menu/menu_api.dart';
 import 'package:tower_desktop_app/features/dingtalk/dingtalk_api.dart';
-import 'package:tower_desktop_app/features/menu_report/menu_report_api.dart';
 import 'package:tower_desktop_app/features/supplier/supplier_api.dart';
 import 'package:tower_desktop_app/features/supplier/supplier_repository.dart';
 import 'package:tower_desktop_app/features/purchase_order/purchase_order_api.dart';
@@ -79,16 +76,6 @@ class ServiceConfig {
       () => RoleRepository(sl.get<ApiClient>()),
     );
 
-    // Dish API
-    locator.registerLazySingleton<DishApi>(
-      () => DishApi(sl.get<ApiClient>()),
-    );
-
-    // Dish Category API
-    locator.registerLazySingleton<DishCategoryApi>(
-      () => DishCategoryApi(sl.get<ApiClient>()),
-    );
-
     // Menu API (creates its own ApiClient internally)
     locator.registerLazySingleton<MenuApi>(
       () => MenuApi(),
@@ -97,11 +84,6 @@ class ServiceConfig {
     // DingTalk API
     locator.registerLazySingleton<DingTalkApi>(
       () => DingTalkApi(sl.get<ApiClient>()),
-    );
-
-    // Menu Report API
-    locator.registerLazySingleton<MenuReportApi>(
-      () => MenuReportApi(sl.get<ApiClient>()),
     );
 
     // Supplier API

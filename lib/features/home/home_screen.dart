@@ -370,10 +370,158 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  /// 构建用户信息卡
+  Widget _buildUserInfoCard(FluentThemeData theme, bool isDark, UserInfo? user) {
+    final displayName = user?.nickname.isNotEmpty == true
+        ? user!.nickname
+        : (user?.username.isNotEmpty == true ? user!.username : '未知用户');
+    final roleName = user?.role?.name ?? '未分配角色';
+    
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: isDark
+              ? [const Color(0xFF2D3748), const Color(0xFF1A202C)]
+              : [Colors.white, const Color(0xFFF7FAFC)],
+        ),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isDark ? Colors.grey[100].withOpacity(0.2) : Colors.grey[40]!,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(isDark ? 0.3 : 0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          // 头像
+          Container(
+            width: 64,
+            height: 64,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Colors.blue, Colors.blue.lighter],
+              ),
+              borderRadius: BorderRadius.circular(32),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.blue.withOpacity(0.3),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Center(
+              child: Text(
+                displayName.isNotEmpty ? displayName.substring(0, 1).toUpperCase() : '?',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 20),
+          // 用户信息
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      displayName,
+                      style: theme.typography.subtitle?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [Colors.teal.withOpacity(0.2), Colors.teal.withOpacity(0.1)],
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.teal.withOpacity(0.3)),
+                      ),
+                      child: Text(
+                        roleName,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.teal,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                // 详细信息行
+                Wrap(
+                  spacing: 20,
+                  runSpacing: 8,
+                  children: [
+                    if (user?.phone.isNotEmpty == true)
+                      _buildInfoItem(FluentIcons.phone, user!.phone, isDark),
+                    if (user?.email.isNotEmpty == true)
+                      _buildInfoItem(FluentIcons.mail, user!.email, isDark),
+                    if (user?.username.isNotEmpty == true && user?.username != displayName)
+                      _buildInfoItem(FluentIcons.contact, user!.username, isDark),
+                  ],
+                ),
+                if (user?.lastLoginAt.isNotEmpty == true) ...[
+                  const SizedBox(height: 8),
+                  Text(
+                    '上次登录: ${user!.lastLoginAt}',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: isDark ? Colors.grey[100] : Colors.grey[130],
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 构建信息项
+  Widget _buildInfoItem(IconData icon, String text, bool isDark) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 14, color: isDark ? Colors.grey[100] : Colors.grey[130]),
+        const SizedBox(width: 6),
+        Text(
+          text,
+          style: TextStyle(
+            fontSize: 13,
+            color: isDark ? Colors.grey[80] : Colors.grey[140],
+          ),
+        ),
+      ],
+    );
+  }
+
   /// 构建设置页面
   Widget _buildSettingsPage() {
     final theme = FluentTheme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final user = SessionManager().userInfo;
     
     return Container(
       padding: const EdgeInsets.all(24),
@@ -426,6 +574,10 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
           const SizedBox(height: 32),
+
+          // 用户信息卡
+          _buildUserInfoCard(theme, isDark, user),
+          const SizedBox(height: 20),
 
           // 主题设置
           Container(
