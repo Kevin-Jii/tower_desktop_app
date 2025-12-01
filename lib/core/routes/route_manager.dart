@@ -4,6 +4,8 @@ import 'package:tower_desktop_app/features/role/role_management_page.dart';
 import 'package:tower_desktop_app/features/dish/dish_management_page.dart';
 import 'package:tower_desktop_app/features/dingtalk/dingtalk_management_page.dart';
 import 'package:tower_desktop_app/features/menu_report/menu_report_management_page.dart';
+import 'package:tower_desktop_app/features/supplier/supplier_management_page.dart';
+import 'package:tower_desktop_app/features/purchase_order/purchase_order_list_page.dart';
 import '../../features/menu/models.dart';
 import '../constants/menu_types.dart';
 import '../../features/user/user_management_page.dart';
@@ -49,6 +51,14 @@ class RouteManager {
         return const MenuReportManagementScope();
       // case 'report/statistics/index':
       //   return _buildModulePage('数据统计', menuItem);
+
+      // 供应商管理
+      case 'store/supplier/index':
+        return const SupplierManagementPage();
+
+      // 采购订单
+      case 'purchase/order/index':
+        return const PurchaseOrderListPage();
 
       default:
         debugPrint('未匹配到页面: $component');

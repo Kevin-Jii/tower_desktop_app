@@ -102,5 +102,14 @@ class ApiPaths {
   static const String menuReports = '/menu-reports';
   static const String menuReportOrders = '/menu-reports';
   static const String menuReportItems = '/menu-report-items';
+  
+  // Supplier related paths
+  static const String suppliers = '/suppliers';
+  static const String supplierCategories = '/supplier-categories';
+  static const String supplierProducts = '/supplier-products';
+  static const String storeSupplierProducts = '/store-supplier-products';
+  
+  // Purchase Order related paths
+  static const String purchaseOrders = '/purchase-orders';
   // 如后端有统计/报表模块可继续补充：static const String reports = '/reports';
 }

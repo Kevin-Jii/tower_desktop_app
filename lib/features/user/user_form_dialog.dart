@@ -17,7 +17,6 @@ class UserFormDialog extends StatefulWidget {
 
 class _UserFormDialogState extends State<UserFormDialog> {
   final _usernameCtrl = TextEditingController();
-  final _nicknameCtrl = TextEditingController();
   final _phoneCtrl = TextEditingController();
   final _emailCtrl = TextEditingController();
   final _passwordCtrl = TextEditingController();
@@ -37,8 +36,6 @@ class _UserFormDialogState extends State<UserFormDialog> {
     if (widget.user != null) {
       final u = widget.user!;
       _usernameCtrl.text = u.username;
-      _nicknameCtrl.text = u.nickname ?? '';
-      _phoneCtrl.text = u.phone;
       _emailCtrl.text = u.email ?? '';
       _roleId = u.roleId;
       _storeId = u.storeId;
@@ -73,7 +70,6 @@ class _UserFormDialogState extends State<UserFormDialog> {
   @override
   void dispose() {
     _usernameCtrl.dispose();
-    _nicknameCtrl.dispose();
     _phoneCtrl.dispose();
     _emailCtrl.dispose();
     _passwordCtrl.dispose();
@@ -83,10 +79,7 @@ class _UserFormDialogState extends State<UserFormDialog> {
   void _submit() {
     if (isEditMode) {
       final req = UpdateUserRequest(
-        phone: _phoneCtrl.text.trim(),
-        nickname: _nicknameCtrl.text.trim().isEmpty
-            ? null
-            : _nicknameCtrl.text.trim(),
+        phone: widget.user!.phone,
         email: _emailCtrl.text.trim().isEmpty ? null : _emailCtrl.text.trim(),
         password: _passwordCtrl.text.isEmpty ? null : _passwordCtrl.text,
         roleId: _roleId,
@@ -99,9 +92,6 @@ class _UserFormDialogState extends State<UserFormDialog> {
         username: _usernameCtrl.text.trim(),
         phone: _phoneCtrl.text.trim(),
         password: _passwordCtrl.text,
-        nickname: _nicknameCtrl.text.trim().isEmpty
-            ? null
-            : _nicknameCtrl.text.trim(),
         email: _emailCtrl.text.trim().isEmpty ? null : _emailCtrl.text.trim(),
         roleId: _roleId,
         status: 1,
@@ -116,7 +106,7 @@ class _UserFormDialogState extends State<UserFormDialog> {
     final isDark = theme.brightness == Brightness.dark;
 
     return ContentDialog(
-      constraints: const BoxConstraints(maxWidth: 500, maxHeight: 600),
+      constraints: const BoxConstraints(maxWidth: 600, maxHeight: 700),
       title: Row(
         children: [
           Container(
@@ -147,23 +137,49 @@ class _UserFormDialogState extends State<UserFormDialog> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            // 基本信息
-            _buildSectionTitle('基本信息', FluentIcons.contact_info, isDark),
+            // 基本信息（编辑模式在标题后显示用户名）
+            _buildSectionTitle(
+              '基本信息',
+              FluentIcons.contact_info,
+              isDark,
+              suffix: isEditMode ? widget.user!.username : null,
+            ),
             const SizedBox(height: 12),
-            _buildTextField('用户名', _usernameCtrl, '请输入用户名',
-                required: true, enabled: !isEditMode),
-            _buildTextField('昵称', _nicknameCtrl, '请输入昵称（选填）'),
-            _buildTextField('手机号', _phoneCtrl, '请输入11位手机号', required: true),
-            _buildTextField('邮箱', _emailCtrl, '请输入邮箱地址（选填）'),
-
-            const SizedBox(height: 16),
-            _buildSectionTitle('安全信息', FluentIcons.lock, isDark),
-            const SizedBox(height: 12),
-            _buildLabel('密码', required: !isEditMode, isDark: isDark),
-            const SizedBox(height: 6),
-            PasswordBox(
-              controller: _passwordCtrl,
-              placeholder: isEditMode ? '留空则不修改密码' : '请输入密码',
+            // 新增模式：用户名和手机号一行
+            if (!isEditMode)
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildCompactTextField('用户名', _usernameCtrl, '请输入用户名', required: true),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: _buildCompactTextField('手机号', _phoneCtrl, '请输入11位手机号', required: true),
+                  ),
+                ],
+              ),
+            if (!isEditMode) const SizedBox(height: 12),
+            // 邮箱和密码一行
+            Row(
+              children: [
+                Expanded(
+                  child: _buildCompactTextField('邮箱', _emailCtrl, '请输入邮箱地址（选填）'),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildLabel('密码', required: !isEditMode, isDark: isDark),
+                      const SizedBox(height: 6),
+                      PasswordBox(
+                        controller: _passwordCtrl,
+                        placeholder: isEditMode ? '留空则不修改密码' : '请输入密码',
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
 
             const SizedBox(height: 16),
@@ -171,14 +187,12 @@ class _UserFormDialogState extends State<UserFormDialog> {
             const SizedBox(height: 12),
             _buildRoleSelector(isDark),
 
-            // 编辑模式显示门店和状态
+            // 编辑模式显示门店
             if (isEditMode) ...[
               const SizedBox(height: 16),
               _buildSectionTitle('其他设置', FluentIcons.settings, isDark),
               const SizedBox(height: 12),
               _buildStoreSelector(isDark),
-              const SizedBox(height: 12),
-              _buildStatusToggle(isDark),
             ],
           ],
         ),
@@ -209,7 +223,7 @@ class _UserFormDialogState extends State<UserFormDialog> {
     );
   }
 
-  Widget _buildSectionTitle(String title, IconData icon, bool isDark) {
+  Widget _buildSectionTitle(String title, IconData icon, bool isDark, {String? suffix}) {
     return Row(
       children: [
         Icon(icon, size: 16, color: Colors.blue),
@@ -222,6 +236,17 @@ class _UserFormDialogState extends State<UserFormDialog> {
             color: isDark ? Colors.white : const Color(0xFF333333),
           ),
         ),
+        if (suffix != null) ...[
+          const SizedBox(width: 12),
+          Text(
+            '【$suffix】',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: Colors.blue,
+            ),
+          ),
+        ],
         const SizedBox(width: 12),
         Expanded(
           child: Container(
@@ -280,6 +305,26 @@ class _UserFormDialogState extends State<UserFormDialog> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildCompactTextField(
+      String label, TextEditingController controller, String placeholder,
+      {bool required = false, bool enabled = true}) {
+    final theme = FluentTheme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildLabel(label, required: required, isDark: isDark),
+        const SizedBox(height: 6),
+        TextBox(
+          controller: controller,
+          placeholder: placeholder,
+          enabled: enabled,
+        ),
+      ],
     );
   }
 

@@ -16,12 +16,45 @@ class _UserManagementPageState extends State<UserManagementPage> {
   static const int superAdminId = 1;
   static const String superAdminUsername = 'admin';
   
+  final _usernameCtrl = TextEditingController();
+  final _phoneSuffixCtrl = TextEditingController();
+  
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<UserProvider>().loadUsers();
     });
+  }
+  
+  @override
+  void dispose() {
+    _usernameCtrl.dispose();
+    _phoneSuffixCtrl.dispose();
+    super.dispose();
+  }
+  
+  void _handleSearch() {
+    final username = _usernameCtrl.text.trim();
+    final phoneSuffix = _phoneSuffixCtrl.text.trim();
+    
+    // 组合查询关键字
+    String? keyword;
+    if (username.isNotEmpty && phoneSuffix.isNotEmpty) {
+      keyword = '$username,$phoneSuffix';
+    } else if (username.isNotEmpty) {
+      keyword = username;
+    } else if (phoneSuffix.isNotEmpty) {
+      keyword = phoneSuffix;
+    }
+    
+    context.read<UserProvider>().loadUsers(page: 1, keyword: keyword);
+  }
+  
+  void _handleReset() {
+    _usernameCtrl.clear();
+    _phoneSuffixCtrl.clear();
+    context.read<UserProvider>().loadUsers(page: 1, keyword: null);
   }
   
   bool _isSuperAdmin(User user) {
@@ -140,7 +173,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
     final isDark = theme.brightness == Brightness.dark;
     
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -157,64 +190,124 @@ class _UserManagementPageState extends State<UserManagementPage> {
           ),
         ),
       ),
-      child: Row(
+      child: Column(
         children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.blue, Colors.blue.lighter],
-              ),
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.blue.withOpacity(0.3),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: const Icon(
-              FluentIcons.people,
-              size: 24,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(width: 16),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          // 标题行
+          Row(
             children: [
-              Text(
-                '用户管理',
-                style: theme.typography.title?.copyWith(
-                  fontWeight: FontWeight.bold,
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.blue, Colors.blue.lighter],
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.blue.withOpacity(0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: const Icon(
+                  FluentIcons.people,
+                  size: 24,
+                  color: Colors.white,
                 ),
               ),
-              const SizedBox(height: 2),
-              Text(
-                '管理系统用户账号和权限',
-                style: theme.typography.caption?.copyWith(
-                  color: isDark ? Colors.grey[100] : Colors.grey[130],
+              const SizedBox(width: 16),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '用户管理',
+                    style: theme.typography.title?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    '管理系统用户账号和权限',
+                    style: theme.typography.caption?.copyWith(
+                      color: isDark ? Colors.grey[100] : Colors.grey[130],
+                    ),
+                  ),
+                ],
+              ),
+              const Spacer(),
+              FilledButton(
+                onPressed: _handleCreate,
+                style: ButtonStyle(
+                  padding: WidgetStateProperty.all(
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: const [
+                    Icon(FluentIcons.add, size: 18),
+                    SizedBox(width: 8),
+                    Text('新增用户', style: TextStyle(fontSize: 14)),
+                  ],
                 ),
               ),
             ],
           ),
-          const Spacer(),
-          FilledButton(
-            onPressed: _handleCreate,
-            style: ButtonStyle(
-              padding: WidgetStateProperty.all(
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          const SizedBox(height: 16),
+          // 查询行
+          Row(
+            children: [
+              SizedBox(
+                width: 180,
+                child: TextBox(
+                  controller: _usernameCtrl,
+                  placeholder: '用户名',
+                  prefix: const Padding(
+                    padding: EdgeInsets.only(left: 8),
+                    child: Icon(FluentIcons.contact, size: 14),
+                  ),
+                  onSubmitted: (_) => _handleSearch(),
+                ),
               ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: const [
-                Icon(FluentIcons.add, size: 18),
-                SizedBox(width: 8),
-                Text('新增用户', style: TextStyle(fontSize: 14)),
-              ],
-            ),
+              const SizedBox(width: 12),
+              SizedBox(
+                width: 180,
+                child: TextBox(
+                  controller: _phoneSuffixCtrl,
+                  placeholder: '手机号后四位',
+                  prefix: const Padding(
+                    padding: EdgeInsets.only(left: 8),
+                    child: Icon(FluentIcons.phone, size: 14),
+                  ),
+                  onSubmitted: (_) => _handleSearch(),
+                ),
+              ),
+              const SizedBox(width: 12),
+              FilledButton(
+                onPressed: _handleSearch,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: const [
+                    Icon(FluentIcons.search, size: 14),
+                    SizedBox(width: 6),
+                    Text('查询'),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              Button(
+                onPressed: _handleReset,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: const [
+                    Icon(FluentIcons.refresh, size: 14),
+                    SizedBox(width: 6),
+                    Text('重置'),
+                  ],
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -385,29 +478,50 @@ class _UserManagementPageState extends State<UserManagementPage> {
       color: isDark ? const Color(0xFF1F1F1F) : const Color(0xFFF5F7FA),
       child: LayoutBuilder(
         builder: (context, constraints) {
-          // 根据宽度计算列数
           final width = constraints.maxWidth;
+          final availableWidth = width - 48; // 减去左右padding
+          // 宽屏时两列，窄屏时一列
           final crossAxisCount = width > 900 ? 2 : 1;
           
           return SingleChildScrollView(
             padding: const EdgeInsets.all(24),
-            child: Wrap(
-              spacing: 16,
-              runSpacing: 16,
-              children: users.map((user) {
-                final cardWidth = crossAxisCount == 2 
-                    ? (width - 48 - 16) / 2  // 减去 padding 和 spacing
-                    : width - 48;
-                return SizedBox(
-                  width: cardWidth,
-                  child: _buildUserCard(user),
-                );
-              }).toList(),
+            child: Column(
+              children: _buildRows(users, crossAxisCount, availableWidth),
             ),
           );
         },
       ),
     );
+  }
+  
+  List<Widget> _buildRows(List<User> users, int crossAxisCount, double availableWidth) {
+    final List<Widget> rows = [];
+    final spacing = 16.0;
+    final cardWidth = crossAxisCount == 2 
+        ? (availableWidth - spacing) / 2 
+        : availableWidth;
+    
+    for (int i = 0; i < users.length; i += crossAxisCount) {
+      final rowUsers = users.skip(i).take(crossAxisCount).toList();
+      rows.add(
+        Padding(
+          padding: EdgeInsets.only(bottom: i + crossAxisCount < users.length ? spacing : 0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              for (int j = 0; j < rowUsers.length; j++) ...[
+                SizedBox(
+                  width: cardWidth,
+                  child: _buildUserCard(rowUsers[j]),
+                ),
+                if (j < rowUsers.length - 1) SizedBox(width: spacing),
+              ],
+            ],
+          ),
+        ),
+      );
+    }
+    return rows;
   }
 
   Widget _buildUserCard(User user) {
@@ -466,18 +580,44 @@ class _UserManagementPageState extends State<UserManagementPage> {
                   children: [
                     Row(
                       children: [
-                        Expanded(
-                          child: Text(
-                            user.username,
-                            style: theme.typography.bodyLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+                        Text(
+                          user.username,
+                          style: theme.typography.bodyLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
                           ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        const SizedBox(width: 8),
+                        // 超级管理员标签（放在名称后面）
+                        if (isSuperAdmin) ...[
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                colors: [Color(0xFFFF6B35), Color(0xFFFF9F1C)],
+                              ),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: const Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text('👑', style: TextStyle(fontSize: 10)),
+                                SizedBox(width: 2),
+                                Text(
+                                  '超级管理员',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                        const Spacer(),
                         // 状态标签
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -547,81 +687,53 @@ class _UserManagementPageState extends State<UserManagementPage> {
             ),
           ),
           
-          // 超级管理员标签
-          if (isSuperAdmin) ...[
-            const SizedBox(height: 8),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFFFF6B35), Color(0xFFFF9F1C)],
+          // 操作按钮（超级管理员不显示）
+          if (!isSuperAdmin) ...[
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                ToggleSwitch(
+                  checked: isActive,
+                  onChanged: (value) => _handleStatusChange(user, value),
                 ),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: const Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text('👑', style: TextStyle(fontSize: 11)),
-                  SizedBox(width: 4),
-                  Text(
-                    '超级管理员',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 11,
-                      fontWeight: FontWeight.bold,
+                const SizedBox(width: 12),
+                Button(
+                  onPressed: () => _handleEdit(user),
+                  style: ButtonStyle(
+                    padding: WidgetStateProperty.all(
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     ),
                   ),
-                ],
-              ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(FluentIcons.edit, size: 12, color: Colors.blue),
+                      const SizedBox(width: 4),
+                      const Text('编辑', style: TextStyle(fontSize: 12)),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Button(
+                  onPressed: () => _handleDelete(user),
+                  style: ButtonStyle(
+                    padding: WidgetStateProperty.all(
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(FluentIcons.delete, size: 12, color: Colors.red),
+                      const SizedBox(width: 4),
+                      Text('删除', style: TextStyle(fontSize: 12, color: Colors.red)),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ],
-          
-          const SizedBox(height: 12),
-          
-          // 操作按钮
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              ToggleSwitch(
-                checked: isActive,
-                onChanged: isSuperAdmin ? null : (value) => _handleStatusChange(user, value),
-              ),
-              const SizedBox(width: 12),
-              Button(
-                onPressed: isSuperAdmin ? null : () => _handleEdit(user),
-                style: ButtonStyle(
-                  padding: WidgetStateProperty.all(
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  ),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(FluentIcons.edit, size: 12, color: isSuperAdmin ? Colors.grey : Colors.blue),
-                    const SizedBox(width: 4),
-                    Text('编辑', style: TextStyle(fontSize: 12, color: isSuperAdmin ? Colors.grey : null)),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 6),
-              Button(
-                onPressed: isSuperAdmin ? null : () => _handleDelete(user),
-                style: ButtonStyle(
-                  padding: WidgetStateProperty.all(
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  ),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(FluentIcons.delete, size: 12, color: isSuperAdmin ? Colors.grey : Colors.red),
-                    const SizedBox(width: 4),
-                    Text('删除', style: TextStyle(fontSize: 12, color: isSuperAdmin ? Colors.grey : Colors.red)),
-                  ],
-                ),
-              ),
-            ],
-          ),
         ],
       ),
     );

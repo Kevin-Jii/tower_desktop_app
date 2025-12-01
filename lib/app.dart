@@ -16,6 +16,10 @@ import 'features/user/user_api.dart';
 import 'features/user/user_provider.dart';
 import 'features/store/store_api.dart';
 import 'features/store/store_provider.dart';
+import 'features/supplier/supplier_repository.dart';
+import 'features/supplier/supplier_provider.dart';
+import 'features/purchase_order/purchase_order_repository.dart';
+import 'features/purchase_order/purchase_order_provider.dart';
 import 'core/theme/fluent_theme_provider.dart';
 
 class TowerApp extends StatelessWidget {
@@ -28,6 +32,8 @@ class TowerApp extends StatelessWidget {
     final userApi = sl.get<UserApi>();
     final menuApi = sl.get<MenuApi>();
     final dingTalkApi = sl.get<DingTalkApi>();
+    final supplierRepository = sl.get<SupplierRepository>();
+    final purchaseOrderRepository = sl.get<PurchaseOrderRepository>();
 
     return ChangeNotifierProvider(
       create: (_) => FluentThemeProvider(),
@@ -40,6 +46,10 @@ class TowerApp extends StatelessWidget {
           ChangeNotifierProvider(create: (_) => StoreProvider(storeApi)),
           ChangeNotifierProvider(
               create: (_) => DingTalkProvider(dingTalkApi)),
+          ChangeNotifierProvider(
+              create: (_) => SupplierProvider(supplierRepository)),
+          ChangeNotifierProvider(
+              create: (_) => PurchaseOrderProvider(purchaseOrderRepository)),
         ],
         child: FutureBuilder(
           future: _bootstrap(context),

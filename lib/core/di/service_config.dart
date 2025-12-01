@@ -12,6 +12,10 @@ import 'package:tower_desktop_app/features/dish/dish_category_api.dart';
 import 'package:tower_desktop_app/features/menu/menu_api.dart';
 import 'package:tower_desktop_app/features/dingtalk/dingtalk_api.dart';
 import 'package:tower_desktop_app/features/menu_report/menu_report_api.dart';
+import 'package:tower_desktop_app/features/supplier/supplier_api.dart';
+import 'package:tower_desktop_app/features/supplier/supplier_repository.dart';
+import 'package:tower_desktop_app/features/purchase_order/purchase_order_api.dart';
+import 'package:tower_desktop_app/features/purchase_order/purchase_order_repository.dart';
 
 /// Service configuration for dependency injection
 ///
@@ -98,6 +102,26 @@ class ServiceConfig {
     // Menu Report API
     locator.registerLazySingleton<MenuReportApi>(
       () => MenuReportApi(sl.get<ApiClient>()),
+    );
+
+    // Supplier API
+    locator.registerLazySingleton<SupplierApi>(
+      () => SupplierApi(sl.get<ApiClient>()),
+    );
+
+    // Supplier Repository
+    locator.registerLazySingleton<SupplierRepository>(
+      () => SupplierRepository(sl.get<SupplierApi>()),
+    );
+
+    // Purchase Order API
+    locator.registerLazySingleton<PurchaseOrderApi>(
+      () => PurchaseOrderApi(sl.get<ApiClient>()),
+    );
+
+    // Purchase Order Repository
+    locator.registerLazySingleton<PurchaseOrderRepository>(
+      () => PurchaseOrderRepository(sl.get<PurchaseOrderApi>()),
     );
   }
 
