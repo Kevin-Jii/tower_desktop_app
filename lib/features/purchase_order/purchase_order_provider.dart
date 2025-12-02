@@ -30,6 +30,9 @@ class PurchaseOrderProvider with ChangeNotifier {
   int? _filterStoreId;
   int? get filterStoreId => _filterStoreId;
 
+  int? _filterSupplierId;
+  int? get filterSupplierId => _filterSupplierId;
+
   int? _filterStatus;
   int? get filterStatus => _filterStatus;
 
@@ -46,10 +49,15 @@ class PurchaseOrderProvider with ChangeNotifier {
   bool _detailLoading = false;
   bool get detailLoading => _detailLoading;
 
+  // Creating State
+  bool _creating = false;
+  bool get creating => _creating;
+
   Future<void> loadOrders({
     int? page,
     int? pageSize,
     int? storeId,
+    int? supplierId,
     int? status,
     String? startDate,
     String? endDate,
@@ -57,6 +65,7 @@ class PurchaseOrderProvider with ChangeNotifier {
     if (page != null) _page = page;
     if (pageSize != null) _pageSize = pageSize;
     if (storeId != null) _filterStoreId = storeId;
+    if (supplierId != null) _filterSupplierId = supplierId;
     if (status != null) _filterStatus = status;
     if (startDate != null) _filterStartDate = startDate;
     if (endDate != null) _filterEndDate = endDate;
@@ -69,6 +78,7 @@ class PurchaseOrderProvider with ChangeNotifier {
       page: _page,
       pageSize: _pageSize,
       storeId: _filterStoreId,
+      supplierId: _filterSupplierId,
       status: _filterStatus,
       startDate: _filterStartDate,
       endDate: _filterEndDate,
@@ -94,6 +104,7 @@ class PurchaseOrderProvider with ChangeNotifier {
 
   void clearFilters() {
     _filterStoreId = null;
+    _filterSupplierId = null;
     _filterStatus = null;
     _filterStartDate = null;
     _filterEndDate = null;
@@ -122,14 +133,35 @@ class PurchaseOrderProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<bool> createOrder(CreatePurchaseOrderRequest request) async {
+    _creating = true;
+    _error = null;
+    notifyListeners();
+
+    final result = await _repository.createPurchaseOrder(request);
+    _creating = false;
+
+    return result.when(
+      success: (order) {
+        loadOrders(page: 1);
+        notifyListeners();
+        return true;
+      },
+      failure: (err) {
+        _error = err.message;
+        notifyListeners();
+        return false;
+      },
+    );
+  }
+
   Future<bool> confirmOrder(int id) async {
     final result = await _repository.confirmPurchaseOrder(id);
     return result.when(
-      success: (order) {
-        if (order != null) {
-          _currentOrder = order;
-          loadOrders();
-        }
+      success: (_) {
+        // 重新加载详情和列表
+        loadOrderDetail(id);
+        loadOrders();
         return true;
       },
       failure: (err) {
@@ -143,11 +175,25 @@ class PurchaseOrderProvider with ChangeNotifier {
   Future<bool> cancelOrder(int id) async {
     final result = await _repository.cancelPurchaseOrder(id);
     return result.when(
-      success: (order) {
-        if (order != null) {
-          _currentOrder = order;
-          loadOrders();
-        }
+      success: (_) {
+        // 重新加载详情和列表
+        loadOrderDetail(id);
+        loadOrders();
+        return true;
+      },
+      failure: (err) {
+        _error = err.message;
+        notifyListeners();
+        return false;
+      },
+    );
+  }
+
+  Future<bool> deleteOrder(int id) async {
+    final result = await _repository.deletePurchaseOrder(id);
+    return result.when(
+      success: (_) {
+        loadOrders();
         return true;
       },
       failure: (err) {

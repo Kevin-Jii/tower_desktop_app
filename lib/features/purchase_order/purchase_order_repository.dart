@@ -43,19 +43,37 @@ class PurchaseOrderRepository {
     }
   }
 
-  Future<Result<PurchaseOrder?>> confirmPurchaseOrder(int id) async {
+  Future<Result<PurchaseOrder?>> createPurchaseOrder(CreatePurchaseOrderRequest request) async {
     try {
-      final order = await _api.confirmPurchaseOrder(id);
+      final order = await _api.createPurchaseOrder(request);
       return Result.success(order);
     } catch (e, stackTrace) {
       return Result.failure(ErrorHandler.handleAny(e, stackTrace));
     }
   }
 
-  Future<Result<PurchaseOrder?>> cancelPurchaseOrder(int id) async {
+  Future<Result<void>> confirmPurchaseOrder(int id) async {
     try {
-      final order = await _api.cancelPurchaseOrder(id);
-      return Result.success(order);
+      await _api.confirmPurchaseOrder(id);
+      return Result.success(null);
+    } catch (e, stackTrace) {
+      return Result.failure(ErrorHandler.handleAny(e, stackTrace));
+    }
+  }
+
+  Future<Result<void>> cancelPurchaseOrder(int id) async {
+    try {
+      await _api.cancelPurchaseOrder(id);
+      return Result.success(null);
+    } catch (e, stackTrace) {
+      return Result.failure(ErrorHandler.handleAny(e, stackTrace));
+    }
+  }
+
+  Future<Result<void>> deletePurchaseOrder(int id) async {
+    try {
+      await _api.deletePurchaseOrder(id);
+      return Result.success(null);
     } catch (e, stackTrace) {
       return Result.failure(ErrorHandler.handleAny(e, stackTrace));
     }

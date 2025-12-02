@@ -169,28 +169,38 @@ class SupplierRepository {
     }
   }
 
-  Future<Result<StoreSupplierProduct?>> bindSupplierProduct(BindSupplierProductRequest request) async {
+  /// 获取当前门店绑定的供应商商品列表（不分页）
+  Future<Result<List<StoreSupplierProduct>>> listStoreSupplierProducts({int? storeId}) async {
     try {
-      final result = await _api.bindSupplierProduct(request);
-      return Result.success(result);
+      final list = await _api.listStoreSupplierProducts(storeId: storeId);
+      return Result.success(list);
     } catch (e, stackTrace) {
       return Result.failure(ErrorHandler.handleAny(e, stackTrace));
     }
   }
 
-  Future<Result<void>> unbindSupplierProduct(int id) async {
+  Future<Result<void>> bindSupplierProducts(int storeId, List<int> productIds) async {
     try {
-      await _api.unbindSupplierProduct(id);
+      await _api.bindSupplierProducts(storeId, productIds);
       return Result.success(null);
     } catch (e, stackTrace) {
       return Result.failure(ErrorHandler.handleAny(e, stackTrace));
     }
   }
 
-  Future<Result<StoreSupplierProduct?>> setDefaultSupplier(int id, int storeId) async {
+  Future<Result<void>> unbindSupplierProducts(int storeId, List<int> productIds) async {
     try {
-      final result = await _api.setDefaultSupplier(id, storeId);
-      return Result.success(result);
+      await _api.unbindSupplierProducts(storeId, productIds);
+      return Result.success(null);
+    } catch (e, stackTrace) {
+      return Result.failure(ErrorHandler.handleAny(e, stackTrace));
+    }
+  }
+
+  Future<Result<void>> setDefaultSupplierProduct(int storeId, int productId) async {
+    try {
+      await _api.setDefaultSupplierProduct(storeId, productId);
+      return Result.success(null);
     } catch (e, stackTrace) {
       return Result.failure(ErrorHandler.handleAny(e, stackTrace));
     }

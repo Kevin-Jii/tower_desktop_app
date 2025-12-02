@@ -46,8 +46,9 @@ class RouteManager {
       case 'store/supplier/index':
         return const SupplierManagementPage();
 
-      // 采购订单
+      // 采购订单/采购管理
       case 'purchase/order/index':
+      case 'store/purchase/index':
         return const PurchaseOrderListPage();
 
       default:

@@ -134,7 +134,7 @@ class SupplierApi {
     int? supplierId,
   }) async {
     return _client.getPage<StoreSupplierProduct>(
-      ApiPaths.storeSupplierProducts,
+      ApiPaths.storeSuppliers,
       itemParser: StoreSupplierProduct.fromJson,
       queryParameters: {
         'page': page,
@@ -145,23 +145,49 @@ class SupplierApi {
     );
   }
 
-  Future<StoreSupplierProduct?> bindSupplierProduct(BindSupplierProductRequest request) async {
-    return await _client.postSmart<StoreSupplierProduct>(
-      path: ApiPaths.storeSupplierProducts,
-      data: request.toJson(),
+  /// 获取当前门店绑定的供应商商品列表（不分页）
+  Future<List<StoreSupplierProduct>> listStoreSupplierProducts({int? storeId}) async {
+    return await _client.getSimpleList<StoreSupplierProduct>(
+      path: ApiPaths.storeSuppliers,
       fromJson: StoreSupplierProduct.fromJson,
+      queryParameters: {
+        if (storeId != null) 'store_id': storeId,
+      },
     );
   }
 
-  Future<void> unbindSupplierProduct(int id) async {
-    await _client.deleteSmart(path: '${ApiPaths.storeSupplierProducts}/$id');
+  /// 门店绑定供应商商品
+  Future<void> bindSupplierProducts(int storeId, List<int> productIds) async {
+    await _client.postSmart<void>(
+      path: '${ApiPaths.storeSuppliers}/bind',
+      data: {
+        'store_id': storeId,
+        'product_ids': productIds,
+      },
+      fromJson: (_) => null,
+    );
   }
 
-  Future<StoreSupplierProduct?> setDefaultSupplier(int id, int storeId) async {
-    return await _client.putSmart<StoreSupplierProduct>(
-      path: '${ApiPaths.storeSupplierProducts}/$id/set-default',
-      data: {'store_id': storeId},
-      fromJson: StoreSupplierProduct.fromJson,
+  /// 门店解绑供应商商品
+  Future<void> unbindSupplierProducts(int storeId, List<int> productIds) async {
+    await _client.deleteSmart(
+      path: '${ApiPaths.storeSuppliers}/unbind',
+      data: {
+        'store_id': storeId,
+        'product_ids': productIds,
+      },
+    );
+  }
+
+  /// 设置默认供应商商品
+  Future<void> setDefaultSupplierProduct(int storeId, int productId) async {
+    await _client.putSmart<void>(
+      path: '${ApiPaths.storeSuppliers}/default',
+      data: {
+        'store_id': storeId,
+        'product_id': productId,
+      },
+      fromJson: (_) => null,
     );
   }
 }

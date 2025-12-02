@@ -39,6 +39,14 @@ class PurchaseOrderApi {
     );
   }
 
+  /// 按供应商分组获取采购单明细
+  Future<Map<String, dynamic>?> getPurchaseOrderBySupplier(int id) async {
+    return await _client.getSmart<Map<String, dynamic>>(
+      path: '${ApiPaths.purchaseOrders}/$id/by-supplier',
+      fromJson: (json) => json,
+    );
+  }
+
   Future<PurchaseOrder?> createPurchaseOrder(CreatePurchaseOrderRequest request) async {
     return await _client.postSmart<PurchaseOrder>(
       path: ApiPaths.purchaseOrders,
@@ -47,10 +55,10 @@ class PurchaseOrderApi {
     );
   }
 
-  Future<PurchaseOrder?> updatePurchaseOrder(int id, Map<String, dynamic> data) async {
-    return await _client.putSmart<PurchaseOrder>(
+  Future<void> updatePurchaseOrder(int id, UpdatePurchaseOrderRequest request) async {
+    await _client.putSmart<PurchaseOrder>(
       path: '${ApiPaths.purchaseOrders}/$id',
-      data: data,
+      data: request.toJson(),
       fromJson: PurchaseOrder.fromJson,
     );
   }
@@ -59,19 +67,13 @@ class PurchaseOrderApi {
     await _client.deleteSmart(path: '${ApiPaths.purchaseOrders}/$id');
   }
 
-  Future<PurchaseOrder?> confirmPurchaseOrder(int id) async {
-    return await _client.putSmart<PurchaseOrder>(
-      path: '${ApiPaths.purchaseOrders}/$id/confirm',
-      data: {},
-      fromJson: PurchaseOrder.fromJson,
-    );
+  /// 确认订单 - 更新状态为已确认(2)
+  Future<void> confirmPurchaseOrder(int id) async {
+    await updatePurchaseOrder(id, const UpdatePurchaseOrderRequest(status: PurchaseOrderStatus.confirmed));
   }
 
-  Future<PurchaseOrder?> cancelPurchaseOrder(int id) async {
-    return await _client.putSmart<PurchaseOrder>(
-      path: '${ApiPaths.purchaseOrders}/$id/cancel',
-      data: {},
-      fromJson: PurchaseOrder.fromJson,
-    );
+  /// 取消订单 - 更新状态为已取消(4)
+  Future<void> cancelPurchaseOrder(int id) async {
+    await updatePurchaseOrder(id, const UpdatePurchaseOrderRequest(status: PurchaseOrderStatus.cancelled));
   }
 }

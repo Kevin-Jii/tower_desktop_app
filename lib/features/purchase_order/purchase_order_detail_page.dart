@@ -28,22 +28,12 @@ class _PurchaseOrderDetailPageState extends State<PurchaseOrderDetailPage> {
     super.dispose();
   }
 
-  String _getStatusLabel(int status) {
-    switch (status) {
-      case 0: return '待确认';
-      case 1: return '已确认';
-      case 2: return '已完成';
-      case 3: return '已取消';
-      default: return '未知';
-    }
-  }
-
   Color _getStatusColor(int status) {
     switch (status) {
-      case 0: return Colors.orange;
-      case 1: return Colors.blue;
-      case 2: return Colors.green;
-      case 3: return Colors.red;
+      case PurchaseOrderStatus.pending: return Colors.orange;
+      case PurchaseOrderStatus.confirmed: return Colors.blue;
+      case PurchaseOrderStatus.completed: return Colors.green;
+      case PurchaseOrderStatus.cancelled: return Colors.red;
       default: return Colors.grey;
     }
   }
@@ -137,7 +127,7 @@ class _PurchaseOrderDetailPageState extends State<PurchaseOrderDetailPage> {
     final theme = FluentTheme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final statusColor = _getStatusColor(order.status);
-    final isPending = order.status == 0;
+    final isPending = order.status == PurchaseOrderStatus.pending;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
@@ -180,12 +170,12 @@ class _PurchaseOrderDetailPageState extends State<PurchaseOrderDetailPage> {
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(color: statusColor.withOpacity(0.3)),
                       ),
-                      child: Text(_getStatusLabel(order.status), style: TextStyle(fontSize: 12, color: statusColor, fontWeight: FontWeight.w600)),
+                      child: Text(PurchaseOrderStatus.getLabel(order.status), style: TextStyle(fontSize: 12, color: statusColor, fontWeight: FontWeight.w600)),
                     ),
                   ],
                 ),
                 const SizedBox(height: 4),
-                Text('${order.store?.name ?? '未知门店'} · ${order.reportDate}', style: theme.typography.caption?.copyWith(color: isDark ? Colors.grey[100] : Colors.grey[130])),
+                Text('${order.store?.name ?? '未知门店'} · ${order.orderDate ?? '-'}', style: theme.typography.caption?.copyWith(color: isDark ? Colors.grey[100] : Colors.grey[130])),
               ],
             ),
           ),
@@ -257,7 +247,7 @@ class _PurchaseOrderDetailPageState extends State<PurchaseOrderDetailPage> {
 
   Widget _buildItemCard(PurchaseOrderItem item, bool isDark) {
     final theme = FluentTheme.of(context);
-    final product = item.supplierProduct;
+    final product = item.product;
 
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
@@ -273,7 +263,7 @@ class _PurchaseOrderDetailPageState extends State<PurchaseOrderDetailPage> {
               color: Colors.purple.withOpacity(0.1),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Center(child: Text(product?.name.substring(0, 1) ?? '?', style: TextStyle(color: Colors.purple, fontWeight: FontWeight.bold))),
+            child: Center(child: Text(product?.name.isNotEmpty == true ? product!.name.substring(0, 1) : '?', style: TextStyle(color: Colors.purple, fontWeight: FontWeight.bold))),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -288,7 +278,7 @@ class _PurchaseOrderDetailPageState extends State<PurchaseOrderDetailPage> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text('${item.quantity} × ¥${item.price.toStringAsFixed(2)}', style: TextStyle(fontSize: 12, color: Colors.grey[130])),
+              Text('${item.quantity} × ¥${item.unitPrice.toStringAsFixed(2)}', style: TextStyle(fontSize: 12, color: Colors.grey[130])),
               Text('¥${item.amount.toStringAsFixed(2)}', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.orange)),
             ],
           ),

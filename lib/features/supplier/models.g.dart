@@ -99,14 +99,16 @@ _$StoreSupplierProductImpl _$$StoreSupplierProductImplFromJson(
     _$StoreSupplierProductImpl(
       id: (json['id'] as num).toInt(),
       storeId: (json['store_id'] as num).toInt(),
-      supplierProductId: (json['supplier_product_id'] as num).toInt(),
+      productId: (json['product_id'] as num).toInt(),
       isDefault: json['is_default'] as bool? ?? false,
       createdAt: json['created_at'] as String?,
       updatedAt: json['updated_at'] as String?,
-      supplierProduct: json['supplier_product'] == null
+      product: json['product'] == null
           ? null
-          : SupplierProduct.fromJson(
-              json['supplier_product'] as Map<String, dynamic>),
+          : SupplierProduct.fromJson(json['product'] as Map<String, dynamic>),
+      store: json['store'] == null
+          ? null
+          : Store.fromJson(json['store'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$StoreSupplierProductImplToJson(
@@ -114,25 +116,10 @@ Map<String, dynamic> _$$StoreSupplierProductImplToJson(
     <String, dynamic>{
       'id': instance.id,
       'store_id': instance.storeId,
-      'supplier_product_id': instance.supplierProductId,
+      'product_id': instance.productId,
       'is_default': instance.isDefault,
       'created_at': instance.createdAt,
       'updated_at': instance.updatedAt,
-      'supplier_product': instance.supplierProduct,
-    };
-
-_$BindSupplierProductRequestImpl _$$BindSupplierProductRequestImplFromJson(
-        Map<String, dynamic> json) =>
-    _$BindSupplierProductRequestImpl(
-      storeId: (json['store_id'] as num).toInt(),
-      supplierProductId: (json['supplier_product_id'] as num).toInt(),
-      isDefault: json['is_default'] as bool?,
-    );
-
-Map<String, dynamic> _$$BindSupplierProductRequestImplToJson(
-        _$BindSupplierProductRequestImpl instance) =>
-    <String, dynamic>{
-      'store_id': instance.storeId,
-      'supplier_product_id': instance.supplierProductId,
-      'is_default': instance.isDefault,
+      'product': instance.product,
+      'store': instance.store,
     };

@@ -28,18 +28,18 @@ mixin _$PurchaseOrder {
   @JsonKey(name: 'total_amount')
   double get totalAmount => throw _privateConstructorUsedError;
   int get status =>
-      throw _privateConstructorUsedError; // 0=待确认, 1=已确认, 2=已完成, 3=已取消
-  @JsonKey(name: 'report_date')
-  String get reportDate => throw _privateConstructorUsedError;
+      throw _privateConstructorUsedError; // 1=待确认, 2=已确认, 3=已完成, 4=已取消
+  @JsonKey(name: 'order_date')
+  String? get orderDate => throw _privateConstructorUsedError;
+  String? get remark => throw _privateConstructorUsedError;
   @JsonKey(name: 'created_by')
   int? get createdBy => throw _privateConstructorUsedError;
   @JsonKey(name: 'created_at')
   String? get createdAt => throw _privateConstructorUsedError;
   @JsonKey(name: 'updated_at')
   String? get updatedAt => throw _privateConstructorUsedError; // 关联数据
-  @JsonKey(name: 'store')
   Store? get store => throw _privateConstructorUsedError;
-  @JsonKey(name: 'items')
+  User? get creator => throw _privateConstructorUsedError;
   List<PurchaseOrderItem>? get items => throw _privateConstructorUsedError;
 
   /// Serializes this PurchaseOrder to a JSON map.
@@ -64,14 +64,17 @@ abstract class $PurchaseOrderCopyWith<$Res> {
       @JsonKey(name: 'store_id') int storeId,
       @JsonKey(name: 'total_amount') double totalAmount,
       int status,
-      @JsonKey(name: 'report_date') String reportDate,
+      @JsonKey(name: 'order_date') String? orderDate,
+      String? remark,
       @JsonKey(name: 'created_by') int? createdBy,
       @JsonKey(name: 'created_at') String? createdAt,
       @JsonKey(name: 'updated_at') String? updatedAt,
-      @JsonKey(name: 'store') Store? store,
-      @JsonKey(name: 'items') List<PurchaseOrderItem>? items});
+      Store? store,
+      User? creator,
+      List<PurchaseOrderItem>? items});
 
   $StoreCopyWith<$Res>? get store;
+  $UserCopyWith<$Res>? get creator;
 }
 
 /// @nodoc
@@ -94,11 +97,13 @@ class _$PurchaseOrderCopyWithImpl<$Res, $Val extends PurchaseOrder>
     Object? storeId = null,
     Object? totalAmount = null,
     Object? status = null,
-    Object? reportDate = null,
+    Object? orderDate = freezed,
+    Object? remark = freezed,
     Object? createdBy = freezed,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
     Object? store = freezed,
+    Object? creator = freezed,
     Object? items = freezed,
   }) {
     return _then(_value.copyWith(
@@ -122,10 +127,14 @@ class _$PurchaseOrderCopyWithImpl<$Res, $Val extends PurchaseOrder>
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as int,
-      reportDate: null == reportDate
-          ? _value.reportDate
-          : reportDate // ignore: cast_nullable_to_non_nullable
-              as String,
+      orderDate: freezed == orderDate
+          ? _value.orderDate
+          : orderDate // ignore: cast_nullable_to_non_nullable
+              as String?,
+      remark: freezed == remark
+          ? _value.remark
+          : remark // ignore: cast_nullable_to_non_nullable
+              as String?,
       createdBy: freezed == createdBy
           ? _value.createdBy
           : createdBy // ignore: cast_nullable_to_non_nullable
@@ -142,6 +151,10 @@ class _$PurchaseOrderCopyWithImpl<$Res, $Val extends PurchaseOrder>
           ? _value.store
           : store // ignore: cast_nullable_to_non_nullable
               as Store?,
+      creator: freezed == creator
+          ? _value.creator
+          : creator // ignore: cast_nullable_to_non_nullable
+              as User?,
       items: freezed == items
           ? _value.items
           : items // ignore: cast_nullable_to_non_nullable
@@ -162,6 +175,20 @@ class _$PurchaseOrderCopyWithImpl<$Res, $Val extends PurchaseOrder>
       return _then(_value.copyWith(store: value) as $Val);
     });
   }
+
+  /// Create a copy of PurchaseOrder
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $UserCopyWith<$Res>? get creator {
+    if (_value.creator == null) {
+      return null;
+    }
+
+    return $UserCopyWith<$Res>(_value.creator!, (value) {
+      return _then(_value.copyWith(creator: value) as $Val);
+    });
+  }
 }
 
 /// @nodoc
@@ -178,15 +205,19 @@ abstract class _$$PurchaseOrderImplCopyWith<$Res>
       @JsonKey(name: 'store_id') int storeId,
       @JsonKey(name: 'total_amount') double totalAmount,
       int status,
-      @JsonKey(name: 'report_date') String reportDate,
+      @JsonKey(name: 'order_date') String? orderDate,
+      String? remark,
       @JsonKey(name: 'created_by') int? createdBy,
       @JsonKey(name: 'created_at') String? createdAt,
       @JsonKey(name: 'updated_at') String? updatedAt,
-      @JsonKey(name: 'store') Store? store,
-      @JsonKey(name: 'items') List<PurchaseOrderItem>? items});
+      Store? store,
+      User? creator,
+      List<PurchaseOrderItem>? items});
 
   @override
   $StoreCopyWith<$Res>? get store;
+  @override
+  $UserCopyWith<$Res>? get creator;
 }
 
 /// @nodoc
@@ -207,11 +238,13 @@ class __$$PurchaseOrderImplCopyWithImpl<$Res>
     Object? storeId = null,
     Object? totalAmount = null,
     Object? status = null,
-    Object? reportDate = null,
+    Object? orderDate = freezed,
+    Object? remark = freezed,
     Object? createdBy = freezed,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
     Object? store = freezed,
+    Object? creator = freezed,
     Object? items = freezed,
   }) {
     return _then(_$PurchaseOrderImpl(
@@ -235,10 +268,14 @@ class __$$PurchaseOrderImplCopyWithImpl<$Res>
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as int,
-      reportDate: null == reportDate
-          ? _value.reportDate
-          : reportDate // ignore: cast_nullable_to_non_nullable
-              as String,
+      orderDate: freezed == orderDate
+          ? _value.orderDate
+          : orderDate // ignore: cast_nullable_to_non_nullable
+              as String?,
+      remark: freezed == remark
+          ? _value.remark
+          : remark // ignore: cast_nullable_to_non_nullable
+              as String?,
       createdBy: freezed == createdBy
           ? _value.createdBy
           : createdBy // ignore: cast_nullable_to_non_nullable
@@ -255,6 +292,10 @@ class __$$PurchaseOrderImplCopyWithImpl<$Res>
           ? _value.store
           : store // ignore: cast_nullable_to_non_nullable
               as Store?,
+      creator: freezed == creator
+          ? _value.creator
+          : creator // ignore: cast_nullable_to_non_nullable
+              as User?,
       items: freezed == items
           ? _value._items
           : items // ignore: cast_nullable_to_non_nullable
@@ -270,14 +311,16 @@ class _$PurchaseOrderImpl implements _PurchaseOrder {
       {required this.id,
       @JsonKey(name: 'order_no') required this.orderNo,
       @JsonKey(name: 'store_id') required this.storeId,
-      @JsonKey(name: 'total_amount') required this.totalAmount,
-      required this.status,
-      @JsonKey(name: 'report_date') required this.reportDate,
+      @JsonKey(name: 'total_amount') this.totalAmount = 0.0,
+      this.status = 1,
+      @JsonKey(name: 'order_date') this.orderDate,
+      this.remark,
       @JsonKey(name: 'created_by') this.createdBy,
       @JsonKey(name: 'created_at') this.createdAt,
       @JsonKey(name: 'updated_at') this.updatedAt,
-      @JsonKey(name: 'store') this.store,
-      @JsonKey(name: 'items') final List<PurchaseOrderItem>? items})
+      this.store,
+      this.creator,
+      final List<PurchaseOrderItem>? items})
       : _items = items;
 
   factory _$PurchaseOrderImpl.fromJson(Map<String, dynamic> json) =>
@@ -295,11 +338,14 @@ class _$PurchaseOrderImpl implements _PurchaseOrder {
   @JsonKey(name: 'total_amount')
   final double totalAmount;
   @override
+  @JsonKey()
   final int status;
-// 0=待确认, 1=已确认, 2=已完成, 3=已取消
+// 1=待确认, 2=已确认, 3=已完成, 4=已取消
   @override
-  @JsonKey(name: 'report_date')
-  final String reportDate;
+  @JsonKey(name: 'order_date')
+  final String? orderDate;
+  @override
+  final String? remark;
   @override
   @JsonKey(name: 'created_by')
   final int? createdBy;
@@ -311,11 +357,11 @@ class _$PurchaseOrderImpl implements _PurchaseOrder {
   final String? updatedAt;
 // 关联数据
   @override
-  @JsonKey(name: 'store')
   final Store? store;
+  @override
+  final User? creator;
   final List<PurchaseOrderItem>? _items;
   @override
-  @JsonKey(name: 'items')
   List<PurchaseOrderItem>? get items {
     final value = _items;
     if (value == null) return null;
@@ -326,7 +372,7 @@ class _$PurchaseOrderImpl implements _PurchaseOrder {
 
   @override
   String toString() {
-    return 'PurchaseOrder(id: $id, orderNo: $orderNo, storeId: $storeId, totalAmount: $totalAmount, status: $status, reportDate: $reportDate, createdBy: $createdBy, createdAt: $createdAt, updatedAt: $updatedAt, store: $store, items: $items)';
+    return 'PurchaseOrder(id: $id, orderNo: $orderNo, storeId: $storeId, totalAmount: $totalAmount, status: $status, orderDate: $orderDate, remark: $remark, createdBy: $createdBy, createdAt: $createdAt, updatedAt: $updatedAt, store: $store, creator: $creator, items: $items)';
   }
 
   @override
@@ -340,8 +386,9 @@ class _$PurchaseOrderImpl implements _PurchaseOrder {
             (identical(other.totalAmount, totalAmount) ||
                 other.totalAmount == totalAmount) &&
             (identical(other.status, status) || other.status == status) &&
-            (identical(other.reportDate, reportDate) ||
-                other.reportDate == reportDate) &&
+            (identical(other.orderDate, orderDate) ||
+                other.orderDate == orderDate) &&
+            (identical(other.remark, remark) || other.remark == remark) &&
             (identical(other.createdBy, createdBy) ||
                 other.createdBy == createdBy) &&
             (identical(other.createdAt, createdAt) ||
@@ -349,6 +396,7 @@ class _$PurchaseOrderImpl implements _PurchaseOrder {
             (identical(other.updatedAt, updatedAt) ||
                 other.updatedAt == updatedAt) &&
             (identical(other.store, store) || other.store == store) &&
+            (identical(other.creator, creator) || other.creator == creator) &&
             const DeepCollectionEquality().equals(other._items, _items));
   }
 
@@ -361,11 +409,13 @@ class _$PurchaseOrderImpl implements _PurchaseOrder {
       storeId,
       totalAmount,
       status,
-      reportDate,
+      orderDate,
+      remark,
       createdBy,
       createdAt,
       updatedAt,
       store,
+      creator,
       const DeepCollectionEquality().hash(_items));
 
   /// Create a copy of PurchaseOrder
@@ -386,18 +436,19 @@ class _$PurchaseOrderImpl implements _PurchaseOrder {
 
 abstract class _PurchaseOrder implements PurchaseOrder {
   const factory _PurchaseOrder(
-          {required final int id,
-          @JsonKey(name: 'order_no') required final String orderNo,
-          @JsonKey(name: 'store_id') required final int storeId,
-          @JsonKey(name: 'total_amount') required final double totalAmount,
-          required final int status,
-          @JsonKey(name: 'report_date') required final String reportDate,
-          @JsonKey(name: 'created_by') final int? createdBy,
-          @JsonKey(name: 'created_at') final String? createdAt,
-          @JsonKey(name: 'updated_at') final String? updatedAt,
-          @JsonKey(name: 'store') final Store? store,
-          @JsonKey(name: 'items') final List<PurchaseOrderItem>? items}) =
-      _$PurchaseOrderImpl;
+      {required final int id,
+      @JsonKey(name: 'order_no') required final String orderNo,
+      @JsonKey(name: 'store_id') required final int storeId,
+      @JsonKey(name: 'total_amount') final double totalAmount,
+      final int status,
+      @JsonKey(name: 'order_date') final String? orderDate,
+      final String? remark,
+      @JsonKey(name: 'created_by') final int? createdBy,
+      @JsonKey(name: 'created_at') final String? createdAt,
+      @JsonKey(name: 'updated_at') final String? updatedAt,
+      final Store? store,
+      final User? creator,
+      final List<PurchaseOrderItem>? items}) = _$PurchaseOrderImpl;
 
   factory _PurchaseOrder.fromJson(Map<String, dynamic> json) =
       _$PurchaseOrderImpl.fromJson;
@@ -414,10 +465,12 @@ abstract class _PurchaseOrder implements PurchaseOrder {
   @JsonKey(name: 'total_amount')
   double get totalAmount;
   @override
-  int get status; // 0=待确认, 1=已确认, 2=已完成, 3=已取消
+  int get status; // 1=待确认, 2=已确认, 3=已完成, 4=已取消
   @override
-  @JsonKey(name: 'report_date')
-  String get reportDate;
+  @JsonKey(name: 'order_date')
+  String? get orderDate;
+  @override
+  String? get remark;
   @override
   @JsonKey(name: 'created_by')
   int? get createdBy;
@@ -428,10 +481,10 @@ abstract class _PurchaseOrder implements PurchaseOrder {
   @JsonKey(name: 'updated_at')
   String? get updatedAt; // 关联数据
   @override
-  @JsonKey(name: 'store')
   Store? get store;
   @override
-  @JsonKey(name: 'items')
+  User? get creator;
+  @override
   List<PurchaseOrderItem>? get items;
 
   /// Create a copy of PurchaseOrder
@@ -449,23 +502,23 @@ PurchaseOrderItem _$PurchaseOrderItemFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$PurchaseOrderItem {
   int get id => throw _privateConstructorUsedError;
-  @JsonKey(name: 'purchase_order_id')
-  int get purchaseOrderId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'order_id')
+  int get orderId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'product_id')
+  int get productId => throw _privateConstructorUsedError;
   @JsonKey(name: 'supplier_id')
-  int get supplierId => throw _privateConstructorUsedError;
-  @JsonKey(name: 'supplier_product_id')
-  int get supplierProductId => throw _privateConstructorUsedError;
+  int? get supplierId => throw _privateConstructorUsedError;
   double get quantity => throw _privateConstructorUsedError;
-  double get price => throw _privateConstructorUsedError;
+  @JsonKey(name: 'unit_price')
+  double get unitPrice => throw _privateConstructorUsedError;
   double get amount => throw _privateConstructorUsedError;
+  String? get remark => throw _privateConstructorUsedError;
   @JsonKey(name: 'created_at')
   String? get createdAt => throw _privateConstructorUsedError;
   @JsonKey(name: 'updated_at')
   String? get updatedAt => throw _privateConstructorUsedError; // 关联数据
-  @JsonKey(name: 'supplier')
   Supplier? get supplier => throw _privateConstructorUsedError;
-  @JsonKey(name: 'supplier_product')
-  SupplierProduct? get supplierProduct => throw _privateConstructorUsedError;
+  SupplierProduct? get product => throw _privateConstructorUsedError;
 
   /// Serializes this PurchaseOrderItem to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -485,19 +538,20 @@ abstract class $PurchaseOrderItemCopyWith<$Res> {
   @useResult
   $Res call(
       {int id,
-      @JsonKey(name: 'purchase_order_id') int purchaseOrderId,
-      @JsonKey(name: 'supplier_id') int supplierId,
-      @JsonKey(name: 'supplier_product_id') int supplierProductId,
+      @JsonKey(name: 'order_id') int orderId,
+      @JsonKey(name: 'product_id') int productId,
+      @JsonKey(name: 'supplier_id') int? supplierId,
       double quantity,
-      double price,
+      @JsonKey(name: 'unit_price') double unitPrice,
       double amount,
+      String? remark,
       @JsonKey(name: 'created_at') String? createdAt,
       @JsonKey(name: 'updated_at') String? updatedAt,
-      @JsonKey(name: 'supplier') Supplier? supplier,
-      @JsonKey(name: 'supplier_product') SupplierProduct? supplierProduct});
+      Supplier? supplier,
+      SupplierProduct? product});
 
   $SupplierCopyWith<$Res>? get supplier;
-  $SupplierProductCopyWith<$Res>? get supplierProduct;
+  $SupplierProductCopyWith<$Res>? get product;
 }
 
 /// @nodoc
@@ -516,46 +570,51 @@ class _$PurchaseOrderItemCopyWithImpl<$Res, $Val extends PurchaseOrderItem>
   @override
   $Res call({
     Object? id = null,
-    Object? purchaseOrderId = null,
-    Object? supplierId = null,
-    Object? supplierProductId = null,
+    Object? orderId = null,
+    Object? productId = null,
+    Object? supplierId = freezed,
     Object? quantity = null,
-    Object? price = null,
+    Object? unitPrice = null,
     Object? amount = null,
+    Object? remark = freezed,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
     Object? supplier = freezed,
-    Object? supplierProduct = freezed,
+    Object? product = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int,
-      purchaseOrderId: null == purchaseOrderId
-          ? _value.purchaseOrderId
-          : purchaseOrderId // ignore: cast_nullable_to_non_nullable
+      orderId: null == orderId
+          ? _value.orderId
+          : orderId // ignore: cast_nullable_to_non_nullable
               as int,
-      supplierId: null == supplierId
+      productId: null == productId
+          ? _value.productId
+          : productId // ignore: cast_nullable_to_non_nullable
+              as int,
+      supplierId: freezed == supplierId
           ? _value.supplierId
           : supplierId // ignore: cast_nullable_to_non_nullable
-              as int,
-      supplierProductId: null == supplierProductId
-          ? _value.supplierProductId
-          : supplierProductId // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
       quantity: null == quantity
           ? _value.quantity
           : quantity // ignore: cast_nullable_to_non_nullable
               as double,
-      price: null == price
-          ? _value.price
-          : price // ignore: cast_nullable_to_non_nullable
+      unitPrice: null == unitPrice
+          ? _value.unitPrice
+          : unitPrice // ignore: cast_nullable_to_non_nullable
               as double,
       amount: null == amount
           ? _value.amount
           : amount // ignore: cast_nullable_to_non_nullable
               as double,
+      remark: freezed == remark
+          ? _value.remark
+          : remark // ignore: cast_nullable_to_non_nullable
+              as String?,
       createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -568,9 +627,9 @@ class _$PurchaseOrderItemCopyWithImpl<$Res, $Val extends PurchaseOrderItem>
           ? _value.supplier
           : supplier // ignore: cast_nullable_to_non_nullable
               as Supplier?,
-      supplierProduct: freezed == supplierProduct
-          ? _value.supplierProduct
-          : supplierProduct // ignore: cast_nullable_to_non_nullable
+      product: freezed == product
+          ? _value.product
+          : product // ignore: cast_nullable_to_non_nullable
               as SupplierProduct?,
     ) as $Val);
   }
@@ -593,13 +652,13 @@ class _$PurchaseOrderItemCopyWithImpl<$Res, $Val extends PurchaseOrderItem>
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $SupplierProductCopyWith<$Res>? get supplierProduct {
-    if (_value.supplierProduct == null) {
+  $SupplierProductCopyWith<$Res>? get product {
+    if (_value.product == null) {
       return null;
     }
 
-    return $SupplierProductCopyWith<$Res>(_value.supplierProduct!, (value) {
-      return _then(_value.copyWith(supplierProduct: value) as $Val);
+    return $SupplierProductCopyWith<$Res>(_value.product!, (value) {
+      return _then(_value.copyWith(product: value) as $Val);
     });
   }
 }
@@ -614,21 +673,22 @@ abstract class _$$PurchaseOrderItemImplCopyWith<$Res>
   @useResult
   $Res call(
       {int id,
-      @JsonKey(name: 'purchase_order_id') int purchaseOrderId,
-      @JsonKey(name: 'supplier_id') int supplierId,
-      @JsonKey(name: 'supplier_product_id') int supplierProductId,
+      @JsonKey(name: 'order_id') int orderId,
+      @JsonKey(name: 'product_id') int productId,
+      @JsonKey(name: 'supplier_id') int? supplierId,
       double quantity,
-      double price,
+      @JsonKey(name: 'unit_price') double unitPrice,
       double amount,
+      String? remark,
       @JsonKey(name: 'created_at') String? createdAt,
       @JsonKey(name: 'updated_at') String? updatedAt,
-      @JsonKey(name: 'supplier') Supplier? supplier,
-      @JsonKey(name: 'supplier_product') SupplierProduct? supplierProduct});
+      Supplier? supplier,
+      SupplierProduct? product});
 
   @override
   $SupplierCopyWith<$Res>? get supplier;
   @override
-  $SupplierProductCopyWith<$Res>? get supplierProduct;
+  $SupplierProductCopyWith<$Res>? get product;
 }
 
 /// @nodoc
@@ -645,46 +705,51 @@ class __$$PurchaseOrderItemImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = null,
-    Object? purchaseOrderId = null,
-    Object? supplierId = null,
-    Object? supplierProductId = null,
+    Object? orderId = null,
+    Object? productId = null,
+    Object? supplierId = freezed,
     Object? quantity = null,
-    Object? price = null,
+    Object? unitPrice = null,
     Object? amount = null,
+    Object? remark = freezed,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
     Object? supplier = freezed,
-    Object? supplierProduct = freezed,
+    Object? product = freezed,
   }) {
     return _then(_$PurchaseOrderItemImpl(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int,
-      purchaseOrderId: null == purchaseOrderId
-          ? _value.purchaseOrderId
-          : purchaseOrderId // ignore: cast_nullable_to_non_nullable
+      orderId: null == orderId
+          ? _value.orderId
+          : orderId // ignore: cast_nullable_to_non_nullable
               as int,
-      supplierId: null == supplierId
+      productId: null == productId
+          ? _value.productId
+          : productId // ignore: cast_nullable_to_non_nullable
+              as int,
+      supplierId: freezed == supplierId
           ? _value.supplierId
           : supplierId // ignore: cast_nullable_to_non_nullable
-              as int,
-      supplierProductId: null == supplierProductId
-          ? _value.supplierProductId
-          : supplierProductId // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
       quantity: null == quantity
           ? _value.quantity
           : quantity // ignore: cast_nullable_to_non_nullable
               as double,
-      price: null == price
-          ? _value.price
-          : price // ignore: cast_nullable_to_non_nullable
+      unitPrice: null == unitPrice
+          ? _value.unitPrice
+          : unitPrice // ignore: cast_nullable_to_non_nullable
               as double,
       amount: null == amount
           ? _value.amount
           : amount // ignore: cast_nullable_to_non_nullable
               as double,
+      remark: freezed == remark
+          ? _value.remark
+          : remark // ignore: cast_nullable_to_non_nullable
+              as String?,
       createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -697,9 +762,9 @@ class __$$PurchaseOrderItemImplCopyWithImpl<$Res>
           ? _value.supplier
           : supplier // ignore: cast_nullable_to_non_nullable
               as Supplier?,
-      supplierProduct: freezed == supplierProduct
-          ? _value.supplierProduct
-          : supplierProduct // ignore: cast_nullable_to_non_nullable
+      product: freezed == product
+          ? _value.product
+          : product // ignore: cast_nullable_to_non_nullable
               as SupplierProduct?,
     ));
   }
@@ -710,16 +775,17 @@ class __$$PurchaseOrderItemImplCopyWithImpl<$Res>
 class _$PurchaseOrderItemImpl implements _PurchaseOrderItem {
   const _$PurchaseOrderItemImpl(
       {required this.id,
-      @JsonKey(name: 'purchase_order_id') required this.purchaseOrderId,
-      @JsonKey(name: 'supplier_id') required this.supplierId,
-      @JsonKey(name: 'supplier_product_id') required this.supplierProductId,
+      @JsonKey(name: 'order_id') required this.orderId,
+      @JsonKey(name: 'product_id') required this.productId,
+      @JsonKey(name: 'supplier_id') this.supplierId,
       required this.quantity,
-      required this.price,
-      required this.amount,
+      @JsonKey(name: 'unit_price') this.unitPrice = 0.0,
+      this.amount = 0.0,
+      this.remark,
       @JsonKey(name: 'created_at') this.createdAt,
       @JsonKey(name: 'updated_at') this.updatedAt,
-      @JsonKey(name: 'supplier') this.supplier,
-      @JsonKey(name: 'supplier_product') this.supplierProduct});
+      this.supplier,
+      this.product});
 
   factory _$PurchaseOrderItemImpl.fromJson(Map<String, dynamic> json) =>
       _$$PurchaseOrderItemImplFromJson(json);
@@ -727,20 +793,24 @@ class _$PurchaseOrderItemImpl implements _PurchaseOrderItem {
   @override
   final int id;
   @override
-  @JsonKey(name: 'purchase_order_id')
-  final int purchaseOrderId;
+  @JsonKey(name: 'order_id')
+  final int orderId;
+  @override
+  @JsonKey(name: 'product_id')
+  final int productId;
   @override
   @JsonKey(name: 'supplier_id')
-  final int supplierId;
-  @override
-  @JsonKey(name: 'supplier_product_id')
-  final int supplierProductId;
+  final int? supplierId;
   @override
   final double quantity;
   @override
-  final double price;
+  @JsonKey(name: 'unit_price')
+  final double unitPrice;
   @override
+  @JsonKey()
   final double amount;
+  @override
+  final String? remark;
   @override
   @JsonKey(name: 'created_at')
   final String? createdAt;
@@ -749,15 +819,13 @@ class _$PurchaseOrderItemImpl implements _PurchaseOrderItem {
   final String? updatedAt;
 // 关联数据
   @override
-  @JsonKey(name: 'supplier')
   final Supplier? supplier;
   @override
-  @JsonKey(name: 'supplier_product')
-  final SupplierProduct? supplierProduct;
+  final SupplierProduct? product;
 
   @override
   String toString() {
-    return 'PurchaseOrderItem(id: $id, purchaseOrderId: $purchaseOrderId, supplierId: $supplierId, supplierProductId: $supplierProductId, quantity: $quantity, price: $price, amount: $amount, createdAt: $createdAt, updatedAt: $updatedAt, supplier: $supplier, supplierProduct: $supplierProduct)';
+    return 'PurchaseOrderItem(id: $id, orderId: $orderId, productId: $productId, supplierId: $supplierId, quantity: $quantity, unitPrice: $unitPrice, amount: $amount, remark: $remark, createdAt: $createdAt, updatedAt: $updatedAt, supplier: $supplier, product: $product)';
   }
 
   @override
@@ -766,24 +834,24 @@ class _$PurchaseOrderItemImpl implements _PurchaseOrderItem {
         (other.runtimeType == runtimeType &&
             other is _$PurchaseOrderItemImpl &&
             (identical(other.id, id) || other.id == id) &&
-            (identical(other.purchaseOrderId, purchaseOrderId) ||
-                other.purchaseOrderId == purchaseOrderId) &&
+            (identical(other.orderId, orderId) || other.orderId == orderId) &&
+            (identical(other.productId, productId) ||
+                other.productId == productId) &&
             (identical(other.supplierId, supplierId) ||
                 other.supplierId == supplierId) &&
-            (identical(other.supplierProductId, supplierProductId) ||
-                other.supplierProductId == supplierProductId) &&
             (identical(other.quantity, quantity) ||
                 other.quantity == quantity) &&
-            (identical(other.price, price) || other.price == price) &&
+            (identical(other.unitPrice, unitPrice) ||
+                other.unitPrice == unitPrice) &&
             (identical(other.amount, amount) || other.amount == amount) &&
+            (identical(other.remark, remark) || other.remark == remark) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.updatedAt, updatedAt) ||
                 other.updatedAt == updatedAt) &&
             (identical(other.supplier, supplier) ||
                 other.supplier == supplier) &&
-            (identical(other.supplierProduct, supplierProduct) ||
-                other.supplierProduct == supplierProduct));
+            (identical(other.product, product) || other.product == product));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -791,16 +859,17 @@ class _$PurchaseOrderItemImpl implements _PurchaseOrderItem {
   int get hashCode => Object.hash(
       runtimeType,
       id,
-      purchaseOrderId,
+      orderId,
+      productId,
       supplierId,
-      supplierProductId,
       quantity,
-      price,
+      unitPrice,
       amount,
+      remark,
       createdAt,
       updatedAt,
       supplier,
-      supplierProduct);
+      product);
 
   /// Create a copy of PurchaseOrderItem
   /// with the given fields replaced by the non-null parameter values.
@@ -822,18 +891,17 @@ class _$PurchaseOrderItemImpl implements _PurchaseOrderItem {
 abstract class _PurchaseOrderItem implements PurchaseOrderItem {
   const factory _PurchaseOrderItem(
       {required final int id,
-      @JsonKey(name: 'purchase_order_id') required final int purchaseOrderId,
-      @JsonKey(name: 'supplier_id') required final int supplierId,
-      @JsonKey(name: 'supplier_product_id')
-      required final int supplierProductId,
+      @JsonKey(name: 'order_id') required final int orderId,
+      @JsonKey(name: 'product_id') required final int productId,
+      @JsonKey(name: 'supplier_id') final int? supplierId,
       required final double quantity,
-      required final double price,
-      required final double amount,
+      @JsonKey(name: 'unit_price') final double unitPrice,
+      final double amount,
+      final String? remark,
       @JsonKey(name: 'created_at') final String? createdAt,
       @JsonKey(name: 'updated_at') final String? updatedAt,
-      @JsonKey(name: 'supplier') final Supplier? supplier,
-      @JsonKey(name: 'supplier_product')
-      final SupplierProduct? supplierProduct}) = _$PurchaseOrderItemImpl;
+      final Supplier? supplier,
+      final SupplierProduct? product}) = _$PurchaseOrderItemImpl;
 
   factory _PurchaseOrderItem.fromJson(Map<String, dynamic> json) =
       _$PurchaseOrderItemImpl.fromJson;
@@ -841,20 +909,23 @@ abstract class _PurchaseOrderItem implements PurchaseOrderItem {
   @override
   int get id;
   @override
-  @JsonKey(name: 'purchase_order_id')
-  int get purchaseOrderId;
+  @JsonKey(name: 'order_id')
+  int get orderId;
+  @override
+  @JsonKey(name: 'product_id')
+  int get productId;
   @override
   @JsonKey(name: 'supplier_id')
-  int get supplierId;
-  @override
-  @JsonKey(name: 'supplier_product_id')
-  int get supplierProductId;
+  int? get supplierId;
   @override
   double get quantity;
   @override
-  double get price;
+  @JsonKey(name: 'unit_price')
+  double get unitPrice;
   @override
   double get amount;
+  @override
+  String? get remark;
   @override
   @JsonKey(name: 'created_at')
   String? get createdAt;
@@ -862,11 +933,9 @@ abstract class _PurchaseOrderItem implements PurchaseOrderItem {
   @JsonKey(name: 'updated_at')
   String? get updatedAt; // 关联数据
   @override
-  @JsonKey(name: 'supplier')
   Supplier? get supplier;
   @override
-  @JsonKey(name: 'supplier_product')
-  SupplierProduct? get supplierProduct;
+  SupplierProduct? get product;
 
   /// Create a copy of PurchaseOrderItem
   /// with the given fields replaced by the non-null parameter values.
@@ -883,10 +952,9 @@ CreatePurchaseOrderRequest _$CreatePurchaseOrderRequestFromJson(
 
 /// @nodoc
 mixin _$CreatePurchaseOrderRequest {
-  @JsonKey(name: 'store_id')
-  int get storeId => throw _privateConstructorUsedError;
-  @JsonKey(name: 'report_date')
-  String get reportDate => throw _privateConstructorUsedError;
+  @JsonKey(name: 'order_date')
+  String get orderDate => throw _privateConstructorUsedError;
+  String? get remark => throw _privateConstructorUsedError;
   List<CreatePurchaseOrderItemRequest> get items =>
       throw _privateConstructorUsedError;
 
@@ -908,8 +976,8 @@ abstract class $CreatePurchaseOrderRequestCopyWith<$Res> {
           CreatePurchaseOrderRequest>;
   @useResult
   $Res call(
-      {@JsonKey(name: 'store_id') int storeId,
-      @JsonKey(name: 'report_date') String reportDate,
+      {@JsonKey(name: 'order_date') String orderDate,
+      String? remark,
       List<CreatePurchaseOrderItemRequest> items});
 }
 
@@ -929,19 +997,19 @@ class _$CreatePurchaseOrderRequestCopyWithImpl<$Res,
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? storeId = null,
-    Object? reportDate = null,
+    Object? orderDate = null,
+    Object? remark = freezed,
     Object? items = null,
   }) {
     return _then(_value.copyWith(
-      storeId: null == storeId
-          ? _value.storeId
-          : storeId // ignore: cast_nullable_to_non_nullable
-              as int,
-      reportDate: null == reportDate
-          ? _value.reportDate
-          : reportDate // ignore: cast_nullable_to_non_nullable
+      orderDate: null == orderDate
+          ? _value.orderDate
+          : orderDate // ignore: cast_nullable_to_non_nullable
               as String,
+      remark: freezed == remark
+          ? _value.remark
+          : remark // ignore: cast_nullable_to_non_nullable
+              as String?,
       items: null == items
           ? _value.items
           : items // ignore: cast_nullable_to_non_nullable
@@ -960,8 +1028,8 @@ abstract class _$$CreatePurchaseOrderRequestImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: 'store_id') int storeId,
-      @JsonKey(name: 'report_date') String reportDate,
+      {@JsonKey(name: 'order_date') String orderDate,
+      String? remark,
       List<CreatePurchaseOrderItemRequest> items});
 }
 
@@ -980,19 +1048,19 @@ class __$$CreatePurchaseOrderRequestImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? storeId = null,
-    Object? reportDate = null,
+    Object? orderDate = null,
+    Object? remark = freezed,
     Object? items = null,
   }) {
     return _then(_$CreatePurchaseOrderRequestImpl(
-      storeId: null == storeId
-          ? _value.storeId
-          : storeId // ignore: cast_nullable_to_non_nullable
-              as int,
-      reportDate: null == reportDate
-          ? _value.reportDate
-          : reportDate // ignore: cast_nullable_to_non_nullable
+      orderDate: null == orderDate
+          ? _value.orderDate
+          : orderDate // ignore: cast_nullable_to_non_nullable
               as String,
+      remark: freezed == remark
+          ? _value.remark
+          : remark // ignore: cast_nullable_to_non_nullable
+              as String?,
       items: null == items
           ? _value._items
           : items // ignore: cast_nullable_to_non_nullable
@@ -1005,8 +1073,8 @@ class __$$CreatePurchaseOrderRequestImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$CreatePurchaseOrderRequestImpl implements _CreatePurchaseOrderRequest {
   const _$CreatePurchaseOrderRequestImpl(
-      {@JsonKey(name: 'store_id') required this.storeId,
-      @JsonKey(name: 'report_date') required this.reportDate,
+      {@JsonKey(name: 'order_date') required this.orderDate,
+      this.remark,
       required final List<CreatePurchaseOrderItemRequest> items})
       : _items = items;
 
@@ -1015,11 +1083,10 @@ class _$CreatePurchaseOrderRequestImpl implements _CreatePurchaseOrderRequest {
       _$$CreatePurchaseOrderRequestImplFromJson(json);
 
   @override
-  @JsonKey(name: 'store_id')
-  final int storeId;
+  @JsonKey(name: 'order_date')
+  final String orderDate;
   @override
-  @JsonKey(name: 'report_date')
-  final String reportDate;
+  final String? remark;
   final List<CreatePurchaseOrderItemRequest> _items;
   @override
   List<CreatePurchaseOrderItemRequest> get items {
@@ -1030,7 +1097,7 @@ class _$CreatePurchaseOrderRequestImpl implements _CreatePurchaseOrderRequest {
 
   @override
   String toString() {
-    return 'CreatePurchaseOrderRequest(storeId: $storeId, reportDate: $reportDate, items: $items)';
+    return 'CreatePurchaseOrderRequest(orderDate: $orderDate, remark: $remark, items: $items)';
   }
 
   @override
@@ -1038,15 +1105,15 @@ class _$CreatePurchaseOrderRequestImpl implements _CreatePurchaseOrderRequest {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$CreatePurchaseOrderRequestImpl &&
-            (identical(other.storeId, storeId) || other.storeId == storeId) &&
-            (identical(other.reportDate, reportDate) ||
-                other.reportDate == reportDate) &&
+            (identical(other.orderDate, orderDate) ||
+                other.orderDate == orderDate) &&
+            (identical(other.remark, remark) || other.remark == remark) &&
             const DeepCollectionEquality().equals(other._items, _items));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, storeId, reportDate,
+  int get hashCode => Object.hash(runtimeType, orderDate, remark,
       const DeepCollectionEquality().hash(_items));
 
   /// Create a copy of CreatePurchaseOrderRequest
@@ -1069,8 +1136,8 @@ class _$CreatePurchaseOrderRequestImpl implements _CreatePurchaseOrderRequest {
 abstract class _CreatePurchaseOrderRequest
     implements CreatePurchaseOrderRequest {
   const factory _CreatePurchaseOrderRequest(
-          {@JsonKey(name: 'store_id') required final int storeId,
-          @JsonKey(name: 'report_date') required final String reportDate,
+          {@JsonKey(name: 'order_date') required final String orderDate,
+          final String? remark,
           required final List<CreatePurchaseOrderItemRequest> items}) =
       _$CreatePurchaseOrderRequestImpl;
 
@@ -1078,11 +1145,10 @@ abstract class _CreatePurchaseOrderRequest
       _$CreatePurchaseOrderRequestImpl.fromJson;
 
   @override
-  @JsonKey(name: 'store_id')
-  int get storeId;
+  @JsonKey(name: 'order_date')
+  String get orderDate;
   @override
-  @JsonKey(name: 'report_date')
-  String get reportDate;
+  String? get remark;
   @override
   List<CreatePurchaseOrderItemRequest> get items;
 
@@ -1101,9 +1167,10 @@ CreatePurchaseOrderItemRequest _$CreatePurchaseOrderItemRequestFromJson(
 
 /// @nodoc
 mixin _$CreatePurchaseOrderItemRequest {
-  @JsonKey(name: 'supplier_product_id')
-  int get supplierProductId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'product_id')
+  int get productId => throw _privateConstructorUsedError;
   double get quantity => throw _privateConstructorUsedError;
+  String? get remark => throw _privateConstructorUsedError;
 
   /// Serializes this CreatePurchaseOrderItemRequest to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -1124,8 +1191,9 @@ abstract class $CreatePurchaseOrderItemRequestCopyWith<$Res> {
           CreatePurchaseOrderItemRequest>;
   @useResult
   $Res call(
-      {@JsonKey(name: 'supplier_product_id') int supplierProductId,
-      double quantity});
+      {@JsonKey(name: 'product_id') int productId,
+      double quantity,
+      String? remark});
 }
 
 /// @nodoc
@@ -1144,18 +1212,23 @@ class _$CreatePurchaseOrderItemRequestCopyWithImpl<$Res,
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? supplierProductId = null,
+    Object? productId = null,
     Object? quantity = null,
+    Object? remark = freezed,
   }) {
     return _then(_value.copyWith(
-      supplierProductId: null == supplierProductId
-          ? _value.supplierProductId
-          : supplierProductId // ignore: cast_nullable_to_non_nullable
+      productId: null == productId
+          ? _value.productId
+          : productId // ignore: cast_nullable_to_non_nullable
               as int,
       quantity: null == quantity
           ? _value.quantity
           : quantity // ignore: cast_nullable_to_non_nullable
               as double,
+      remark: freezed == remark
+          ? _value.remark
+          : remark // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -1170,8 +1243,9 @@ abstract class _$$CreatePurchaseOrderItemRequestImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: 'supplier_product_id') int supplierProductId,
-      double quantity});
+      {@JsonKey(name: 'product_id') int productId,
+      double quantity,
+      String? remark});
 }
 
 /// @nodoc
@@ -1189,18 +1263,23 @@ class __$$CreatePurchaseOrderItemRequestImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? supplierProductId = null,
+    Object? productId = null,
     Object? quantity = null,
+    Object? remark = freezed,
   }) {
     return _then(_$CreatePurchaseOrderItemRequestImpl(
-      supplierProductId: null == supplierProductId
-          ? _value.supplierProductId
-          : supplierProductId // ignore: cast_nullable_to_non_nullable
+      productId: null == productId
+          ? _value.productId
+          : productId // ignore: cast_nullable_to_non_nullable
               as int,
       quantity: null == quantity
           ? _value.quantity
           : quantity // ignore: cast_nullable_to_non_nullable
               as double,
+      remark: freezed == remark
+          ? _value.remark
+          : remark // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -1210,22 +1289,25 @@ class __$$CreatePurchaseOrderItemRequestImplCopyWithImpl<$Res>
 class _$CreatePurchaseOrderItemRequestImpl
     implements _CreatePurchaseOrderItemRequest {
   const _$CreatePurchaseOrderItemRequestImpl(
-      {@JsonKey(name: 'supplier_product_id') required this.supplierProductId,
-      required this.quantity});
+      {@JsonKey(name: 'product_id') required this.productId,
+      required this.quantity,
+      this.remark});
 
   factory _$CreatePurchaseOrderItemRequestImpl.fromJson(
           Map<String, dynamic> json) =>
       _$$CreatePurchaseOrderItemRequestImplFromJson(json);
 
   @override
-  @JsonKey(name: 'supplier_product_id')
-  final int supplierProductId;
+  @JsonKey(name: 'product_id')
+  final int productId;
   @override
   final double quantity;
+  @override
+  final String? remark;
 
   @override
   String toString() {
-    return 'CreatePurchaseOrderItemRequest(supplierProductId: $supplierProductId, quantity: $quantity)';
+    return 'CreatePurchaseOrderItemRequest(productId: $productId, quantity: $quantity, remark: $remark)';
   }
 
   @override
@@ -1233,15 +1315,16 @@ class _$CreatePurchaseOrderItemRequestImpl
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$CreatePurchaseOrderItemRequestImpl &&
-            (identical(other.supplierProductId, supplierProductId) ||
-                other.supplierProductId == supplierProductId) &&
+            (identical(other.productId, productId) ||
+                other.productId == productId) &&
             (identical(other.quantity, quantity) ||
-                other.quantity == quantity));
+                other.quantity == quantity) &&
+            (identical(other.remark, remark) || other.remark == remark));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, supplierProductId, quantity);
+  int get hashCode => Object.hash(runtimeType, productId, quantity, remark);
 
   /// Create a copy of CreatePurchaseOrderItemRequest
   /// with the given fields replaced by the non-null parameter values.
@@ -1264,18 +1347,20 @@ class _$CreatePurchaseOrderItemRequestImpl
 abstract class _CreatePurchaseOrderItemRequest
     implements CreatePurchaseOrderItemRequest {
   const factory _CreatePurchaseOrderItemRequest(
-      {@JsonKey(name: 'supplier_product_id')
-      required final int supplierProductId,
-      required final double quantity}) = _$CreatePurchaseOrderItemRequestImpl;
+      {@JsonKey(name: 'product_id') required final int productId,
+      required final double quantity,
+      final String? remark}) = _$CreatePurchaseOrderItemRequestImpl;
 
   factory _CreatePurchaseOrderItemRequest.fromJson(Map<String, dynamic> json) =
       _$CreatePurchaseOrderItemRequestImpl.fromJson;
 
   @override
-  @JsonKey(name: 'supplier_product_id')
-  int get supplierProductId;
+  @JsonKey(name: 'product_id')
+  int get productId;
   @override
   double get quantity;
+  @override
+  String? get remark;
 
   /// Create a copy of CreatePurchaseOrderItemRequest
   /// with the given fields replaced by the non-null parameter values.
@@ -1283,5 +1368,181 @@ abstract class _CreatePurchaseOrderItemRequest
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$CreatePurchaseOrderItemRequestImplCopyWith<
           _$CreatePurchaseOrderItemRequestImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+UpdatePurchaseOrderRequest _$UpdatePurchaseOrderRequestFromJson(
+    Map<String, dynamic> json) {
+  return _UpdatePurchaseOrderRequest.fromJson(json);
+}
+
+/// @nodoc
+mixin _$UpdatePurchaseOrderRequest {
+  int? get status => throw _privateConstructorUsedError;
+  String? get remark => throw _privateConstructorUsedError;
+
+  /// Serializes this UpdatePurchaseOrderRequest to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of UpdatePurchaseOrderRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $UpdatePurchaseOrderRequestCopyWith<UpdatePurchaseOrderRequest>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $UpdatePurchaseOrderRequestCopyWith<$Res> {
+  factory $UpdatePurchaseOrderRequestCopyWith(UpdatePurchaseOrderRequest value,
+          $Res Function(UpdatePurchaseOrderRequest) then) =
+      _$UpdatePurchaseOrderRequestCopyWithImpl<$Res,
+          UpdatePurchaseOrderRequest>;
+  @useResult
+  $Res call({int? status, String? remark});
+}
+
+/// @nodoc
+class _$UpdatePurchaseOrderRequestCopyWithImpl<$Res,
+        $Val extends UpdatePurchaseOrderRequest>
+    implements $UpdatePurchaseOrderRequestCopyWith<$Res> {
+  _$UpdatePurchaseOrderRequestCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of UpdatePurchaseOrderRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? status = freezed,
+    Object? remark = freezed,
+  }) {
+    return _then(_value.copyWith(
+      status: freezed == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as int?,
+      remark: freezed == remark
+          ? _value.remark
+          : remark // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$UpdatePurchaseOrderRequestImplCopyWith<$Res>
+    implements $UpdatePurchaseOrderRequestCopyWith<$Res> {
+  factory _$$UpdatePurchaseOrderRequestImplCopyWith(
+          _$UpdatePurchaseOrderRequestImpl value,
+          $Res Function(_$UpdatePurchaseOrderRequestImpl) then) =
+      __$$UpdatePurchaseOrderRequestImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({int? status, String? remark});
+}
+
+/// @nodoc
+class __$$UpdatePurchaseOrderRequestImplCopyWithImpl<$Res>
+    extends _$UpdatePurchaseOrderRequestCopyWithImpl<$Res,
+        _$UpdatePurchaseOrderRequestImpl>
+    implements _$$UpdatePurchaseOrderRequestImplCopyWith<$Res> {
+  __$$UpdatePurchaseOrderRequestImplCopyWithImpl(
+      _$UpdatePurchaseOrderRequestImpl _value,
+      $Res Function(_$UpdatePurchaseOrderRequestImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of UpdatePurchaseOrderRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? status = freezed,
+    Object? remark = freezed,
+  }) {
+    return _then(_$UpdatePurchaseOrderRequestImpl(
+      status: freezed == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as int?,
+      remark: freezed == remark
+          ? _value.remark
+          : remark // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$UpdatePurchaseOrderRequestImpl implements _UpdatePurchaseOrderRequest {
+  const _$UpdatePurchaseOrderRequestImpl({this.status, this.remark});
+
+  factory _$UpdatePurchaseOrderRequestImpl.fromJson(
+          Map<String, dynamic> json) =>
+      _$$UpdatePurchaseOrderRequestImplFromJson(json);
+
+  @override
+  final int? status;
+  @override
+  final String? remark;
+
+  @override
+  String toString() {
+    return 'UpdatePurchaseOrderRequest(status: $status, remark: $remark)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$UpdatePurchaseOrderRequestImpl &&
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.remark, remark) || other.remark == remark));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, status, remark);
+
+  /// Create a copy of UpdatePurchaseOrderRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$UpdatePurchaseOrderRequestImplCopyWith<_$UpdatePurchaseOrderRequestImpl>
+      get copyWith => __$$UpdatePurchaseOrderRequestImplCopyWithImpl<
+          _$UpdatePurchaseOrderRequestImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$UpdatePurchaseOrderRequestImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _UpdatePurchaseOrderRequest
+    implements UpdatePurchaseOrderRequest {
+  const factory _UpdatePurchaseOrderRequest(
+      {final int? status,
+      final String? remark}) = _$UpdatePurchaseOrderRequestImpl;
+
+  factory _UpdatePurchaseOrderRequest.fromJson(Map<String, dynamic> json) =
+      _$UpdatePurchaseOrderRequestImpl.fromJson;
+
+  @override
+  int? get status;
+  @override
+  String? get remark;
+
+  /// Create a copy of UpdatePurchaseOrderRequest
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$UpdatePurchaseOrderRequestImplCopyWith<_$UpdatePurchaseOrderRequestImpl>
       get copyWith => throw _privateConstructorUsedError;
 }

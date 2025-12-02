@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'purchase_order_provider.dart';
 import 'models.dart';
 import 'purchase_order_detail_page.dart';
+import 'purchase_order_create_page.dart';
 
 class PurchaseOrderListPage extends StatefulWidget {
   const PurchaseOrderListPage({super.key});
@@ -18,10 +19,10 @@ class _PurchaseOrderListPageState extends State<PurchaseOrderListPage> {
 
   final _statusOptions = [
     const ComboBoxItem<int?>(value: null, child: Text('全部状态')),
-    const ComboBoxItem<int>(value: 0, child: Text('待确认')),
-    const ComboBoxItem<int>(value: 1, child: Text('已确认')),
-    const ComboBoxItem<int>(value: 2, child: Text('已完成')),
-    const ComboBoxItem<int>(value: 3, child: Text('已取消')),
+    const ComboBoxItem<int>(value: PurchaseOrderStatus.pending, child: Text('待确认')),
+    const ComboBoxItem<int>(value: PurchaseOrderStatus.confirmed, child: Text('已确认')),
+    const ComboBoxItem<int>(value: PurchaseOrderStatus.completed, child: Text('已完成')),
+    const ComboBoxItem<int>(value: PurchaseOrderStatus.cancelled, child: Text('已取消')),
   ];
 
   @override
@@ -32,22 +33,12 @@ class _PurchaseOrderListPageState extends State<PurchaseOrderListPage> {
     });
   }
 
-  String _getStatusLabel(int status) {
-    switch (status) {
-      case 0: return '待确认';
-      case 1: return '已确认';
-      case 2: return '已完成';
-      case 3: return '已取消';
-      default: return '未知';
-    }
-  }
-
   Color _getStatusColor(int status) {
     switch (status) {
-      case 0: return Colors.orange;
-      case 1: return Colors.blue;
-      case 2: return Colors.green;
-      case 3: return Colors.red;
+      case PurchaseOrderStatus.pending: return Colors.orange;
+      case PurchaseOrderStatus.confirmed: return Colors.blue;
+      case PurchaseOrderStatus.completed: return Colors.green;
+      case PurchaseOrderStatus.cancelled: return Colors.red;
       default: return Colors.grey;
     }
   }
@@ -74,6 +65,13 @@ class _PurchaseOrderListPageState extends State<PurchaseOrderListPage> {
     Navigator.push(
       context,
       FluentPageRoute(builder: (context) => PurchaseOrderDetailPage(orderId: order.id)),
+    );
+  }
+
+  void _handleCreate() {
+    Navigator.push(
+      context,
+      FluentPageRoute(builder: (context) => const PurchaseOrderCreatePage()),
     );
   }
 
@@ -165,6 +163,18 @@ class _PurchaseOrderListPageState extends State<PurchaseOrderListPage> {
               FilledButton(onPressed: _handleSearch, child: const Text('查询')),
               const SizedBox(width: 8),
               Button(onPressed: _handleReset, child: const Text('重置')),
+              const Spacer(),
+              FilledButton(
+                onPressed: _handleCreate,
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(FluentIcons.add, size: 14),
+                    SizedBox(width: 6),
+                    Text('新建采购单'),
+                  ],
+                ),
+              ),
             ],
           ),
         ],
@@ -254,7 +264,7 @@ class _PurchaseOrderListPageState extends State<PurchaseOrderListPage> {
                             color: statusColor.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: Text(_getStatusLabel(order.status), style: TextStyle(fontSize: 11, color: statusColor)),
+                          child: Text(PurchaseOrderStatus.getLabel(order.status), style: TextStyle(fontSize: 11, color: statusColor)),
                         ),
                       ],
                     ),
@@ -263,7 +273,7 @@ class _PurchaseOrderListPageState extends State<PurchaseOrderListPage> {
                       children: [
                         if (order.store != null) Text('门店: ${order.store!.name}', style: TextStyle(fontSize: 12, color: Colors.grey[130])),
                         const SizedBox(width: 16),
-                        Text('日期: ${order.reportDate}', style: TextStyle(fontSize: 12, color: Colors.grey[130])),
+                        Text('日期: ${order.orderDate ?? '-'}', style: TextStyle(fontSize: 12, color: Colors.grey[130])),
                       ],
                     ),
                   ],

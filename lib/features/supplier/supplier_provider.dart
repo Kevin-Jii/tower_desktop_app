@@ -51,6 +51,10 @@ class SupplierProvider with ChangeNotifier {
   int _bindingTotal = 0;
   int get bindingTotal => _bindingTotal;
 
+  // Store Supplier Products (for purchase order creation)
+  List<StoreSupplierProduct> _storeSupplierProducts = [];
+  List<StoreSupplierProduct> get storeSupplierProducts => _storeSupplierProducts;
+
   // Supplier Methods
   Future<void> loadSuppliers({
     int? page,
@@ -327,11 +331,11 @@ class SupplierProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> bindProduct(BindSupplierProductRequest request) async {
-    final result = await _repository.bindSupplierProduct(request);
+  Future<bool> bindProducts(int storeId, List<int> productIds) async {
+    final result = await _repository.bindSupplierProducts(storeId, productIds);
     return result.when(
       success: (_) {
-        loadStoreBindings(storeId: request.storeId, page: 1);
+        loadStoreBindings(storeId: storeId, page: 1);
         return true;
       },
       failure: (err) {
@@ -342,8 +346,8 @@ class SupplierProvider with ChangeNotifier {
     );
   }
 
-  Future<bool> unbindProduct(int id, int storeId) async {
-    final result = await _repository.unbindSupplierProduct(id);
+  Future<bool> unbindProducts(int storeId, List<int> productIds) async {
+    final result = await _repository.unbindSupplierProducts(storeId, productIds);
     return result.when(
       success: (_) {
         loadStoreBindings(storeId: storeId);
@@ -357,8 +361,8 @@ class SupplierProvider with ChangeNotifier {
     );
   }
 
-  Future<bool> setDefaultSupplier(int id, int storeId) async {
-    final result = await _repository.setDefaultSupplier(id, storeId);
+  Future<bool> setDefaultSupplierProduct(int storeId, int productId) async {
+    final result = await _repository.setDefaultSupplierProduct(storeId, productId);
     return result.when(
       success: (_) {
         loadStoreBindings(storeId: storeId);
@@ -370,5 +374,27 @@ class SupplierProvider with ChangeNotifier {
         return false;
       },
     );
+  }
+
+  /// 加载当前门店绑定的供应商商品（用于采购单创建）
+  Future<void> loadStoreSupplierProducts({int? storeId}) async {
+    _loading = true;
+    notifyListeners();
+
+    final result = await _repository.listStoreSupplierProducts(storeId: storeId);
+
+    result.when(
+      success: (list) {
+        _storeSupplierProducts = list;
+        _error = null;
+      },
+      failure: (err) {
+        _error = err.message;
+        _storeSupplierProducts = [];
+      },
+    );
+
+    _loading = false;
+    notifyListeners();
   }
 }

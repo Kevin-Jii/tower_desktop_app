@@ -107,7 +107,7 @@ class ApiPaths {
   static const String suppliers = '/suppliers';
   static const String supplierCategories = '/supplier-categories';
   static const String supplierProducts = '/supplier-products';
-  static const String storeSupplierProducts = '/store-supplier-products';
+  static const String storeSuppliers = '/store-supplier-products';
   
   // Purchase Order related paths
   static const String purchaseOrders = '/purchase-orders';

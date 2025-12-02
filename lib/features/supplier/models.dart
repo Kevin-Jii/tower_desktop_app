@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import '../store/models.dart';
 
 part 'models.freezed.dart';
 part 'models.g.dart';
@@ -61,24 +62,14 @@ class StoreSupplierProduct with _$StoreSupplierProduct {
   const factory StoreSupplierProduct({
     required int id,
     @JsonKey(name: 'store_id') required int storeId,
-    @JsonKey(name: 'supplier_product_id') required int supplierProductId,
+    @JsonKey(name: 'product_id') required int productId,
     @JsonKey(name: 'is_default') @Default(false) bool isDefault,
     @JsonKey(name: 'created_at') String? createdAt,
     @JsonKey(name: 'updated_at') String? updatedAt,
     // 关联数据
-    @JsonKey(name: 'supplier_product') SupplierProduct? supplierProduct,
+    SupplierProduct? product,
+    Store? store,
   }) = _StoreSupplierProduct;
 
   factory StoreSupplierProduct.fromJson(Map<String, dynamic> json) => _$StoreSupplierProductFromJson(json);
-}
-
-@freezed
-class BindSupplierProductRequest with _$BindSupplierProductRequest {
-  const factory BindSupplierProductRequest({
-    @JsonKey(name: 'store_id') required int storeId,
-    @JsonKey(name: 'supplier_product_id') required int supplierProductId,
-    @JsonKey(name: 'is_default') bool? isDefault,
-  }) = _BindSupplierProductRequest;
-
-  factory BindSupplierProductRequest.fromJson(Map<String, dynamic> json) => _$BindSupplierProductRequestFromJson(json);
 }
