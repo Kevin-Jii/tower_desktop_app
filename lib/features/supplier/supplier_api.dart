@@ -156,38 +156,56 @@ class SupplierApi {
     );
   }
 
-  /// 门店绑定供应商商品
-  Future<void> bindSupplierProducts(int storeId, List<int> productIds) async {
+  /// 门店绑定供应商
+  Future<void> bindSuppliers(int storeId, List<int> supplierIds) async {
     await _client.postSmart<void>(
-      path: '${ApiPaths.storeSuppliers}/bind',
+      path: '${ApiPaths.storeSuppliers}',
       data: {
         'store_id': storeId,
-        'product_ids': productIds,
+        'supplier_ids': supplierIds,
       },
       fromJson: (_) => null,
     );
   }
 
-  /// 门店解绑供应商商品
-  Future<void> unbindSupplierProducts(int storeId, List<int> productIds) async {
+  /// 门店解绑供应商
+  /// DELETE /api/v1/store-suppliers
+  Future<void> unbindSuppliers(int storeId, List<int> supplierIds) async {
     await _client.deleteSmart(
-      path: '${ApiPaths.storeSuppliers}/unbind',
+      path: ApiPaths.storeSuppliers,
       data: {
         'store_id': storeId,
-        'product_ids': productIds,
+        'supplier_ids': supplierIds,
       },
     );
   }
 
-  /// 设置默认供应商商品
-  Future<void> setDefaultSupplierProduct(int storeId, int productId) async {
-    await _client.putSmart<void>(
-      path: '${ApiPaths.storeSuppliers}/default',
-      data: {
-        'store_id': storeId,
-        'product_id': productId,
+  /// 获取门店已绑定的供应商列表
+  /// GET /api/v1/store-suppliers?store_id=xxx
+  /// 返回数组格式，每项包含 supplier 嵌套对象
+  Future<List<StoreSupplier>> getStoreBoundSuppliers(int storeId) async {
+    return await _client.getSimpleList<StoreSupplier>(
+      path: ApiPaths.storeSuppliers,
+      fromJson: StoreSupplier.fromJson,
+      queryParameters: {'store_id': storeId},
+    );
+  }
+
+  /// 获取门店可采购的商品列表（基于已绑定的供应商）
+  /// GET /api/v1/store-suppliers/products
+  Future<List<SupplierProduct>> getStorePurchasableProducts({
+    int? supplierId,
+    int? categoryId,
+    String? keyword,
+  }) async {
+    return await _client.getSimpleList<SupplierProduct>(
+      path: '${ApiPaths.storeSuppliers}/products',
+      fromJson: SupplierProduct.fromJson,
+      queryParameters: {
+        if (supplierId != null) 'supplier_id': supplierId,
+        if (categoryId != null) 'category_id': categoryId,
+        if (keyword != null && keyword.isNotEmpty) 'keyword': keyword,
       },
-      fromJson: (_) => null,
     );
   }
 }

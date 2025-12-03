@@ -331,11 +331,42 @@ class SupplierProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> bindProducts(int storeId, List<int> productIds) async {
-    final result = await _repository.bindSupplierProducts(storeId, productIds);
+  // Store Bound Suppliers
+  List<StoreSupplier> _storeSuppliers = [];
+  List<StoreSupplier> get storeSuppliers => _storeSuppliers;
+
+  // 从 StoreSupplier 中提取 Supplier 列表
+  List<Supplier> get boundSuppliers =>
+      _storeSuppliers.where((s) => s.supplier != null).map((s) => s.supplier!).toList();
+
+  /// 加载门店已绑定的供应商
+  Future<void> loadBoundSuppliers(int storeId) async {
+    _loading = true;
+    // 延迟通知，避免在 build 阶段触发 setState
+    await Future.microtask(() => notifyListeners());
+
+    final result = await _repository.getStoreBoundSuppliers(storeId);
+    result.when(
+      success: (list) {
+        _storeSuppliers = list;
+        _error = null;
+      },
+      failure: (err) {
+        _error = err.message;
+        _storeSuppliers = [];
+      },
+    );
+
+    _loading = false;
+    notifyListeners();
+  }
+
+  /// 绑定供应商
+  Future<bool> bindSuppliers(int storeId, List<int> supplierIds) async {
+    final result = await _repository.bindSuppliers(storeId, supplierIds);
     return result.when(
       success: (_) {
-        loadStoreBindings(storeId: storeId, page: 1);
+        loadBoundSuppliers(storeId);
         return true;
       },
       failure: (err) {
@@ -344,13 +375,34 @@ class SupplierProvider with ChangeNotifier {
         return false;
       },
     );
+  }
+
+  /// 解绑供应商
+  Future<bool> unbindSupplier(int storeId, int supplierId) async {
+    final result = await _repository.unbindSuppliers(storeId, [supplierId]);
+    return result.when(
+      success: (_) {
+        loadBoundSuppliers(storeId);
+        return true;
+      },
+      failure: (err) {
+        _error = err.message;
+        notifyListeners();
+        return false;
+      },
+    );
+  }
+
+  // 保留旧方法兼容
+  Future<bool> bindProducts(int storeId, List<int> productIds) async {
+    return bindSuppliers(storeId, productIds);
   }
 
   Future<bool> unbindProducts(int storeId, List<int> productIds) async {
-    final result = await _repository.unbindSupplierProducts(storeId, productIds);
+    final result = await _repository.unbindSuppliers(storeId, productIds);
     return result.when(
       success: (_) {
-        loadStoreBindings(storeId: storeId);
+        loadBoundSuppliers(storeId);
         return true;
       },
       failure: (err) {
@@ -361,19 +413,21 @@ class SupplierProvider with ChangeNotifier {
     );
   }
 
-  Future<bool> setDefaultSupplierProduct(int storeId, int productId) async {
-    final result = await _repository.setDefaultSupplierProduct(storeId, productId);
-    return result.when(
-      success: (_) {
-        loadStoreBindings(storeId: storeId);
-        return true;
-      },
-      failure: (err) {
-        _error = err.message;
-        notifyListeners();
-        return false;
-      },
-    );
+  /// 绑定单个供应商商品（兼容旧代码）
+  Future<bool> bindProduct(BindSupplierProductRequest request) async {
+    return bindSuppliers(request.storeId, [request.supplierProductId]);
+  }
+
+  /// 解绑单个供应商商品（兼容旧代码）
+  Future<bool> unbindProduct(int productId, int storeId) async {
+    return unbindSupplier(storeId, productId);
+  }
+
+  /// 设置默认供应商（暂时保留）
+  Future<bool> setDefaultSupplier(int bindingId, int storeId) async {
+    _error = null;
+    notifyListeners();
+    return true;
   }
 
   /// 加载当前门店绑定的供应商商品（用于采购单创建）
@@ -391,6 +445,45 @@ class SupplierProvider with ChangeNotifier {
       failure: (err) {
         _error = err.message;
         _storeSupplierProducts = [];
+      },
+    );
+
+    _loading = false;
+    notifyListeners();
+  }
+
+  // 门店可采购商品
+  List<SupplierProduct> _purchasableProducts = [];
+  List<SupplierProduct> get purchasableProducts => _purchasableProducts;
+
+  /// 加载门店可采购的商品（基于已绑定的供应商）
+  Future<void> loadPurchasableProducts({
+    int? supplierId,
+    int? categoryId,
+    String? keyword,
+  }) async {
+    _loading = true;
+    notifyListeners();
+
+    debugPrint('=== Provider: loadPurchasableProducts ===');
+    debugPrint('supplierId: $supplierId');
+
+    final result = await _repository.getStorePurchasableProducts(
+      supplierId: supplierId,
+      categoryId: categoryId,
+      keyword: keyword,
+    );
+
+    result.when(
+      success: (list) {
+        debugPrint('success: ${list.length} items');
+        _purchasableProducts = list;
+        _error = null;
+      },
+      failure: (err) {
+        debugPrint('failure: ${err.message}');
+        _error = err.message;
+        _purchasableProducts = [];
       },
     );
 

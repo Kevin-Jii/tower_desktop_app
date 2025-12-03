@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import '../../core/widgets/fluent_info_bar.dart';
 import 'supplier_provider.dart';
 import 'models.dart';
-import 'bind_product_dialog.dart';
 
 class StoreSupplierBindingPage extends StatefulWidget {
   final int storeId;
@@ -24,23 +23,30 @@ class _StoreSupplierBindingPageState extends State<StoreSupplierBindingPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<SupplierProvider>().loadStoreBindings(storeId: widget.storeId);
+      context.read<SupplierProvider>().loadBoundSuppliers(widget.storeId);
     });
   }
 
-  void _handleBindProduct() async {
+  void _handleBindSupplier() async {
     final provider = context.read<SupplierProvider>();
-    final boundProductIds = provider.storeBindings.map((b) => b.supplierProductId).toList();
-    
-    final result = await showDialog<BindSupplierProductRequest>(
+    final boundIds = provider.boundSuppliers.map((s) => s.id).toSet();
+
+    // 加载所有供应商
+    await provider.loadSuppliers(page: 1, pageSize: 100);
+    final allSuppliers = provider.suppliers.where((s) => !boundIds.contains(s.id)).toList();
+
+    if (allSuppliers.isEmpty) {
+      if (mounted) FluentInfoBarHelper.showWarning(context, '没有可绑定的供应商');
+      return;
+    }
+
+    final result = await showDialog<List<int>>(
       context: context,
-      builder: (ctx) => BindProductDialog(
-        storeId: widget.storeId,
-        excludeProductIds: boundProductIds,
-      ),
+      builder: (ctx) => _BindSupplierDialog(suppliers: allSuppliers),
     );
-    if (result != null && mounted) {
-      final success = await provider.bindProduct(result);
+
+    if (result != null && result.isNotEmpty && mounted) {
+      final success = await provider.bindSuppliers(widget.storeId, result);
       if (success && mounted) {
         await FluentInfoBarHelper.showSuccess(context, '绑定成功');
       } else if (mounted) {
@@ -50,12 +56,12 @@ class _StoreSupplierBindingPageState extends State<StoreSupplierBindingPage> {
     }
   }
 
-  void _handleUnbind(StoreSupplierProduct binding) async {
+  void _handleUnbind(Supplier supplier) async {
     final result = await showDialog<bool>(
       context: context,
       builder: (context) => ContentDialog(
         title: const Text('确认解绑'),
-        content: Text('确定要解绑商品 "${binding.supplierProduct?.name ?? ''}" 吗？'),
+        content: Text('确定要解绑供应商 "${supplier.name}" 吗？\n解绑后将无法在采购单中选择该供应商的商品。'),
         actions: [
           Button(onPressed: () => Navigator.pop(context, false), child: const Text('取消')),
           FilledButton(
@@ -67,7 +73,7 @@ class _StoreSupplierBindingPageState extends State<StoreSupplierBindingPage> {
       ),
     );
     if (result == true && mounted) {
-      final success = await context.read<SupplierProvider>().unbindProduct(binding.id, widget.storeId);
+      final success = await context.read<SupplierProvider>().unbindSupplier(widget.storeId, supplier.id);
       if (success && mounted) {
         await FluentInfoBarHelper.showSuccess(context, '解绑成功');
       } else if (mounted) {
@@ -77,17 +83,6 @@ class _StoreSupplierBindingPageState extends State<StoreSupplierBindingPage> {
     }
   }
 
-  void _handleSetDefault(StoreSupplierProduct binding) async {
-    final success = await context.read<SupplierProvider>().setDefaultSupplier(binding.id, widget.storeId);
-    if (success && mounted) {
-      await FluentInfoBarHelper.showSuccess(context, '已设为默认供应商');
-    } else if (mounted) {
-      final err = context.read<SupplierProvider>().error ?? '设置失败';
-      await FluentInfoBarHelper.showError(context, err);
-    }
-  }
-
-
   @override
   Widget build(BuildContext context) {
     return ScaffoldPage(
@@ -96,11 +91,11 @@ class _StoreSupplierBindingPageState extends State<StoreSupplierBindingPage> {
         children: [
           _buildHeader(),
           Expanded(child: _buildContent()),
-          _buildPagination(),
         ],
       ),
     );
   }
+
 
   Widget _buildHeader() {
     final theme = FluentTheme.of(context);
@@ -121,10 +116,7 @@ class _StoreSupplierBindingPageState extends State<StoreSupplierBindingPage> {
       ),
       child: Row(
         children: [
-          IconButton(
-            icon: const Icon(FluentIcons.back, size: 20),
-            onPressed: () => Navigator.pop(context),
-          ),
+          IconButton(icon: const Icon(FluentIcons.back, size: 20), onPressed: () => Navigator.pop(context)),
           const SizedBox(width: 12),
           Container(
             padding: const EdgeInsets.all(12),
@@ -138,26 +130,17 @@ class _StoreSupplierBindingPageState extends State<StoreSupplierBindingPage> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                '${widget.storeName} - 供应商绑定',
-                style: theme.typography.title?.copyWith(fontWeight: FontWeight.bold),
-              ),
-              Text(
-                '管理门店可采购的供应商商品',
-                style: theme.typography.caption?.copyWith(color: isDark ? Colors.grey[100] : Colors.grey[130]),
-              ),
+              Text('${widget.storeName} - 绑定供应商', style: theme.typography.title?.copyWith(fontWeight: FontWeight.bold)),
+              Text('绑定后可在采购单中选择该供应商的商品',
+                  style: theme.typography.caption?.copyWith(color: isDark ? Colors.grey[100] : Colors.grey[130])),
             ],
           ),
           const Spacer(),
           FilledButton(
-            onPressed: _handleBindProduct,
-            child: Row(
+            onPressed: _handleBindSupplier,
+            child: const Row(
               mainAxisSize: MainAxisSize.min,
-              children: const [
-                Icon(FluentIcons.add, size: 18),
-                SizedBox(width: 8),
-                Text('绑定商品'),
-              ],
+              children: [Icon(FluentIcons.add, size: 18), SizedBox(width: 8), Text('绑定供应商')],
             ),
           ),
         ],
@@ -174,32 +157,33 @@ class _StoreSupplierBindingPageState extends State<StoreSupplierBindingPage> {
         if (provider.loading) {
           return const Center(child: ProgressRing());
         }
-        if (provider.storeBindings.isEmpty) {
+        if (provider.boundSuppliers.isEmpty) {
           return Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(FluentIcons.link, size: 64, color: Colors.grey[100]),
                 const SizedBox(height: 16),
-                Text('暂无绑定商品', style: TextStyle(color: Colors.grey[100], fontSize: 16)),
+                Text('暂未绑定供应商', style: TextStyle(color: Colors.grey[100], fontSize: 16)),
+                const SizedBox(height: 8),
+                Text('绑定供应商后，可在采购单中选择其商品', style: TextStyle(color: Colors.grey[100], fontSize: 12)),
                 const SizedBox(height: 16),
-                FilledButton(onPressed: _handleBindProduct, child: const Text('绑定商品')),
+                FilledButton(onPressed: _handleBindSupplier, child: const Text('绑定供应商')),
               ],
             ),
           );
         }
         return ListView.builder(
           padding: const EdgeInsets.all(24),
-          itemCount: provider.storeBindings.length,
-          itemBuilder: (context, index) => _buildBindingCard(provider.storeBindings[index], isDark),
+          itemCount: provider.boundSuppliers.length,
+          itemBuilder: (context, index) => _buildSupplierCard(provider.boundSuppliers[index], isDark),
         );
       },
     );
   }
 
-  Widget _buildBindingCard(StoreSupplierProduct binding, bool isDark) {
+  Widget _buildSupplierCard(Supplier supplier, bool isDark) {
     final theme = FluentTheme.of(context);
-    final product = binding.supplierProduct;
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
@@ -216,10 +200,8 @@ class _StoreSupplierBindingPageState extends State<StoreSupplierBindingPage> {
               borderRadius: BorderRadius.circular(8),
             ),
             child: Center(
-              child: Text(
-                product?.name.substring(0, 1) ?? '?',
-                style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
-              ),
+              child: Text(supplier.name.substring(0, 1),
+                  style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
             ),
           ),
           const SizedBox(width: 16),
@@ -227,92 +209,145 @@ class _StoreSupplierBindingPageState extends State<StoreSupplierBindingPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Text(product?.name ?? '未知商品', style: theme.typography.bodyStrong),
-                    const SizedBox(width: 8),
-                    if (binding.isDefault)
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: Colors.orange.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: Colors.orange.withOpacity(0.3)),
-                        ),
-                        child: const Text('默认', style: TextStyle(fontSize: 11, color: Colors.orange)),
-                      ),
-                  ],
-                ),
+                Text(supplier.name, style: theme.typography.bodyStrong),
                 const SizedBox(height: 4),
                 Row(
                   children: [
-                    if (product?.supplier != null)
-                      Text('供应商: ${product!.supplier!.name}', style: TextStyle(fontSize: 12, color: Colors.grey[130])),
-                    if (product?.price != null) ...[
+                    if (supplier.contactPerson != null)
+                      Text('联系人: ${supplier.contactPerson}', style: TextStyle(fontSize: 12, color: Colors.grey[130])),
+                    if (supplier.phone != null) ...[
                       const SizedBox(width: 16),
-                      Text('价格: ¥${product!.price!.toStringAsFixed(2)}', style: TextStyle(fontSize: 12, color: Colors.orange)),
+                      Text('电话: ${supplier.phone}', style: TextStyle(fontSize: 12, color: Colors.grey[130])),
                     ],
                   ],
                 ),
               ],
             ),
           ),
-          if (!binding.isDefault)
-            Button(
-              onPressed: () => _handleSetDefault(binding),
-              child: const Text('设为默认'),
-            ),
-          const SizedBox(width: 8),
           Button(
-            onPressed: () => _handleUnbind(binding),
+            onPressed: () => _handleUnbind(supplier),
             child: Text('解绑', style: TextStyle(color: Colors.red)),
           ),
         ],
       ),
     );
   }
+}
 
-  Widget _buildPagination() {
-    return Consumer<SupplierProvider>(
-      builder: (context, provider, _) {
-        if (provider.storeBindings.isEmpty) return const SizedBox.shrink();
-        final totalPages = (provider.bindingTotal / 10).ceil();
-        if (totalPages <= 1) return const SizedBox.shrink();
 
-        final theme = FluentTheme.of(context);
-        final isDark = theme.brightness == Brightness.dark;
+/// 绑定供应商对话框 - 多选
+class _BindSupplierDialog extends StatefulWidget {
+  final List<Supplier> suppliers;
 
-        return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-          decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF2D2D2D) : Colors.white,
-            border: Border(top: BorderSide(color: isDark ? Colors.grey[100].withOpacity(0.2) : Colors.grey[40]!, width: 1)),
-          ),
-          child: Row(
+  const _BindSupplierDialog({required this.suppliers});
+
+  @override
+  State<_BindSupplierDialog> createState() => _BindSupplierDialogState();
+}
+
+class _BindSupplierDialogState extends State<_BindSupplierDialog> {
+  final Set<int> _selectedIds = {};
+
+  void _toggleSupplier(int id) {
+    setState(() {
+      if (_selectedIds.contains(id)) {
+        _selectedIds.remove(id);
+      } else {
+        _selectedIds.add(id);
+      }
+    });
+  }
+
+  void _selectAll() {
+    setState(() {
+      if (_selectedIds.length == widget.suppliers.length) {
+        _selectedIds.clear();
+      } else {
+        _selectedIds.addAll(widget.suppliers.map((s) => s.id));
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = FluentTheme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    return ContentDialog(
+      constraints: const BoxConstraints(maxWidth: 500, maxHeight: 450),
+      title: const Text('选择供应商'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('共 ${provider.bindingTotal} 条记录'),
-              Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(FluentIcons.chevron_left, size: 16),
-                    onPressed: provider.bindingPage > 1
-                        ? () => provider.loadStoreBindings(storeId: widget.storeId, page: provider.bindingPage - 1)
-                        : null,
-                  ),
-                  Text('${provider.bindingPage} / $totalPages'),
-                  IconButton(
-                    icon: const Icon(FluentIcons.chevron_right, size: 16),
-                    onPressed: provider.bindingPage < totalPages
-                        ? () => provider.loadStoreBindings(storeId: widget.storeId, page: provider.bindingPage + 1)
-                        : null,
-                  ),
-                ],
+              Text('共 ${widget.suppliers.length} 个供应商可绑定', style: theme.typography.body),
+              HyperlinkButton(
+                onPressed: _selectAll,
+                child: Text(_selectedIds.length == widget.suppliers.length ? '取消全选' : '全选'),
               ),
             ],
           ),
-        );
-      },
+          const SizedBox(height: 8),
+          Expanded(
+            child: ListView.builder(
+              itemCount: widget.suppliers.length,
+              itemBuilder: (context, index) {
+                final supplier = widget.suppliers[index];
+                final isSelected = _selectedIds.contains(supplier.id);
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: HoverButton(
+                    onPressed: () => _toggleSupplier(supplier.id),
+                    builder: (context, states) {
+                      return Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? Colors.blue.withOpacity(0.15)
+                              : states.isHovered
+                                  ? (isDark ? Colors.grey[150].withOpacity(0.1) : Colors.grey[30])
+                                  : Colors.transparent,
+                          borderRadius: BorderRadius.circular(6),
+                          border: isSelected ? Border.all(color: Colors.blue.withOpacity(0.5)) : null,
+                        ),
+                        child: Row(
+                          children: [
+                            Checkbox(checked: isSelected, onChanged: (_) => _toggleSupplier(supplier.id)),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(supplier.name, style: const TextStyle(fontWeight: FontWeight.w500)),
+                                  if (supplier.contactPerson != null || supplier.phone != null)
+                                    Text(
+                                      [supplier.contactPerson, supplier.phone].where((e) => e != null).join(' | '),
+                                      style: TextStyle(fontSize: 11, color: Colors.grey[130]),
+                                    ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+      actions: [
+        Button(onPressed: () => Navigator.pop(context), child: const Text('取消')),
+        FilledButton(
+          onPressed: _selectedIds.isNotEmpty ? () => Navigator.pop(context, _selectedIds.toList()) : null,
+          child: Text('确定绑定 (${_selectedIds.length})'),
+        ),
+      ],
     );
   }
 }

@@ -60,11 +60,12 @@ _$SupplierProductImpl _$$SupplierProductImplFromJson(
         Map<String, dynamic> json) =>
     _$SupplierProductImpl(
       id: (json['id'] as num).toInt(),
-      supplierId: (json['supplier_id'] as num).toInt(),
-      categoryId: (json['category_id'] as num).toInt(),
-      name: json['name'] as String,
+      supplierId: (json['supplier_id'] as num?)?.toInt() ?? 0,
+      categoryId: (json['category_id'] as num?)?.toInt() ?? 0,
+      name: json['name'] as String? ?? '',
       unit: json['unit'] as String?,
       price: (json['price'] as num?)?.toDouble(),
+      spec: json['spec'] as String?,
       status: (json['status'] as num?)?.toInt(),
       remark: json['remark'] as String?,
       createdAt: json['created_at'] as String?,
@@ -86,6 +87,7 @@ Map<String, dynamic> _$$SupplierProductImplToJson(
       'name': instance.name,
       'unit': instance.unit,
       'price': instance.price,
+      'spec': instance.spec,
       'status': instance.status,
       'remark': instance.remark,
       'created_at': instance.createdAt,
@@ -100,12 +102,17 @@ _$StoreSupplierProductImpl _$$StoreSupplierProductImplFromJson(
       id: (json['id'] as num).toInt(),
       storeId: (json['store_id'] as num).toInt(),
       productId: (json['product_id'] as num).toInt(),
+      supplierProductId: (json['supplier_product_id'] as num?)?.toInt(),
       isDefault: json['is_default'] as bool? ?? false,
       createdAt: json['created_at'] as String?,
       updatedAt: json['updated_at'] as String?,
       product: json['product'] == null
           ? null
           : SupplierProduct.fromJson(json['product'] as Map<String, dynamic>),
+      supplierProduct: json['supplier_product'] == null
+          ? null
+          : SupplierProduct.fromJson(
+              json['supplier_product'] as Map<String, dynamic>),
       store: json['store'] == null
           ? null
           : Store.fromJson(json['store'] as Map<String, dynamic>),
@@ -117,9 +124,35 @@ Map<String, dynamic> _$$StoreSupplierProductImplToJson(
       'id': instance.id,
       'store_id': instance.storeId,
       'product_id': instance.productId,
+      'supplier_product_id': instance.supplierProductId,
       'is_default': instance.isDefault,
       'created_at': instance.createdAt,
       'updated_at': instance.updatedAt,
       'product': instance.product,
+      'supplier_product': instance.supplierProduct,
       'store': instance.store,
+    };
+
+_$StoreSupplierImpl _$$StoreSupplierImplFromJson(Map<String, dynamic> json) =>
+    _$StoreSupplierImpl(
+      id: (json['id'] as num).toInt(),
+      storeId: (json['store_id'] as num).toInt(),
+      supplierId: (json['supplier_id'] as num).toInt(),
+      supplier: json['supplier'] == null
+          ? null
+          : Supplier.fromJson(json['supplier'] as Map<String, dynamic>),
+      status: (json['status'] as num?)?.toInt(),
+      createdAt: json['created_at'] as String?,
+      updatedAt: json['updated_at'] as String?,
+    );
+
+Map<String, dynamic> _$$StoreSupplierImplToJson(_$StoreSupplierImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'store_id': instance.storeId,
+      'supplier_id': instance.supplierId,
+      'supplier': instance.supplier,
+      'status': instance.status,
+      'created_at': instance.createdAt,
+      'updated_at': instance.updatedAt,
     };

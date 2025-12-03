@@ -179,28 +179,46 @@ class SupplierRepository {
     }
   }
 
-  Future<Result<void>> bindSupplierProducts(int storeId, List<int> productIds) async {
+  Future<Result<void>> bindSuppliers(int storeId, List<int> supplierIds) async {
     try {
-      await _api.bindSupplierProducts(storeId, productIds);
+      await _api.bindSuppliers(storeId, supplierIds);
       return Result.success(null);
     } catch (e, stackTrace) {
       return Result.failure(ErrorHandler.handleAny(e, stackTrace));
     }
   }
 
-  Future<Result<void>> unbindSupplierProducts(int storeId, List<int> productIds) async {
+  Future<Result<void>> unbindSuppliers(int storeId, List<int> supplierIds) async {
     try {
-      await _api.unbindSupplierProducts(storeId, productIds);
+      await _api.unbindSuppliers(storeId, supplierIds);
       return Result.success(null);
     } catch (e, stackTrace) {
       return Result.failure(ErrorHandler.handleAny(e, stackTrace));
     }
   }
 
-  Future<Result<void>> setDefaultSupplierProduct(int storeId, int productId) async {
+  Future<Result<List<StoreSupplier>>> getStoreBoundSuppliers(int storeId) async {
     try {
-      await _api.setDefaultSupplierProduct(storeId, productId);
-      return Result.success(null);
+      final list = await _api.getStoreBoundSuppliers(storeId);
+      return Result.success(list);
+    } catch (e, stackTrace) {
+      return Result.failure(ErrorHandler.handleAny(e, stackTrace));
+    }
+  }
+
+  /// 获取门店可采购的商品列表
+  Future<Result<List<SupplierProduct>>> getStorePurchasableProducts({
+    int? supplierId,
+    int? categoryId,
+    String? keyword,
+  }) async {
+    try {
+      final list = await _api.getStorePurchasableProducts(
+        supplierId: supplierId,
+        categoryId: categoryId,
+        keyword: keyword,
+      );
+      return Result.success(list);
     } catch (e, stackTrace) {
       return Result.failure(ErrorHandler.handleAny(e, stackTrace));
     }

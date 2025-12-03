@@ -4,6 +4,7 @@ import '../../core/widgets/fluent_info_bar.dart';
 import 'store_provider.dart';
 import 'models.dart';
 import 'store_form_dialog.dart';
+import '../supplier/store_supplier_binding_page.dart';
 
 class StoreManagementPage extends StatefulWidget {
   const StoreManagementPage({super.key});
@@ -117,6 +118,18 @@ class _StoreManagementPageState extends State<StoreManagementPage> {
       final err = context.read<StoreProvider>().error ?? '状态更新失败';
       await FluentInfoBarHelper.showError(context, err);
     }
+  }
+
+  void _handleBindSupplier(Store store) {
+    Navigator.push(
+      context,
+      FluentPageRoute(
+        builder: (context) => StoreSupplierBindingPage(
+          storeId: store.id,
+          storeName: store.name,
+        ),
+      ),
+    );
   }
 
   @override
@@ -601,6 +614,23 @@ class _StoreManagementPageState extends State<StoreManagementPage> {
                   onChanged: (value) => _handleStatusChange(store, value),
                 ),
               const SizedBox(width: 12),
+              Button(
+                onPressed: () => _handleBindSupplier(store),
+                style: ButtonStyle(
+                  padding: WidgetStateProperty.all(
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(FluentIcons.link, size: 12, color: Colors.teal),
+                    const SizedBox(width: 4),
+                    Text('绑定供应商', style: TextStyle(fontSize: 12, color: Colors.teal)),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 6),
               Button(
                 onPressed: () => _handleEdit(store),
                 style: ButtonStyle(

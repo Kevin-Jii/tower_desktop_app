@@ -651,15 +651,14 @@ mixin _$SupplierProduct {
   String get name => throw _privateConstructorUsedError;
   String? get unit => throw _privateConstructorUsedError;
   double? get price => throw _privateConstructorUsedError;
+  String? get spec => throw _privateConstructorUsedError;
   int? get status => throw _privateConstructorUsedError;
   String? get remark => throw _privateConstructorUsedError;
   @JsonKey(name: 'created_at')
   String? get createdAt => throw _privateConstructorUsedError;
   @JsonKey(name: 'updated_at')
   String? get updatedAt => throw _privateConstructorUsedError; // 关联数据
-  @JsonKey(name: 'supplier')
   Supplier? get supplier => throw _privateConstructorUsedError;
-  @JsonKey(name: 'category')
   SupplierCategory? get category => throw _privateConstructorUsedError;
 
   /// Serializes this SupplierProduct to a JSON map.
@@ -685,12 +684,13 @@ abstract class $SupplierProductCopyWith<$Res> {
       String name,
       String? unit,
       double? price,
+      String? spec,
       int? status,
       String? remark,
       @JsonKey(name: 'created_at') String? createdAt,
       @JsonKey(name: 'updated_at') String? updatedAt,
-      @JsonKey(name: 'supplier') Supplier? supplier,
-      @JsonKey(name: 'category') SupplierCategory? category});
+      Supplier? supplier,
+      SupplierCategory? category});
 
   $SupplierCopyWith<$Res>? get supplier;
   $SupplierCategoryCopyWith<$Res>? get category;
@@ -717,6 +717,7 @@ class _$SupplierProductCopyWithImpl<$Res, $Val extends SupplierProduct>
     Object? name = null,
     Object? unit = freezed,
     Object? price = freezed,
+    Object? spec = freezed,
     Object? status = freezed,
     Object? remark = freezed,
     Object? createdAt = freezed,
@@ -749,6 +750,10 @@ class _$SupplierProductCopyWithImpl<$Res, $Val extends SupplierProduct>
           ? _value.price
           : price // ignore: cast_nullable_to_non_nullable
               as double?,
+      spec: freezed == spec
+          ? _value.spec
+          : spec // ignore: cast_nullable_to_non_nullable
+              as String?,
       status: freezed == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
@@ -820,12 +825,13 @@ abstract class _$$SupplierProductImplCopyWith<$Res>
       String name,
       String? unit,
       double? price,
+      String? spec,
       int? status,
       String? remark,
       @JsonKey(name: 'created_at') String? createdAt,
       @JsonKey(name: 'updated_at') String? updatedAt,
-      @JsonKey(name: 'supplier') Supplier? supplier,
-      @JsonKey(name: 'category') SupplierCategory? category});
+      Supplier? supplier,
+      SupplierCategory? category});
 
   @override
   $SupplierCopyWith<$Res>? get supplier;
@@ -852,6 +858,7 @@ class __$$SupplierProductImplCopyWithImpl<$Res>
     Object? name = null,
     Object? unit = freezed,
     Object? price = freezed,
+    Object? spec = freezed,
     Object? status = freezed,
     Object? remark = freezed,
     Object? createdAt = freezed,
@@ -884,6 +891,10 @@ class __$$SupplierProductImplCopyWithImpl<$Res>
           ? _value.price
           : price // ignore: cast_nullable_to_non_nullable
               as double?,
+      spec: freezed == spec
+          ? _value.spec
+          : spec // ignore: cast_nullable_to_non_nullable
+              as String?,
       status: freezed == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
@@ -917,17 +928,18 @@ class __$$SupplierProductImplCopyWithImpl<$Res>
 class _$SupplierProductImpl implements _SupplierProduct {
   const _$SupplierProductImpl(
       {required this.id,
-      @JsonKey(name: 'supplier_id') required this.supplierId,
-      @JsonKey(name: 'category_id') required this.categoryId,
-      required this.name,
+      @JsonKey(name: 'supplier_id') this.supplierId = 0,
+      @JsonKey(name: 'category_id') this.categoryId = 0,
+      this.name = '',
       this.unit,
       this.price,
+      this.spec,
       this.status,
       this.remark,
       @JsonKey(name: 'created_at') this.createdAt,
       @JsonKey(name: 'updated_at') this.updatedAt,
-      @JsonKey(name: 'supplier') this.supplier,
-      @JsonKey(name: 'category') this.category});
+      this.supplier,
+      this.category});
 
   factory _$SupplierProductImpl.fromJson(Map<String, dynamic> json) =>
       _$$SupplierProductImplFromJson(json);
@@ -941,11 +953,14 @@ class _$SupplierProductImpl implements _SupplierProduct {
   @JsonKey(name: 'category_id')
   final int categoryId;
   @override
+  @JsonKey()
   final String name;
   @override
   final String? unit;
   @override
   final double? price;
+  @override
+  final String? spec;
   @override
   final int? status;
   @override
@@ -958,15 +973,13 @@ class _$SupplierProductImpl implements _SupplierProduct {
   final String? updatedAt;
 // 关联数据
   @override
-  @JsonKey(name: 'supplier')
   final Supplier? supplier;
   @override
-  @JsonKey(name: 'category')
   final SupplierCategory? category;
 
   @override
   String toString() {
-    return 'SupplierProduct(id: $id, supplierId: $supplierId, categoryId: $categoryId, name: $name, unit: $unit, price: $price, status: $status, remark: $remark, createdAt: $createdAt, updatedAt: $updatedAt, supplier: $supplier, category: $category)';
+    return 'SupplierProduct(id: $id, supplierId: $supplierId, categoryId: $categoryId, name: $name, unit: $unit, price: $price, spec: $spec, status: $status, remark: $remark, createdAt: $createdAt, updatedAt: $updatedAt, supplier: $supplier, category: $category)';
   }
 
   @override
@@ -982,6 +995,7 @@ class _$SupplierProductImpl implements _SupplierProduct {
             (identical(other.name, name) || other.name == name) &&
             (identical(other.unit, unit) || other.unit == unit) &&
             (identical(other.price, price) || other.price == price) &&
+            (identical(other.spec, spec) || other.spec == spec) &&
             (identical(other.status, status) || other.status == status) &&
             (identical(other.remark, remark) || other.remark == remark) &&
             (identical(other.createdAt, createdAt) ||
@@ -996,8 +1010,21 @@ class _$SupplierProductImpl implements _SupplierProduct {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, supplierId, categoryId, name,
-      unit, price, status, remark, createdAt, updatedAt, supplier, category);
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      supplierId,
+      categoryId,
+      name,
+      unit,
+      price,
+      spec,
+      status,
+      remark,
+      createdAt,
+      updatedAt,
+      supplier,
+      category);
 
   /// Create a copy of SupplierProduct
   /// with the given fields replaced by the non-null parameter values.
@@ -1018,19 +1045,19 @@ class _$SupplierProductImpl implements _SupplierProduct {
 
 abstract class _SupplierProduct implements SupplierProduct {
   const factory _SupplierProduct(
-          {required final int id,
-          @JsonKey(name: 'supplier_id') required final int supplierId,
-          @JsonKey(name: 'category_id') required final int categoryId,
-          required final String name,
-          final String? unit,
-          final double? price,
-          final int? status,
-          final String? remark,
-          @JsonKey(name: 'created_at') final String? createdAt,
-          @JsonKey(name: 'updated_at') final String? updatedAt,
-          @JsonKey(name: 'supplier') final Supplier? supplier,
-          @JsonKey(name: 'category') final SupplierCategory? category}) =
-      _$SupplierProductImpl;
+      {required final int id,
+      @JsonKey(name: 'supplier_id') final int supplierId,
+      @JsonKey(name: 'category_id') final int categoryId,
+      final String name,
+      final String? unit,
+      final double? price,
+      final String? spec,
+      final int? status,
+      final String? remark,
+      @JsonKey(name: 'created_at') final String? createdAt,
+      @JsonKey(name: 'updated_at') final String? updatedAt,
+      final Supplier? supplier,
+      final SupplierCategory? category}) = _$SupplierProductImpl;
 
   factory _SupplierProduct.fromJson(Map<String, dynamic> json) =
       _$SupplierProductImpl.fromJson;
@@ -1050,6 +1077,8 @@ abstract class _SupplierProduct implements SupplierProduct {
   @override
   double? get price;
   @override
+  String? get spec;
+  @override
   int? get status;
   @override
   String? get remark;
@@ -1060,10 +1089,8 @@ abstract class _SupplierProduct implements SupplierProduct {
   @JsonKey(name: 'updated_at')
   String? get updatedAt; // 关联数据
   @override
-  @JsonKey(name: 'supplier')
   Supplier? get supplier;
   @override
-  @JsonKey(name: 'category')
   SupplierCategory? get category;
 
   /// Create a copy of SupplierProduct
@@ -1085,6 +1112,8 @@ mixin _$StoreSupplierProduct {
   int get storeId => throw _privateConstructorUsedError;
   @JsonKey(name: 'product_id')
   int get productId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'supplier_product_id')
+  int? get supplierProductId => throw _privateConstructorUsedError;
   @JsonKey(name: 'is_default')
   bool get isDefault => throw _privateConstructorUsedError;
   @JsonKey(name: 'created_at')
@@ -1092,6 +1121,8 @@ mixin _$StoreSupplierProduct {
   @JsonKey(name: 'updated_at')
   String? get updatedAt => throw _privateConstructorUsedError; // 关联数据
   SupplierProduct? get product => throw _privateConstructorUsedError;
+  @JsonKey(name: 'supplier_product')
+  SupplierProduct? get supplierProduct => throw _privateConstructorUsedError;
   Store? get store => throw _privateConstructorUsedError;
 
   /// Serializes this StoreSupplierProduct to a JSON map.
@@ -1114,13 +1145,16 @@ abstract class $StoreSupplierProductCopyWith<$Res> {
       {int id,
       @JsonKey(name: 'store_id') int storeId,
       @JsonKey(name: 'product_id') int productId,
+      @JsonKey(name: 'supplier_product_id') int? supplierProductId,
       @JsonKey(name: 'is_default') bool isDefault,
       @JsonKey(name: 'created_at') String? createdAt,
       @JsonKey(name: 'updated_at') String? updatedAt,
       SupplierProduct? product,
+      @JsonKey(name: 'supplier_product') SupplierProduct? supplierProduct,
       Store? store});
 
   $SupplierProductCopyWith<$Res>? get product;
+  $SupplierProductCopyWith<$Res>? get supplierProduct;
   $StoreCopyWith<$Res>? get store;
 }
 
@@ -1143,10 +1177,12 @@ class _$StoreSupplierProductCopyWithImpl<$Res,
     Object? id = null,
     Object? storeId = null,
     Object? productId = null,
+    Object? supplierProductId = freezed,
     Object? isDefault = null,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
     Object? product = freezed,
+    Object? supplierProduct = freezed,
     Object? store = freezed,
   }) {
     return _then(_value.copyWith(
@@ -1162,6 +1198,10 @@ class _$StoreSupplierProductCopyWithImpl<$Res,
           ? _value.productId
           : productId // ignore: cast_nullable_to_non_nullable
               as int,
+      supplierProductId: freezed == supplierProductId
+          ? _value.supplierProductId
+          : supplierProductId // ignore: cast_nullable_to_non_nullable
+              as int?,
       isDefault: null == isDefault
           ? _value.isDefault
           : isDefault // ignore: cast_nullable_to_non_nullable
@@ -1177,6 +1217,10 @@ class _$StoreSupplierProductCopyWithImpl<$Res,
       product: freezed == product
           ? _value.product
           : product // ignore: cast_nullable_to_non_nullable
+              as SupplierProduct?,
+      supplierProduct: freezed == supplierProduct
+          ? _value.supplierProduct
+          : supplierProduct // ignore: cast_nullable_to_non_nullable
               as SupplierProduct?,
       store: freezed == store
           ? _value.store
@@ -1196,6 +1240,20 @@ class _$StoreSupplierProductCopyWithImpl<$Res,
 
     return $SupplierProductCopyWith<$Res>(_value.product!, (value) {
       return _then(_value.copyWith(product: value) as $Val);
+    });
+  }
+
+  /// Create a copy of StoreSupplierProduct
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $SupplierProductCopyWith<$Res>? get supplierProduct {
+    if (_value.supplierProduct == null) {
+      return null;
+    }
+
+    return $SupplierProductCopyWith<$Res>(_value.supplierProduct!, (value) {
+      return _then(_value.copyWith(supplierProduct: value) as $Val);
     });
   }
 
@@ -1226,14 +1284,18 @@ abstract class _$$StoreSupplierProductImplCopyWith<$Res>
       {int id,
       @JsonKey(name: 'store_id') int storeId,
       @JsonKey(name: 'product_id') int productId,
+      @JsonKey(name: 'supplier_product_id') int? supplierProductId,
       @JsonKey(name: 'is_default') bool isDefault,
       @JsonKey(name: 'created_at') String? createdAt,
       @JsonKey(name: 'updated_at') String? updatedAt,
       SupplierProduct? product,
+      @JsonKey(name: 'supplier_product') SupplierProduct? supplierProduct,
       Store? store});
 
   @override
   $SupplierProductCopyWith<$Res>? get product;
+  @override
+  $SupplierProductCopyWith<$Res>? get supplierProduct;
   @override
   $StoreCopyWith<$Res>? get store;
 }
@@ -1254,10 +1316,12 @@ class __$$StoreSupplierProductImplCopyWithImpl<$Res>
     Object? id = null,
     Object? storeId = null,
     Object? productId = null,
+    Object? supplierProductId = freezed,
     Object? isDefault = null,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
     Object? product = freezed,
+    Object? supplierProduct = freezed,
     Object? store = freezed,
   }) {
     return _then(_$StoreSupplierProductImpl(
@@ -1273,6 +1337,10 @@ class __$$StoreSupplierProductImplCopyWithImpl<$Res>
           ? _value.productId
           : productId // ignore: cast_nullable_to_non_nullable
               as int,
+      supplierProductId: freezed == supplierProductId
+          ? _value.supplierProductId
+          : supplierProductId // ignore: cast_nullable_to_non_nullable
+              as int?,
       isDefault: null == isDefault
           ? _value.isDefault
           : isDefault // ignore: cast_nullable_to_non_nullable
@@ -1289,6 +1357,10 @@ class __$$StoreSupplierProductImplCopyWithImpl<$Res>
           ? _value.product
           : product // ignore: cast_nullable_to_non_nullable
               as SupplierProduct?,
+      supplierProduct: freezed == supplierProduct
+          ? _value.supplierProduct
+          : supplierProduct // ignore: cast_nullable_to_non_nullable
+              as SupplierProduct?,
       store: freezed == store
           ? _value.store
           : store // ignore: cast_nullable_to_non_nullable
@@ -1304,10 +1376,12 @@ class _$StoreSupplierProductImpl implements _StoreSupplierProduct {
       {required this.id,
       @JsonKey(name: 'store_id') required this.storeId,
       @JsonKey(name: 'product_id') required this.productId,
+      @JsonKey(name: 'supplier_product_id') this.supplierProductId,
       @JsonKey(name: 'is_default') this.isDefault = false,
       @JsonKey(name: 'created_at') this.createdAt,
       @JsonKey(name: 'updated_at') this.updatedAt,
       this.product,
+      @JsonKey(name: 'supplier_product') this.supplierProduct,
       this.store});
 
   factory _$StoreSupplierProductImpl.fromJson(Map<String, dynamic> json) =>
@@ -1322,6 +1396,9 @@ class _$StoreSupplierProductImpl implements _StoreSupplierProduct {
   @JsonKey(name: 'product_id')
   final int productId;
   @override
+  @JsonKey(name: 'supplier_product_id')
+  final int? supplierProductId;
+  @override
   @JsonKey(name: 'is_default')
   final bool isDefault;
   @override
@@ -1334,11 +1411,14 @@ class _$StoreSupplierProductImpl implements _StoreSupplierProduct {
   @override
   final SupplierProduct? product;
   @override
+  @JsonKey(name: 'supplier_product')
+  final SupplierProduct? supplierProduct;
+  @override
   final Store? store;
 
   @override
   String toString() {
-    return 'StoreSupplierProduct(id: $id, storeId: $storeId, productId: $productId, isDefault: $isDefault, createdAt: $createdAt, updatedAt: $updatedAt, product: $product, store: $store)';
+    return 'StoreSupplierProduct(id: $id, storeId: $storeId, productId: $productId, supplierProductId: $supplierProductId, isDefault: $isDefault, createdAt: $createdAt, updatedAt: $updatedAt, product: $product, supplierProduct: $supplierProduct, store: $store)';
   }
 
   @override
@@ -1350,6 +1430,8 @@ class _$StoreSupplierProductImpl implements _StoreSupplierProduct {
             (identical(other.storeId, storeId) || other.storeId == storeId) &&
             (identical(other.productId, productId) ||
                 other.productId == productId) &&
+            (identical(other.supplierProductId, supplierProductId) ||
+                other.supplierProductId == supplierProductId) &&
             (identical(other.isDefault, isDefault) ||
                 other.isDefault == isDefault) &&
             (identical(other.createdAt, createdAt) ||
@@ -1357,13 +1439,25 @@ class _$StoreSupplierProductImpl implements _StoreSupplierProduct {
             (identical(other.updatedAt, updatedAt) ||
                 other.updatedAt == updatedAt) &&
             (identical(other.product, product) || other.product == product) &&
+            (identical(other.supplierProduct, supplierProduct) ||
+                other.supplierProduct == supplierProduct) &&
             (identical(other.store, store) || other.store == store));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, storeId, productId,
-      isDefault, createdAt, updatedAt, product, store);
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      storeId,
+      productId,
+      supplierProductId,
+      isDefault,
+      createdAt,
+      updatedAt,
+      product,
+      supplierProduct,
+      store);
 
   /// Create a copy of StoreSupplierProduct
   /// with the given fields replaced by the non-null parameter values.
@@ -1388,10 +1482,12 @@ abstract class _StoreSupplierProduct implements StoreSupplierProduct {
       {required final int id,
       @JsonKey(name: 'store_id') required final int storeId,
       @JsonKey(name: 'product_id') required final int productId,
+      @JsonKey(name: 'supplier_product_id') final int? supplierProductId,
       @JsonKey(name: 'is_default') final bool isDefault,
       @JsonKey(name: 'created_at') final String? createdAt,
       @JsonKey(name: 'updated_at') final String? updatedAt,
       final SupplierProduct? product,
+      @JsonKey(name: 'supplier_product') final SupplierProduct? supplierProduct,
       final Store? store}) = _$StoreSupplierProductImpl;
 
   factory _StoreSupplierProduct.fromJson(Map<String, dynamic> json) =
@@ -1406,6 +1502,9 @@ abstract class _StoreSupplierProduct implements StoreSupplierProduct {
   @JsonKey(name: 'product_id')
   int get productId;
   @override
+  @JsonKey(name: 'supplier_product_id')
+  int? get supplierProductId;
+  @override
   @JsonKey(name: 'is_default')
   bool get isDefault;
   @override
@@ -1417,6 +1516,9 @@ abstract class _StoreSupplierProduct implements StoreSupplierProduct {
   @override
   SupplierProduct? get product;
   @override
+  @JsonKey(name: 'supplier_product')
+  SupplierProduct? get supplierProduct;
+  @override
   Store? get store;
 
   /// Create a copy of StoreSupplierProduct
@@ -1425,4 +1527,314 @@ abstract class _StoreSupplierProduct implements StoreSupplierProduct {
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$StoreSupplierProductImplCopyWith<_$StoreSupplierProductImpl>
       get copyWith => throw _privateConstructorUsedError;
+}
+
+StoreSupplier _$StoreSupplierFromJson(Map<String, dynamic> json) {
+  return _StoreSupplier.fromJson(json);
+}
+
+/// @nodoc
+mixin _$StoreSupplier {
+  int get id => throw _privateConstructorUsedError;
+  @JsonKey(name: 'store_id')
+  int get storeId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'supplier_id')
+  int get supplierId => throw _privateConstructorUsedError;
+  Supplier? get supplier => throw _privateConstructorUsedError;
+  int? get status => throw _privateConstructorUsedError;
+  @JsonKey(name: 'created_at')
+  String? get createdAt => throw _privateConstructorUsedError;
+  @JsonKey(name: 'updated_at')
+  String? get updatedAt => throw _privateConstructorUsedError;
+
+  /// Serializes this StoreSupplier to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of StoreSupplier
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $StoreSupplierCopyWith<StoreSupplier> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $StoreSupplierCopyWith<$Res> {
+  factory $StoreSupplierCopyWith(
+          StoreSupplier value, $Res Function(StoreSupplier) then) =
+      _$StoreSupplierCopyWithImpl<$Res, StoreSupplier>;
+  @useResult
+  $Res call(
+      {int id,
+      @JsonKey(name: 'store_id') int storeId,
+      @JsonKey(name: 'supplier_id') int supplierId,
+      Supplier? supplier,
+      int? status,
+      @JsonKey(name: 'created_at') String? createdAt,
+      @JsonKey(name: 'updated_at') String? updatedAt});
+
+  $SupplierCopyWith<$Res>? get supplier;
+}
+
+/// @nodoc
+class _$StoreSupplierCopyWithImpl<$Res, $Val extends StoreSupplier>
+    implements $StoreSupplierCopyWith<$Res> {
+  _$StoreSupplierCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of StoreSupplier
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? storeId = null,
+    Object? supplierId = null,
+    Object? supplier = freezed,
+    Object? status = freezed,
+    Object? createdAt = freezed,
+    Object? updatedAt = freezed,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int,
+      storeId: null == storeId
+          ? _value.storeId
+          : storeId // ignore: cast_nullable_to_non_nullable
+              as int,
+      supplierId: null == supplierId
+          ? _value.supplierId
+          : supplierId // ignore: cast_nullable_to_non_nullable
+              as int,
+      supplier: freezed == supplier
+          ? _value.supplier
+          : supplier // ignore: cast_nullable_to_non_nullable
+              as Supplier?,
+      status: freezed == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as int?,
+      createdAt: freezed == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+      updatedAt: freezed == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+
+  /// Create a copy of StoreSupplier
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $SupplierCopyWith<$Res>? get supplier {
+    if (_value.supplier == null) {
+      return null;
+    }
+
+    return $SupplierCopyWith<$Res>(_value.supplier!, (value) {
+      return _then(_value.copyWith(supplier: value) as $Val);
+    });
+  }
+}
+
+/// @nodoc
+abstract class _$$StoreSupplierImplCopyWith<$Res>
+    implements $StoreSupplierCopyWith<$Res> {
+  factory _$$StoreSupplierImplCopyWith(
+          _$StoreSupplierImpl value, $Res Function(_$StoreSupplierImpl) then) =
+      __$$StoreSupplierImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {int id,
+      @JsonKey(name: 'store_id') int storeId,
+      @JsonKey(name: 'supplier_id') int supplierId,
+      Supplier? supplier,
+      int? status,
+      @JsonKey(name: 'created_at') String? createdAt,
+      @JsonKey(name: 'updated_at') String? updatedAt});
+
+  @override
+  $SupplierCopyWith<$Res>? get supplier;
+}
+
+/// @nodoc
+class __$$StoreSupplierImplCopyWithImpl<$Res>
+    extends _$StoreSupplierCopyWithImpl<$Res, _$StoreSupplierImpl>
+    implements _$$StoreSupplierImplCopyWith<$Res> {
+  __$$StoreSupplierImplCopyWithImpl(
+      _$StoreSupplierImpl _value, $Res Function(_$StoreSupplierImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of StoreSupplier
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? storeId = null,
+    Object? supplierId = null,
+    Object? supplier = freezed,
+    Object? status = freezed,
+    Object? createdAt = freezed,
+    Object? updatedAt = freezed,
+  }) {
+    return _then(_$StoreSupplierImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int,
+      storeId: null == storeId
+          ? _value.storeId
+          : storeId // ignore: cast_nullable_to_non_nullable
+              as int,
+      supplierId: null == supplierId
+          ? _value.supplierId
+          : supplierId // ignore: cast_nullable_to_non_nullable
+              as int,
+      supplier: freezed == supplier
+          ? _value.supplier
+          : supplier // ignore: cast_nullable_to_non_nullable
+              as Supplier?,
+      status: freezed == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as int?,
+      createdAt: freezed == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+      updatedAt: freezed == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$StoreSupplierImpl implements _StoreSupplier {
+  const _$StoreSupplierImpl(
+      {required this.id,
+      @JsonKey(name: 'store_id') required this.storeId,
+      @JsonKey(name: 'supplier_id') required this.supplierId,
+      this.supplier,
+      this.status,
+      @JsonKey(name: 'created_at') this.createdAt,
+      @JsonKey(name: 'updated_at') this.updatedAt});
+
+  factory _$StoreSupplierImpl.fromJson(Map<String, dynamic> json) =>
+      _$$StoreSupplierImplFromJson(json);
+
+  @override
+  final int id;
+  @override
+  @JsonKey(name: 'store_id')
+  final int storeId;
+  @override
+  @JsonKey(name: 'supplier_id')
+  final int supplierId;
+  @override
+  final Supplier? supplier;
+  @override
+  final int? status;
+  @override
+  @JsonKey(name: 'created_at')
+  final String? createdAt;
+  @override
+  @JsonKey(name: 'updated_at')
+  final String? updatedAt;
+
+  @override
+  String toString() {
+    return 'StoreSupplier(id: $id, storeId: $storeId, supplierId: $supplierId, supplier: $supplier, status: $status, createdAt: $createdAt, updatedAt: $updatedAt)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$StoreSupplierImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.storeId, storeId) || other.storeId == storeId) &&
+            (identical(other.supplierId, supplierId) ||
+                other.supplierId == supplierId) &&
+            (identical(other.supplier, supplier) ||
+                other.supplier == supplier) &&
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt) &&
+            (identical(other.updatedAt, updatedAt) ||
+                other.updatedAt == updatedAt));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, id, storeId, supplierId,
+      supplier, status, createdAt, updatedAt);
+
+  /// Create a copy of StoreSupplier
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$StoreSupplierImplCopyWith<_$StoreSupplierImpl> get copyWith =>
+      __$$StoreSupplierImplCopyWithImpl<_$StoreSupplierImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$StoreSupplierImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _StoreSupplier implements StoreSupplier {
+  const factory _StoreSupplier(
+          {required final int id,
+          @JsonKey(name: 'store_id') required final int storeId,
+          @JsonKey(name: 'supplier_id') required final int supplierId,
+          final Supplier? supplier,
+          final int? status,
+          @JsonKey(name: 'created_at') final String? createdAt,
+          @JsonKey(name: 'updated_at') final String? updatedAt}) =
+      _$StoreSupplierImpl;
+
+  factory _StoreSupplier.fromJson(Map<String, dynamic> json) =
+      _$StoreSupplierImpl.fromJson;
+
+  @override
+  int get id;
+  @override
+  @JsonKey(name: 'store_id')
+  int get storeId;
+  @override
+  @JsonKey(name: 'supplier_id')
+  int get supplierId;
+  @override
+  Supplier? get supplier;
+  @override
+  int? get status;
+  @override
+  @JsonKey(name: 'created_at')
+  String? get createdAt;
+  @override
+  @JsonKey(name: 'updated_at')
+  String? get updatedAt;
+
+  /// Create a copy of StoreSupplier
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$StoreSupplierImplCopyWith<_$StoreSupplierImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
