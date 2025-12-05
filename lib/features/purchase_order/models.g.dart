@@ -108,6 +108,7 @@ _$CreatePurchaseOrderItemRequestImpl
         _$CreatePurchaseOrderItemRequestImpl(
           productId: (json['product_id'] as num).toInt(),
           quantity: (json['quantity'] as num).toDouble(),
+          unit: json['unit'] as String?,
           remark: json['remark'] as String?,
         );
 
@@ -116,6 +117,7 @@ Map<String, dynamic> _$$CreatePurchaseOrderItemRequestImplToJson(
     <String, dynamic>{
       'product_id': instance.productId,
       'quantity': instance.quantity,
+      'unit': instance.unit,
       'remark': instance.remark,
     };
 

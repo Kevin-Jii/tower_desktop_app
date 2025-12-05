@@ -1170,6 +1170,7 @@ mixin _$CreatePurchaseOrderItemRequest {
   @JsonKey(name: 'product_id')
   int get productId => throw _privateConstructorUsedError;
   double get quantity => throw _privateConstructorUsedError;
+  String? get unit => throw _privateConstructorUsedError; // 单位编码
   String? get remark => throw _privateConstructorUsedError;
 
   /// Serializes this CreatePurchaseOrderItemRequest to a JSON map.
@@ -1193,6 +1194,7 @@ abstract class $CreatePurchaseOrderItemRequestCopyWith<$Res> {
   $Res call(
       {@JsonKey(name: 'product_id') int productId,
       double quantity,
+      String? unit,
       String? remark});
 }
 
@@ -1214,6 +1216,7 @@ class _$CreatePurchaseOrderItemRequestCopyWithImpl<$Res,
   $Res call({
     Object? productId = null,
     Object? quantity = null,
+    Object? unit = freezed,
     Object? remark = freezed,
   }) {
     return _then(_value.copyWith(
@@ -1225,6 +1228,10 @@ class _$CreatePurchaseOrderItemRequestCopyWithImpl<$Res,
           ? _value.quantity
           : quantity // ignore: cast_nullable_to_non_nullable
               as double,
+      unit: freezed == unit
+          ? _value.unit
+          : unit // ignore: cast_nullable_to_non_nullable
+              as String?,
       remark: freezed == remark
           ? _value.remark
           : remark // ignore: cast_nullable_to_non_nullable
@@ -1245,6 +1252,7 @@ abstract class _$$CreatePurchaseOrderItemRequestImplCopyWith<$Res>
   $Res call(
       {@JsonKey(name: 'product_id') int productId,
       double quantity,
+      String? unit,
       String? remark});
 }
 
@@ -1265,6 +1273,7 @@ class __$$CreatePurchaseOrderItemRequestImplCopyWithImpl<$Res>
   $Res call({
     Object? productId = null,
     Object? quantity = null,
+    Object? unit = freezed,
     Object? remark = freezed,
   }) {
     return _then(_$CreatePurchaseOrderItemRequestImpl(
@@ -1276,6 +1285,10 @@ class __$$CreatePurchaseOrderItemRequestImplCopyWithImpl<$Res>
           ? _value.quantity
           : quantity // ignore: cast_nullable_to_non_nullable
               as double,
+      unit: freezed == unit
+          ? _value.unit
+          : unit // ignore: cast_nullable_to_non_nullable
+              as String?,
       remark: freezed == remark
           ? _value.remark
           : remark // ignore: cast_nullable_to_non_nullable
@@ -1291,6 +1304,7 @@ class _$CreatePurchaseOrderItemRequestImpl
   const _$CreatePurchaseOrderItemRequestImpl(
       {@JsonKey(name: 'product_id') required this.productId,
       required this.quantity,
+      this.unit,
       this.remark});
 
   factory _$CreatePurchaseOrderItemRequestImpl.fromJson(
@@ -1303,11 +1317,14 @@ class _$CreatePurchaseOrderItemRequestImpl
   @override
   final double quantity;
   @override
+  final String? unit;
+// 单位编码
+  @override
   final String? remark;
 
   @override
   String toString() {
-    return 'CreatePurchaseOrderItemRequest(productId: $productId, quantity: $quantity, remark: $remark)';
+    return 'CreatePurchaseOrderItemRequest(productId: $productId, quantity: $quantity, unit: $unit, remark: $remark)';
   }
 
   @override
@@ -1319,12 +1336,14 @@ class _$CreatePurchaseOrderItemRequestImpl
                 other.productId == productId) &&
             (identical(other.quantity, quantity) ||
                 other.quantity == quantity) &&
+            (identical(other.unit, unit) || other.unit == unit) &&
             (identical(other.remark, remark) || other.remark == remark));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, productId, quantity, remark);
+  int get hashCode =>
+      Object.hash(runtimeType, productId, quantity, unit, remark);
 
   /// Create a copy of CreatePurchaseOrderItemRequest
   /// with the given fields replaced by the non-null parameter values.
@@ -1349,6 +1368,7 @@ abstract class _CreatePurchaseOrderItemRequest
   const factory _CreatePurchaseOrderItemRequest(
       {@JsonKey(name: 'product_id') required final int productId,
       required final double quantity,
+      final String? unit,
       final String? remark}) = _$CreatePurchaseOrderItemRequestImpl;
 
   factory _CreatePurchaseOrderItemRequest.fromJson(Map<String, dynamic> json) =
@@ -1359,6 +1379,8 @@ abstract class _CreatePurchaseOrderItemRequest
   int get productId;
   @override
   double get quantity;
+  @override
+  String? get unit; // 单位编码
   @override
   String? get remark;
 

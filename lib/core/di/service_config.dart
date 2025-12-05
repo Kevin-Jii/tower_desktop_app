@@ -13,6 +13,8 @@ import 'package:tower_desktop_app/features/supplier/supplier_api.dart';
 import 'package:tower_desktop_app/features/supplier/supplier_repository.dart';
 import 'package:tower_desktop_app/features/purchase_order/purchase_order_api.dart';
 import 'package:tower_desktop_app/features/purchase_order/purchase_order_repository.dart';
+import 'package:tower_desktop_app/features/dict/dict_api.dart';
+import 'package:tower_desktop_app/features/dict/dict_repository.dart';
 
 /// Service configuration for dependency injection
 ///
@@ -104,6 +106,16 @@ class ServiceConfig {
     // Purchase Order Repository
     locator.registerLazySingleton<PurchaseOrderRepository>(
       () => PurchaseOrderRepository(sl.get<PurchaseOrderApi>()),
+    );
+
+    // Dict API
+    locator.registerLazySingleton<DictApi>(
+      () => DictApi(sl.get<ApiClient>()),
+    );
+
+    // Dict Repository
+    locator.registerLazySingleton<DictRepository>(
+      () => DictRepository(sl.get<DictApi>()),
     );
   }
 

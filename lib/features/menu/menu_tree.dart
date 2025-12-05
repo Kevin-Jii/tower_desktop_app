@@ -79,9 +79,8 @@ class MenuTree extends StatelessWidget {
     for (int index = 0; index < roots.length; index++) {
       final section = roots[index];
       final hasChildren = section.children.isNotEmpty;
-      final inferredType =
-          section.type ?? (hasChildren ? MenuType.directory : MenuType.page);
-      final isDirectory = inferredType == MenuType.directory && hasChildren;
+      // 如果有子节点，无论 type 是什么，都当作目录处理
+      final isDirectory = hasChildren;
 
       if (isDirectory) {
         if (widgets.isNotEmpty) {
@@ -127,10 +126,9 @@ class MenuTree extends StatelessWidget {
 
     for (final node in nodes) {
       final hasChildren = node.children.isNotEmpty;
-      final inferredType =
-          node.type ?? (hasChildren ? MenuType.directory : MenuType.page);
 
-      if (inferredType == MenuType.directory && hasChildren) {
+      // 如果有子节点，无论 type 是什么，都当作目录处理
+      if (hasChildren) {
         widgets.add(_MenuSubsectionHeader(
           title: node.title,
           towerColors: towerColors,

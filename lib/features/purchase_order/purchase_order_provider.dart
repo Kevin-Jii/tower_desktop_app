@@ -36,11 +36,8 @@ class PurchaseOrderProvider with ChangeNotifier {
   int? _filterStatus;
   int? get filterStatus => _filterStatus;
 
-  String? _filterStartDate;
-  String? get filterStartDate => _filterStartDate;
-
-  String? _filterEndDate;
-  String? get filterEndDate => _filterEndDate;
+  String? _filterDate;
+  String? get filterDate => _filterDate;
 
   // Current Order Detail
   PurchaseOrder? _currentOrder;
@@ -59,16 +56,14 @@ class PurchaseOrderProvider with ChangeNotifier {
     int? storeId,
     int? supplierId,
     int? status,
-    String? startDate,
-    String? endDate,
+    String? date,
   }) async {
     if (page != null) _page = page;
     if (pageSize != null) _pageSize = pageSize;
     if (storeId != null) _filterStoreId = storeId;
     if (supplierId != null) _filterSupplierId = supplierId;
     if (status != null) _filterStatus = status;
-    if (startDate != null) _filterStartDate = startDate;
-    if (endDate != null) _filterEndDate = endDate;
+    if (date != null) _filterDate = date;
 
     _loading = true;
     _error = null;
@@ -80,8 +75,7 @@ class PurchaseOrderProvider with ChangeNotifier {
       storeId: _filterStoreId,
       supplierId: _filterSupplierId,
       status: _filterStatus,
-      startDate: _filterStartDate,
-      endDate: _filterEndDate,
+      date: _filterDate,
     );
 
     result.when(
@@ -106,8 +100,7 @@ class PurchaseOrderProvider with ChangeNotifier {
     _filterStoreId = null;
     _filterSupplierId = null;
     _filterStatus = null;
-    _filterStartDate = null;
-    _filterEndDate = null;
+    _filterDate = null;
     loadOrders(page: 1);
   }
 

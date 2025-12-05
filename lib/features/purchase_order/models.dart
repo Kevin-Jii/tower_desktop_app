@@ -84,6 +84,7 @@ class CreatePurchaseOrderItemRequest with _$CreatePurchaseOrderItemRequest {
   const factory CreatePurchaseOrderItemRequest({
     @JsonKey(name: 'product_id') required int productId,
     required double quantity,
+    String? unit, // 单位编码
     String? remark,
   }) = _CreatePurchaseOrderItemRequest;
 

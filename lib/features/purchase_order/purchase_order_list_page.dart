@@ -4,6 +4,8 @@ import 'purchase_order_provider.dart';
 import 'models.dart';
 import 'purchase_order_detail_page.dart';
 import 'purchase_order_create_page.dart';
+import '../dict/dict_provider.dart';
+import '../dict/models.dart';
 
 class PurchaseOrderListPage extends StatefulWidget {
   const PurchaseOrderListPage({super.key});
@@ -13,50 +15,83 @@ class PurchaseOrderListPage extends StatefulWidget {
 }
 
 class _PurchaseOrderListPageState extends State<PurchaseOrderListPage> {
-  int? _selectedStatus;
-  DateTime? _startDate;
-  DateTime? _endDate;
+  String? _selectedStatus; // 改为 String 类型，对应字典的 value
+  DateTime? _selectedDate; // 改为单个日期
 
-  final _statusOptions = [
-    const ComboBoxItem<int?>(value: null, child: Text('全部状态')),
-    const ComboBoxItem<int>(value: PurchaseOrderStatus.pending, child: Text('待确认')),
-    const ComboBoxItem<int>(value: PurchaseOrderStatus.confirmed, child: Text('已确认')),
-    const ComboBoxItem<int>(value: PurchaseOrderStatus.completed, child: Text('已完成')),
-    const ComboBoxItem<int>(value: PurchaseOrderStatus.cancelled, child: Text('已取消')),
-  ];
+  // 字典数据
+  List<DictData> _statusOptions = [];
+  bool _dictLoading = true;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<PurchaseOrderProvider>().loadOrders();
+      _loadDictAndOrders();
     });
   }
 
+  Future<void> _loadDictAndOrders() async {
+    // 加载字典数据
+    final dictProvider = context.read<DictProvider>();
+    await dictProvider.loadAllDicts();
+    
+    if (mounted) {
+      final options = dictProvider.getDictByCode('CGDDZT');
+      setState(() {
+      setState(() {
+        _statusOptions = options;
+        _dictLoading = false;
+      });
+    }
+    
+    // 加载订单（默认不带筛选条件，显示全部）
+    if (mounted) {
+      context.read<PurchaseOrderProvider>().loadOrders();
+    }
+  }
+
   Color _getStatusColor(int status) {
+    // 根据字典的 list_class 获取颜色
+    final dictItem = _statusOptions.where((d) => d.value == status.toString()).firstOrNull;
+    if (dictItem != null && dictItem.listClass != null) {
+      switch (dictItem.listClass) {
+        case 'warning': return Colors.orange;
+        case 'info': return Colors.blue;
+        case 'success': return Colors.green;
+        case 'danger': return Colors.red;
+      }
+    }
+    // 默认颜色映射
     switch (status) {
-      case PurchaseOrderStatus.pending: return Colors.orange;
-      case PurchaseOrderStatus.confirmed: return Colors.blue;
-      case PurchaseOrderStatus.completed: return Colors.green;
-      case PurchaseOrderStatus.cancelled: return Colors.red;
+      case 1: return Colors.orange;  // 待确认
+      case 2: return Colors.blue;    // 已确认
+      case 3: return Colors.green;   // 已完成
+      case 4: return Colors.red;     // 已取消
       default: return Colors.grey;
     }
   }
 
+  String _getStatusLabel(int status) {
+    // 从字典获取标签
+    final dictItem = _statusOptions.where((d) => d.value == status.toString()).firstOrNull;
+    return dictItem?.label ?? '未知';
+  }
+
   void _handleSearch() {
+    final statusInt = _selectedStatus != null ? int.tryParse(_selectedStatus!) : null;
+    final dateStr = _selectedDate?.toIso8601String().split('T').first;
+    
     context.read<PurchaseOrderProvider>().loadOrders(
       page: 1,
-      status: _selectedStatus,
-      startDate: _startDate?.toIso8601String().split('T').first,
-      endDate: _endDate?.toIso8601String().split('T').first,
+      status: statusInt,
+      date: dateStr,
     );
   }
 
   void _handleReset() {
     setState(() {
       _selectedStatus = null;
-      _startDate = null;
-      _endDate = null;
+      _selectedDate = null;
     });
     context.read<PurchaseOrderProvider>().clearFilters();
   }
@@ -75,6 +110,20 @@ class _PurchaseOrderListPageState extends State<PurchaseOrderListPage> {
     );
   }
 
+  /// 格式化日期显示
+  String _formatDate(String? dateStr) {
+    if (dateStr == null || dateStr.isEmpty) return '-';
+    try {
+      final date = DateTime.parse(dateStr);
+      return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+    } catch (_) {
+      // 如果已经是格式化的日期字符串，直接返回
+      if (dateStr.contains('T')) {
+        return dateStr.split('T').first;
+      }
+      return dateStr;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +144,7 @@ class _PurchaseOrderListPageState extends State<PurchaseOrderListPage> {
     final isDark = theme.brightness == Brightness.dark;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -109,6 +158,7 @@ class _PurchaseOrderListPageState extends State<PurchaseOrderListPage> {
       ),
       child: Column(
         children: [
+          // 标题行
           Row(
             children: [
               Container(
@@ -116,6 +166,9 @@ class _PurchaseOrderListPageState extends State<PurchaseOrderListPage> {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(colors: [Colors.blue, Colors.blue.lighter]),
                   borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(color: Colors.blue.withOpacity(0.3), blurRadius: 8, offset: const Offset(0, 2)),
+                  ],
                 ),
                 child: const Icon(FluentIcons.shopping_cart, size: 24, color: Colors.white),
               ),
@@ -124,57 +177,141 @@ class _PurchaseOrderListPageState extends State<PurchaseOrderListPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('采购订单', style: theme.typography.title?.copyWith(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 2),
                   Text('查看和管理采购订单', style: theme.typography.caption?.copyWith(color: isDark ? Colors.grey[100] : Colors.grey[130])),
                 ],
               ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              SizedBox(
-                width: 140,
-                child: ComboBox<int?>(
-                  value: _selectedStatus,
-                  items: _statusOptions,
-                  onChanged: (v) => setState(() => _selectedStatus = v),
-                  placeholder: const Text('状态'),
-                ),
-              ),
-              const SizedBox(width: 12),
-              SizedBox(
-                width: 140,
-                child: DatePicker(
-                  selected: _startDate,
-                  onChanged: (d) => setState(() => _startDate = d),
-                  header: '开始日期',
-                ),
-              ),
-              const SizedBox(width: 12),
-              SizedBox(
-                width: 140,
-                child: DatePicker(
-                  selected: _endDate,
-                  onChanged: (d) => setState(() => _endDate = d),
-                  header: '结束日期',
-                ),
-              ),
-              const SizedBox(width: 12),
-              FilledButton(onPressed: _handleSearch, child: const Text('查询')),
-              const SizedBox(width: 8),
-              Button(onPressed: _handleReset, child: const Text('重置')),
               const Spacer(),
+              // 统计信息
+              Consumer<PurchaseOrderProvider>(
+                builder: (context, provider, _) {
+                  if (provider.orders.isEmpty) return const SizedBox.shrink();
+                  return Row(
+                    children: [
+                      _buildStatCard('总订单', '${provider.total}', FluentIcons.document_set, Colors.blue, isDark),
+                      const SizedBox(width: 12),
+                    ],
+                  );
+                },
+              ),
               FilledButton(
                 onPressed: _handleCreate,
+                style: ButtonStyle(
+                  padding: WidgetStateProperty.all(const EdgeInsets.symmetric(horizontal: 20, vertical: 12)),
+                ),
                 child: const Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(FluentIcons.add, size: 14),
-                    SizedBox(width: 6),
-                    Text('新建采购单'),
+                    Icon(FluentIcons.add, size: 16),
+                    SizedBox(width: 8),
+                    Text('新建采购单', style: TextStyle(fontSize: 14)),
                   ],
                 ),
               ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          // 筛选行
+          Row(
+            children: [
+              // 状态筛选（使用字典数据）
+              SizedBox(
+                width: 160,
+                child: _dictLoading
+                    ? const Center(child: ProgressRing())
+                    : ComboBox<String?>(
+                        value: _selectedStatus,
+                        items: [
+                          const ComboBoxItem<String?>(value: null, child: Text('全部状态')),
+                          // 过滤掉 value 为 "0" 的选项（字典中的"全部状态"）
+                          ..._statusOptions.where((d) => d.value != '0').map((d) => ComboBoxItem<String>(
+                            value: d.value,
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 8,
+                                  height: 8,
+                                  margin: const EdgeInsets.only(right: 8),
+                                  decoration: BoxDecoration(
+                                    color: _getColorByListClass(d.listClass),
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                                Text(d.label),
+                              ],
+                            ),
+                          )),
+                        ],
+                        onChanged: (v) {
+                          setState(() => _selectedStatus = v);
+                          // 选择后自动查询
+                          _handleSearch();
+                        },
+                        placeholder: const Text('订单状态'),
+                        isExpanded: true,
+                      ),
+              ),
+              const SizedBox(width: 16),
+              // 单个日期选择
+              SizedBox(
+                width: 160,
+                child: DatePicker(
+                  selected: _selectedDate,
+                  onChanged: (d) => setState(() => _selectedDate = d),
+                  header: '采购日期',
+                ),
+              ),
+              const SizedBox(width: 16),
+              FilledButton(
+                onPressed: _handleSearch,
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [Icon(FluentIcons.search, size: 14), SizedBox(width: 6), Text('查询')],
+                ),
+              ),
+              const SizedBox(width: 8),
+              Button(
+                onPressed: _handleReset,
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [Icon(FluentIcons.refresh, size: 14), SizedBox(width: 6), Text('重置')],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Color _getColorByListClass(String? listClass) {
+    switch (listClass) {
+      case 'warning': return Colors.orange;
+      case 'info': return Colors.blue;
+      case 'success': return Colors.green;
+      case 'danger': return Colors.red;
+      default: return Colors.grey;
+    }
+  }
+
+  Widget _buildStatCard(String label, String value, IconData icon, Color color, bool isDark) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: color.withOpacity(0.2)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 18, color: color),
+          const SizedBox(width: 10),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(label, style: TextStyle(fontSize: 11, color: Colors.grey[120])),
+              Text(value, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: color)),
             ],
           ),
         ],
@@ -189,40 +326,111 @@ class _PurchaseOrderListPageState extends State<PurchaseOrderListPage> {
     return Consumer<PurchaseOrderProvider>(
       builder: (context, provider, _) {
         if (provider.loading) {
-          return const Center(child: ProgressRing());
-        }
-        if (provider.error != null) {
           return Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(FluentIcons.error_badge, size: 48, color: Colors.red),
+                const ProgressRing(),
                 const SizedBox(height: 16),
-                Text(provider.error!, style: TextStyle(color: Colors.red)),
-                const SizedBox(height: 16),
-                FilledButton(onPressed: () => provider.loadOrders(), child: const Text('重试')),
+                Text('加载中...', style: TextStyle(color: Colors.grey[100])),
               ],
+            ),
+          );
+        }
+        if (provider.error != null) {
+          return Center(
+            child: Container(
+              padding: const EdgeInsets.all(32),
+              margin: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: Colors.red.withOpacity(0.05),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: Colors.red.withOpacity(0.2)),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.red.withOpacity(0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(FluentIcons.error_badge, size: 48, color: Colors.red),
+                  ),
+                  const SizedBox(height: 20),
+                  Text('加载失败', style: theme.typography.subtitle?.copyWith(color: Colors.red.dark, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  Text(provider.error!, style: TextStyle(color: Colors.red.darker), textAlign: TextAlign.center),
+                  const SizedBox(height: 24),
+                  FilledButton(
+                    onPressed: () => provider.loadOrders(),
+                    style: ButtonStyle(backgroundColor: WidgetStateProperty.all(Colors.red)),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [Icon(FluentIcons.refresh, size: 14), SizedBox(width: 6), Text('重试')],
+                    ),
+                  ),
+                ],
+              ),
             ),
           );
         }
         if (provider.orders.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(FluentIcons.shopping_cart, size: 64, color: Colors.grey[100]),
-                const SizedBox(height: 16),
-                Text('暂无采购订单', style: TextStyle(color: Colors.grey[100], fontSize: 16)),
-              ],
-            ),
-          );
+          return _buildEmptyState(theme, isDark);
         }
-        return ListView.builder(
-          padding: const EdgeInsets.all(24),
-          itemCount: provider.orders.length,
-          itemBuilder: (context, index) => _buildOrderCard(provider.orders[index], isDark),
+        return Container(
+          color: isDark ? const Color(0xFF1F1F1F) : const Color(0xFFF5F7FA),
+          child: ListView.builder(
+            padding: const EdgeInsets.all(24),
+            itemCount: provider.orders.length,
+            itemBuilder: (context, index) => _buildOrderCard(provider.orders[index], isDark),
+          ),
         );
       },
+    );
+  }
+
+  Widget _buildEmptyState(FluentThemeData theme, bool isDark) {
+    return Center(
+      child: Container(
+        padding: const EdgeInsets.all(48),
+        margin: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Colors.blue.withOpacity(0.05), Colors.purple.withOpacity(0.05)],
+          ),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: Colors.blue.withOpacity(0.1), width: 2),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(colors: [Colors.blue.withOpacity(0.1), Colors.purple.withOpacity(0.1)]),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(FluentIcons.shopping_cart, size: 72, color: Colors.blue),
+            ),
+            const SizedBox(height: 24),
+            Text('暂无采购订单', style: theme.typography.title?.copyWith(color: Colors.grey[160], fontWeight: FontWeight.bold)),
+            const SizedBox(height: 12),
+            Text('点击右上角"新建采购单"按钮创建第一笔采购', style: theme.typography.body?.copyWith(color: Colors.grey[130])),
+            const SizedBox(height: 24),
+            FilledButton(
+              onPressed: _handleCreate,
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [Icon(FluentIcons.add, size: 16), SizedBox(width: 8), Text('立即新建')],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -230,61 +438,150 @@ class _PurchaseOrderListPageState extends State<PurchaseOrderListPage> {
     final theme = FluentTheme.of(context);
     final statusColor = _getStatusColor(order.status);
 
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      backgroundColor: isDark ? const Color(0xFF2D2D2D) : Colors.white,
-      borderRadius: BorderRadius.circular(8),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
       child: HoverButton(
         onPressed: () => _handleViewDetail(order),
         builder: (context, states) {
-          return Row(
-            children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(colors: [Colors.blue, Colors.blue.lighter]),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Center(child: Icon(FluentIcons.shopping_cart, size: 24, color: Colors.white)),
+          final isHovered = states.isHovered;
+          return AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeOut,
+            transform: Matrix4.identity()..translate(0.0, isHovered ? -2.0 : 0.0),
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF2D2D2D) : Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: isHovered ? Colors.blue.withOpacity(0.5) : (isDark ? Colors.grey[100].withOpacity(0.1) : Colors.grey[30]!),
+                width: isHovered ? 2 : 1,
               ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Text(order.orderNo, style: theme.typography.bodyStrong),
-                        const SizedBox(width: 12),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: statusColor.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Text(PurchaseOrderStatus.getLabel(order.status), style: TextStyle(fontSize: 11, color: statusColor)),
-                        ),
-                      ],
+              boxShadow: [
+                BoxShadow(
+                  color: isHovered ? Colors.blue.withOpacity(0.15) : Colors.black.withOpacity(isDark ? 0.3 : 0.08),
+                  blurRadius: isHovered ? 16 : 8,
+                  offset: Offset(0, isHovered ? 6 : 3),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                // 订单图标
+                Container(
+                  width: 56,
+                  height: 56,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [Colors.blue, Colors.blue.lighter],
                     ),
+                    borderRadius: BorderRadius.circular(14),
+                    boxShadow: [
+                      BoxShadow(color: Colors.blue.withOpacity(0.4), blurRadius: 12, offset: const Offset(0, 4)),
+                    ],
+                  ),
+                  child: const Center(child: Icon(FluentIcons.shopping_cart, size: 26, color: Colors.white)),
+                ),
+                const SizedBox(width: 20),
+                // 订单信息
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(order.orderNo, style: theme.typography.bodyStrong?.copyWith(fontSize: 15)),
+                          const SizedBox(width: 12),
+                          // 状态标签
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: statusColor.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: statusColor.withOpacity(0.3)),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  width: 6,
+                                  height: 6,
+                                  decoration: BoxDecoration(
+                                    color: statusColor,
+                                    shape: BoxShape.circle,
+                                    boxShadow: [BoxShadow(color: statusColor.withOpacity(0.5), blurRadius: 4)],
+                                  ),
+                                ),
+                                const SizedBox(width: 6),
+                                Text(_getStatusLabel(order.status), style: TextStyle(fontSize: 11, color: statusColor, fontWeight: FontWeight.w600)),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          if (order.store != null) ...[
+                            _buildInfoChip(FluentIcons.store_logo16, order.store!.name, Colors.teal, isDark),
+                            const SizedBox(width: 12),
+                          ],
+                          _buildInfoChip(FluentIcons.calendar, _formatDate(order.orderDate), Colors.purple, isDark),
+                          if (order.items != null && order.items!.isNotEmpty) ...[
+                            const SizedBox(width: 12),
+                            _buildInfoChip(FluentIcons.product_list, '${order.items!.length} 项商品', Colors.blue, isDark),
+                          ],
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                // 金额
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text('合计金额', style: TextStyle(fontSize: 11, color: Colors.grey[120])),
                     const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        if (order.store != null) Text('门店: ${order.store!.name}', style: TextStyle(fontSize: 12, color: Colors.grey[130])),
-                        const SizedBox(width: 16),
-                        Text('日期: ${order.orderDate ?? '-'}', style: TextStyle(fontSize: 12, color: Colors.grey[130])),
-                      ],
+                    Text(
+                      '¥${order.totalAmount.toStringAsFixed(2)}',
+                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.orange),
                     ),
                   ],
                 ),
-              ),
-              Text('¥${order.totalAmount.toStringAsFixed(2)}', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.orange)),
-              const SizedBox(width: 16),
-              const Icon(FluentIcons.chevron_right, size: 16),
-            ],
+                const SizedBox(width: 16),
+                // 箭头
+                Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: isHovered ? Colors.blue.withOpacity(0.1) : Colors.transparent,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(FluentIcons.chevron_right, size: 16, color: isHovered ? Colors.blue : Colors.grey[100]),
+                ),
+              ],
+            ),
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildInfoChip(IconData icon, String text, Color color, bool isDark) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 12, color: color),
+          const SizedBox(width: 4),
+          Text(text, style: TextStyle(fontSize: 11, color: color, fontWeight: FontWeight.w500)),
+        ],
       ),
     );
   }

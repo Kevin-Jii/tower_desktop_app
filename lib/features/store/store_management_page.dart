@@ -492,213 +492,292 @@ class _StoreManagementPageState extends State<StoreManagementPage> {
     final isActive = store.status == 1;
     final isUpdating = _updatingStores.contains(store.id);
 
-    return Card(
-      padding: const EdgeInsets.all(20),
-      backgroundColor: isDark ? const Color(0xFF2D2D2D) : Colors.white,
-      borderRadius: BorderRadius.circular(12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              // 门店图标
-              Container(
-                width: 56,
-                height: 56,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Colors.teal, Colors.teal.lighter],
-                  ),
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.teal.withOpacity(0.3),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Center(
-                  child: Text(
-                    store.name.substring(0, 1),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 16),
-              // 门店信息
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            store.name,
-                            style: theme.typography.bodyLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        // 状态标签
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: isActive
-                                  ? [Colors.green.lighter, Colors.green]
-                                  : [Colors.grey[60]!, Colors.grey[80]!],
-                            ),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text(
-                            isActive ? '✓ 营业中' : '✕ 已关闭',
-                            style: const TextStyle(
-                              fontSize: 11,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          // 详细信息
-          Container(
-            padding: const EdgeInsets.all(10),
+    return HoverButton(
+      onPressed: () {},
+      builder: (context, states) {
+        final isHovered = states.isHovered;
+        return AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOut,
+          transform: Matrix4.identity()..translate(0.0, isHovered ? -4.0 : 0.0),
+          child: Container(
             decoration: BoxDecoration(
-              color: isDark ? Colors.grey[150].withOpacity(0.1) : Colors.grey[20],
-              borderRadius: BorderRadius.circular(8),
+              color: isDark ? const Color(0xFF2D2D2D) : Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: isHovered ? Colors.teal.withOpacity(0.5) : (isDark ? Colors.grey[100].withOpacity(0.1) : Colors.grey[30]!),
+                width: isHovered ? 2 : 1,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: isHovered ? Colors.teal.withOpacity(0.15) : Colors.black.withOpacity(isDark ? 0.3 : 0.08),
+                  blurRadius: isHovered ? 20 : 10,
+                  offset: Offset(0, isHovered ? 8 : 4),
+                ),
+              ],
             ),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (store.address != null && store.address!.isNotEmpty)
-                  _buildInfoRow(FluentIcons.map_pin, '地址', store.address!, isDark),
-                if (store.contactPerson != null && store.contactPerson!.isNotEmpty)
-                  _buildInfoRow(FluentIcons.contact, '负责人', store.contactPerson!, isDark),
-                if (store.phone != null && store.phone!.isNotEmpty)
-                  _buildInfoRow(FluentIcons.phone, '电话', store.phone!, isDark),
+                // 头部区域
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Colors.teal.withOpacity(isDark ? 0.15 : 0.08),
+                        Colors.transparent,
+                      ],
+                    ),
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
+                  ),
+                  child: Row(
+                    children: [
+                      // 门店头像
+                      Container(
+                        width: 52,
+                        height: 52,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [Colors.teal, Colors.teal.lighter],
+                          ),
+                          borderRadius: BorderRadius.circular(14),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.teal.withOpacity(0.4),
+                              blurRadius: 12,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Center(
+                          child: Text(
+                            store.name.isNotEmpty ? store.name.substring(0, 1) : "店",
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 14),
+                      // 门店名称和副标题
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              store.name,
+                              style: theme.typography.bodyLarge?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 17,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              isActive ? "正常营业中" : "暂停营业",
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: isDark ? Colors.grey[100] : Colors.grey[120],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      // 状态标签
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: isActive ? Colors.green.withOpacity(0.1) : Colors.red.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: isActive ? Colors.green.withOpacity(0.3) : Colors.red.withOpacity(0.3),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              width: 8,
+                              height: 8,
+                              decoration: BoxDecoration(
+                                color: isActive ? Colors.green : Colors.red,
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: (isActive ? Colors.green : Colors.red).withOpacity(0.5),
+                                    blurRadius: 6,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              isActive ? "营业中" : "已关闭",
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: isActive ? Colors.green : Colors.red,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // 分隔线
+                Container(
+                  height: 1,
+                  color: isDark ? Colors.grey[100].withOpacity(0.1) : Colors.grey[30],
+                ),
+                // 信息区域
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    children: [
+                      _buildInfoRowNew(
+                        FluentIcons.map_pin,
+                        "地址",
+                        store.address ?? "-",
+                        Colors.orange,
+                        isDark,
+                      ),
+                      const SizedBox(height: 14),
+                      _buildInfoRowNew(
+                        FluentIcons.contact,
+                        "负责人",
+                        store.contactPerson ?? "-",
+                        Colors.blue,
+                        isDark,
+                      ),
+                      const SizedBox(height: 14),
+                      _buildInfoRowNew(
+                        FluentIcons.phone,
+                        "电话",
+                        store.phone ?? "-",
+                        Colors.green,
+                        isDark,
+                      ),
+                    ],
+                  ),
+                ),
+                // 操作区域
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      top: BorderSide(color: isDark ? Colors.grey[100].withOpacity(0.1) : Colors.grey[30]!),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      // 开关
+                      if (isUpdating)
+                        const SizedBox(width: 20, height: 20, child: ProgressRing(strokeWidth: 2))
+                      else
+                        ToggleSwitch(
+                          checked: isActive,
+                          onChanged: (value) => _handleStatusChange(store, value),
+                        ),
+                      const SizedBox(width: 8),
+                      Text(
+                        isActive ? "启用" : "停用",
+                        style: TextStyle(fontSize: 12, color: isDark ? Colors.grey[100] : Colors.grey[120]),
+                      ),
+                      const Spacer(),
+                      // 操作按钮
+                      _buildActionBtn(FluentIcons.link, "绑定", Colors.purple, () => _handleBindSupplier(store)),
+                      const SizedBox(width: 8),
+                      _buildActionBtn(FluentIcons.edit, "编辑", Colors.teal, () => _handleEdit(store)),
+                      const SizedBox(width: 8),
+                      _buildActionBtn(FluentIcons.delete, "删除", Colors.red, () => _handleDelete(store)),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
-          const SizedBox(height: 12),
-          // 操作按钮
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              if (isUpdating)
-                const SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: ProgressRing(strokeWidth: 2),
-                )
-              else
-                ToggleSwitch(
-                  checked: isActive,
-                  onChanged: (value) => _handleStatusChange(store, value),
-                ),
-              const SizedBox(width: 12),
-              Button(
-                onPressed: () => _handleBindSupplier(store),
-                style: ButtonStyle(
-                  padding: WidgetStateProperty.all(
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  ),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(FluentIcons.link, size: 12, color: Colors.teal),
-                    const SizedBox(width: 4),
-                    Text('绑定供应商', style: TextStyle(fontSize: 12, color: Colors.teal)),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 6),
-              Button(
-                onPressed: () => _handleEdit(store),
-                style: ButtonStyle(
-                  padding: WidgetStateProperty.all(
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  ),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(FluentIcons.edit, size: 12, color: Colors.blue),
-                    const SizedBox(width: 4),
-                    const Text('编辑', style: TextStyle(fontSize: 12)),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 6),
-              Button(
-                onPressed: () => _handleDelete(store),
-                style: ButtonStyle(
-                  padding: WidgetStateProperty.all(
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  ),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(FluentIcons.delete, size: 12, color: Colors.red),
-                    const SizedBox(width: 4),
-                    Text('删除', style: TextStyle(fontSize: 12, color: Colors.red)),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
-  Widget _buildInfoRow(IconData icon, String label, String value, bool isDark) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
-      child: Row(
-        children: [
-          Icon(icon, size: 12, color: isDark ? Colors.grey[100] : Colors.grey[130]),
-          const SizedBox(width: 6),
-          Text(
-            '$label: ',
-            style: TextStyle(
-              fontSize: 12,
-              color: isDark ? Colors.grey[100] : Colors.grey[130],
-            ),
+  Widget _buildInfoRowNew(IconData icon, String label, String value, Color iconColor, bool isDark) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 32,
+          height: 32,
+          decoration: BoxDecoration(
+            color: iconColor.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8),
           ),
-          Expanded(
-            child: Text(
-              value,
-              style: TextStyle(
-                fontSize: 12,
-                color: isDark ? Colors.white : Colors.grey[160],
+          child: Icon(icon, size: 14, color: iconColor),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 11,
+                  color: isDark ? Colors.grey[100] : Colors.grey[120],
+                ),
               ),
-              overflow: TextOverflow.ellipsis,
-            ),
+              const SizedBox(height: 2),
+              Text(
+                value,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: isDark ? Colors.white : Colors.grey[160],
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
+
+  Widget _buildActionBtn(IconData icon, String label, Color color, VoidCallback onTap) {
+    return HoverButton(
+      onPressed: onTap,
+      builder: (context, states) {
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          decoration: BoxDecoration(
+            color: states.isHovered ? color.withOpacity(0.15) : color.withOpacity(0.08),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: color.withOpacity(states.isHovered ? 0.4 : 0.2)),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, size: 12, color: color),
+              const SizedBox(width: 4),
+              Text(label, style: TextStyle(fontSize: 12, color: color, fontWeight: FontWeight.w500)),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+
 
   Widget _buildPagination() {
     return Consumer<StoreProvider>(

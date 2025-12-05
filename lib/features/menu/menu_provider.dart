@@ -26,9 +26,7 @@ class MenuProvider extends ChangeNotifier {
     try {
       // 后端已返回树结构，直接使用并递归过滤掉按钮 (type == 3)
       final raw = await _api.getUserMenus();
-
       final List<String> collectedPerms = [];
-
       List<MenuItem> filterTree(List<MenuItem> nodes) {
         final result = <MenuItem>[];
         for (final n in nodes) {
@@ -37,7 +35,7 @@ class MenuProvider extends ChangeNotifier {
             if (n.permission != null && n.permission!.isNotEmpty) {
               collectedPerms.add(n.permission!);
             }
-            continue; // 不放入侧边栏
+            continue; 
           }
           result.add(n.copyWith(children: filterTree(n.children)));
         }
@@ -45,7 +43,6 @@ class MenuProvider extends ChangeNotifier {
       }
 
       _tree = filterTree(raw.where((n) => n.parentId == 0).toList());
-
       // 设置权限集合
       permissionProvider?.setPermissions(collectedPerms);
       if (_tree.isNotEmpty) {

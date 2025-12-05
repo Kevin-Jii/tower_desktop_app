@@ -15,8 +15,7 @@ class PurchaseOrderRepository {
     int? storeId,
     int? supplierId,
     int? status,
-    String? startDate,
-    String? endDate,
+    String? date,
   }) async {
     try {
       final response = await _api.getPurchaseOrders(
@@ -25,8 +24,7 @@ class PurchaseOrderRepository {
         storeId: storeId,
         supplierId: supplierId,
         status: status,
-        startDate: startDate,
-        endDate: endDate,
+        date: date,
       );
       return Result.success(response);
     } catch (e, stackTrace) {

@@ -1,13 +1,18 @@
 import 'package:fluent_ui/fluent_ui.dart';
+// 保持原有的业务页面 import
 import 'package:tower_desktop_app/features/menu/menu_management_page.dart';
 import 'package:tower_desktop_app/features/role/role_management_page.dart';
 import 'package:tower_desktop_app/features/dingtalk/dingtalk_management_page.dart';
 import 'package:tower_desktop_app/features/supplier/supplier_management_page.dart';
 import 'package:tower_desktop_app/features/purchase_order/purchase_order_list_page.dart';
+import 'package:tower_desktop_app/features/dict/dict_management_page.dart';
 import '../../features/menu/models.dart';
 import '../constants/menu_types.dart';
 import '../../features/user/user_management_page.dart';
 import '../../features/store/store_management_page.dart';
+
+// 定义一个构建函数的别名，方便管理
+typedef PageBuilder = Widget Function();
 
 /// 路由管理器
 class RouteManager {
@@ -15,49 +20,42 @@ class RouteManager {
   factory RouteManager() => _instance;
   RouteManager._internal();
 
+  /// 路由注册表 (核心优化点)
+  /// 使用 Map 替代 Switch，结构更清晰，查找更快
+  static final Map<String, PageBuilder> _routeMap = {
+    // 系统管理
+    'system/user/index': () => const UserManagementPage(),
+    'system/role/index': () => const RoleManagementScope(),
+    'system/menu/index': () => const MenuManagementScope(),
+    'system/dict/index': () => const DictManagementScope(),
+    
+    // 门店管理
+    'store/list/index': () => const StoreManagementPage(),
+    'store/supplier/index': () => const SupplierManagementPage(),
+    
+    'store/purchase/index': () => const PurchaseOrderListPage(),
+    
+    // 钉钉管理
+    'dingtalk/robot/index': () => const DingTalkManagementPage(),
+  };
+
   /// 根据菜单项获取对应的页面
   Widget? getPageForMenuItem(MenuItem menuItem) {
-    // 目录与按钮不直接渲染页面
-    if (menuItem.type == null) return null;
     if (menuItem.type != MenuType.page) return null;
+    
     final component = menuItem.component;
-    if (component == null || component.isEmpty) {
-      return null;
-    }
+    if (component == null || component.isEmpty) return null;
 
-    // 根据 component 路径返回对应的页面
-    switch (component) {
-      // 系统管理
-      case 'system/user/index':
-        return const UserManagementPage();
-      case 'system/role/index':
-        return const RoleManagementScope();
-      case 'system/menu/index':
-        return const MenuManagementScope();
-      // 门店管理
-      case 'store/list/index':
-        return const StoreManagementPage();
+    final builder = _routeMap[component];
 
-      // 钉钉管理
-      case 'dingtalk/robot/index':
-        return const DingTalkManagementPage();
-
-      // 供应商管理
-      case 'store/supplier/index':
-        return const SupplierManagementPage();
-
-      // 采购订单/采购管理
-      case 'purchase/order/index':
-      case 'store/purchase/index':
-        return const PurchaseOrderListPage();
-
-      default:
-        debugPrint('未匹配到页面: $component');
-        return _buildModulePage('未实现页面', menuItem);
+    if (builder != null) {
+      return builder();
+    } else {
+      debugPrint('RouteManager Warning: 未找到路径映射 -> $component');
+      return _buildModulePage('功能建设中', menuItem);
     }
   }
 
-  /// 构建模块页面（临时占位页面）
   Widget _buildModulePage(String moduleName, MenuItem menuItem) {
     return _ModulePlaceholderPage(
       moduleName: moduleName,
@@ -66,7 +64,6 @@ class RouteManager {
   }
 }
 
-/// 模块占位页面
 class _ModulePlaceholderPage extends StatelessWidget {
   final String moduleName;
   final MenuItem menuItem;
@@ -78,43 +75,39 @@ class _ModulePlaceholderPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final typography = FluentTheme.of(context).typography;
+    
     return ScaffoldPage(
       content: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(FluentIcons.page, size: 64, color: Colors.blue),
+            Icon(FluentIcons.construction_cone, size: 64, color: Colors.orange),
             const SizedBox(height: 24),
             Text(
               moduleName,
-              style: FluentTheme.of(context).typography.title,
+              style: typography.title,
             ),
-            const SizedBox(height: 8),
-            Text(
-              '组件路径: ${menuItem.component}',
-              style: FluentTheme.of(context).typography.body,
-            ),
+            const SizedBox(height: 12),
+            _buildInfoChip(context, '组件路径: ${menuItem.component}'),
             const SizedBox(height: 4),
-            Text(
-              '路由路径: ${menuItem.path}',
-              style: FluentTheme.of(context).typography.caption,
-            ),
+            _buildInfoChip(context, '路由地址: ${menuItem.path}', isSecondary: true),
             const SizedBox(height: 24),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
-                color: Colors.orange.lightest,
+                color: Colors.blue.lightest, 
                 borderRadius: BorderRadius.circular(4),
-                border: Border.all(color: Colors.orange.light),
+                border: Border.all(color: Colors.blue.light),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(FluentIcons.info, size: 16, color: Colors.orange),
+                  Icon(FluentIcons.info, size: 16, color: Colors.blue),
                   const SizedBox(width: 8),
                   Text(
-                    '页面开发中...',
-                    style: TextStyle(color: Colors.orange.dark),
+                    '该功能模块正在开发中，敬请期待',
+                    style: TextStyle(color: Colors.blue.dark),
                   ),
                 ],
               ),
@@ -125,5 +118,13 @@ class _ModulePlaceholderPage extends StatelessWidget {
     );
   }
 
-  // 图标逻辑已迁移到 TdIconMapper
+  // 提取小组件，使主 build 方法更干净
+  Widget _buildInfoChip(BuildContext context, String text, {bool isSecondary = false}) {
+    return Text(
+      text,
+      style: isSecondary 
+          ? FluentTheme.of(context).typography.caption?.copyWith(color: Colors.grey[100])
+          : FluentTheme.of(context).typography.body,
+    );
+  }
 }

@@ -14,8 +14,7 @@ class PurchaseOrderApi {
     int? storeId,
     int? supplierId,
     int? status,
-    String? startDate,
-    String? endDate,
+    String? date,
   }) async {
     return _client.getPage<PurchaseOrder>(
       ApiPaths.purchaseOrders,
@@ -26,8 +25,7 @@ class PurchaseOrderApi {
         if (storeId != null) 'store_id': storeId,
         if (supplierId != null) 'supplier_id': supplierId,
         if (status != null) 'status': status,
-        if (startDate != null) 'start_date': startDate,
-        if (endDate != null) 'end_date': endDate,
+        if (date != null) 'date': date,
       },
     );
   }

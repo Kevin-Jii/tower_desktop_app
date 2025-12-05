@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import '../../core/widgets/fluent_info_bar.dart';
 import '../supplier/supplier_provider.dart';
 import '../supplier/models.dart';
+import '../dict/dict_provider.dart';
+import '../dict/models.dart' as dict;
 import 'purchase_order_provider.dart';
 import 'models.dart';
 
@@ -19,6 +21,7 @@ class _PurchaseOrderCreatePageState extends State<PurchaseOrderCreatePage> {
   final List<_OrderItemData> _items = [];
   bool _loading = false;
   List<Supplier> _boundSuppliers = [];
+  List<dict.DictData> _unitOptions = []; // 单位字典选项
 
   @override
   void initState() {
@@ -37,6 +40,13 @@ class _PurchaseOrderCreatePageState extends State<PurchaseOrderCreatePage> {
   Future<void> _loadBoundSuppliers() async {
     setState(() => _loading = true);
     try {
+      // 加载字典数据
+      final dictProvider = context.read<DictProvider>();
+      await dictProvider.loadAllDicts();
+      if (mounted) {
+        _unitOptions = dictProvider.getDictByCode('GYSGL_SPDW');
+      }
+      
       // 加载门店已绑定的供应商
       await context.read<SupplierProvider>().loadBoundSuppliers(0); // 0表示当前门店
       if (mounted) {
@@ -94,7 +104,11 @@ class _PurchaseOrderCreatePageState extends State<PurchaseOrderCreatePage> {
       orderDate: _orderDate.toIso8601String().split('T').first,
       remark: _remarkController.text.isEmpty ? null : _remarkController.text,
       items: _items
-          .map((item) => CreatePurchaseOrderItemRequest(productId: item.product!.id, quantity: item.quantity))
+          .map((item) => CreatePurchaseOrderItemRequest(
+            productId: item.product!.id, 
+            quantity: item.quantity,
+            unit: item.unit, // 传递单位编码
+          ))
           .toList(),
     );
 
@@ -239,6 +253,10 @@ class _PurchaseOrderCreatePageState extends State<PurchaseOrderCreatePage> {
   }
 
 
+  void _updateItemUnit(int index, String? unit) {
+    setState(() => _items[index].unit = unit);
+  }
+
   Widget _buildItemCard(int index, bool isDark) {
     final item = _items[index];
     final price = item.product?.price ?? 0;
@@ -260,6 +278,28 @@ class _PurchaseOrderCreatePageState extends State<PurchaseOrderCreatePage> {
                 Text(item.product?.name ?? '-', style: const TextStyle(fontWeight: FontWeight.w600)),
                 const SizedBox(height: 4),
                 Text('供应商: ${item.supplier?.name ?? '-'}', style: TextStyle(fontSize: 12, color: Colors.grey[130])),
+              ],
+            ),
+          ),
+          const SizedBox(width: 16),
+          // 单位选择
+          SizedBox(
+            width: 100,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('单位', style: TextStyle(fontSize: 11, color: Colors.grey[130])),
+                const SizedBox(height: 4),
+                ComboBox<String>(
+                  value: item.unit,
+                  placeholder: const Text('选择'),
+                  isExpanded: true,
+                  items: _unitOptions.map((d) => ComboBoxItem<String>(
+                    value: d.value,
+                    child: Text(d.label),
+                  )).toList(),
+                  onChanged: (v) => _updateItemUnit(index, v),
+                ),
               ],
             ),
           ),
@@ -353,8 +393,9 @@ class _OrderItemData {
   Supplier? supplier;
   SupplierProduct? product;
   double quantity;
+  String? unit; // 单位编码
 
-  _OrderItemData({this.supplier, this.product, this.quantity = 1});
+  _OrderItemData({this.supplier, this.product, this.quantity = 1, this.unit});
 }
 
 
@@ -423,7 +464,12 @@ class _AddProductsDialogState extends State<_AddProductsDialog> {
 
     final items = _products
         .where((p) => _selectedProductIds.contains(p.id))
-        .map((p) => _OrderItemData(supplier: _selectedSupplier, product: p, quantity: 1))
+        .map((p) => _OrderItemData(
+          supplier: _selectedSupplier, 
+          product: p, 
+          quantity: 1,
+          unit: p.unit, // 使用商品的默认单位
+        ))
         .toList();
 
     Navigator.pop(context, items);

@@ -1,6 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
 import '../../core/widgets/fluent_info_bar.dart';
+import '../../core/utils/dict_utils.dart';
 import 'supplier_provider.dart';
 import 'models.dart';
 import 'supplier_form_dialog.dart';
@@ -240,6 +241,12 @@ class _SupplierManagementPageState extends State<SupplierManagementPage> {
       final success =
           await context.read<SupplierProvider>().createProduct(result);
       if (success && mounted) {
+        // 刷新商品列表
+        context.read<SupplierProvider>().loadProducts(
+          page: 1,
+          supplierId: _selectedSupplier!.id,
+          categoryId: _selectedCategoryId,
+        );
         await FluentInfoBarHelper.showSuccess(context, '商品创建成功');
       } else if (mounted) {
         final err = context.read<SupplierProvider>().error ?? '创建失败';
@@ -888,11 +895,11 @@ class _SupplierManagementPageState extends State<SupplierManagementPage> {
                 const SizedBox(height: 2),
                 Row(
                   children: [
-                    if (product.unit != null)
-                      Text('${product.unit}',
+                    if (product.unit != null && product.unit!.isNotEmpty)
+                      Text(DictUtils.getLabel(context, 'GYSGL_SPDW', product.unit),
                           style: TextStyle(fontSize: 11, color: Colors.grey[130])),
                     if (product.price != null) ...[
-                      if (product.unit != null) const SizedBox(width: 12),
+                      if (product.unit != null && product.unit!.isNotEmpty) const SizedBox(width: 12),
                       Text('¥${product.price!.toStringAsFixed(2)}',
                           style:
                               TextStyle(fontSize: 11, color: Colors.orange)),

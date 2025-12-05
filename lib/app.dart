@@ -19,6 +19,9 @@ import 'features/supplier/supplier_repository.dart';
 import 'features/supplier/supplier_provider.dart';
 import 'features/purchase_order/purchase_order_repository.dart';
 import 'features/purchase_order/purchase_order_provider.dart';
+import 'features/dict/dict_api.dart';
+import 'features/dict/dict_repository.dart';
+import 'features/dict/dict_provider.dart';
 import 'core/theme/fluent_theme_provider.dart';
 
 class TowerApp extends StatelessWidget {
@@ -33,6 +36,7 @@ class TowerApp extends StatelessWidget {
     final dingTalkApi = sl.get<DingTalkApi>();
     final supplierRepository = sl.get<SupplierRepository>();
     final purchaseOrderRepository = sl.get<PurchaseOrderRepository>();
+    final dictRepository = sl.get<DictRepository>();
 
     return ChangeNotifierProvider(
       create: (_) => FluentThemeProvider(),
@@ -49,6 +53,8 @@ class TowerApp extends StatelessWidget {
               create: (_) => SupplierProvider(supplierRepository)),
           ChangeNotifierProvider(
               create: (_) => PurchaseOrderProvider(purchaseOrderRepository)),
+          ChangeNotifierProvider(
+              create: (_) => DictProvider(dictRepository)),
         ],
         child: FutureBuilder(
           future: _bootstrap(context),

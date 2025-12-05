@@ -38,6 +38,18 @@ class _PurchaseOrderDetailPageState extends State<PurchaseOrderDetailPage> {
     }
   }
 
+  /// 格式化日期时间显示 (年-月-日 时:分:秒)
+  String _formatDateTime(String? dateStr) {
+    if (dateStr == null || dateStr.isEmpty) return '-';
+    try {
+      final date = DateTime.parse(dateStr);
+      return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')} '
+             '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}:${date.second.toString().padLeft(2, '0')}';
+    } catch (_) {
+      return dateStr;
+    }
+  }
+
   void _handleConfirm() async {
     final result = await showDialog<bool>(
       context: context,
@@ -213,7 +225,7 @@ class _PurchaseOrderDetailPageState extends State<PurchaseOrderDetailPage> {
                 const SizedBox(width: 48),
                 _buildSummaryItem('商品数量', '${order.items?.length ?? 0} 项', Colors.blue),
                 const SizedBox(width: 48),
-                _buildSummaryItem('创建时间', order.createdAt?.split('T').first ?? '-', Colors.grey),
+                _buildSummaryItem('创建时间', _formatDateTime(order.createdAt), Colors.grey),
               ],
             ),
           ),
