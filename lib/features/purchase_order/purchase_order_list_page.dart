@@ -38,7 +38,6 @@ class _PurchaseOrderListPageState extends State<PurchaseOrderListPage> {
     if (mounted) {
       final options = dictProvider.getDictByCode('CGDDZT');
       setState(() {
-      setState(() {
         _statusOptions = options;
         _dictLoading = false;
       });
