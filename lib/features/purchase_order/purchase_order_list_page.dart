@@ -1,4 +1,4 @@
-import 'package:fluent_ui/fluent_ui.dart';
+﻿import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
 import 'purchase_order_provider.dart';
 import 'models.dart';
@@ -6,22 +6,16 @@ import 'purchase_order_detail_page.dart';
 import 'purchase_order_create_page.dart';
 import '../dict/dict_provider.dart';
 import '../dict/models.dart';
-
 class PurchaseOrderListPage extends StatefulWidget {
   const PurchaseOrderListPage({super.key});
-
   @override
   State<PurchaseOrderListPage> createState() => _PurchaseOrderListPageState();
 }
-
 class _PurchaseOrderListPageState extends State<PurchaseOrderListPage> {
-  String? _selectedStatus; // 改为 String 类型，对应字典的 value
-  DateTime? _selectedDate; // 改为单个日期
-
-  // 字典数据
+  String? _selectedStatus; 
+  DateTime? _selectedDate; 
   List<DictData> _statusOptions = [];
   bool _dictLoading = true;
-
   @override
   void initState() {
     super.initState();
@@ -29,12 +23,9 @@ class _PurchaseOrderListPageState extends State<PurchaseOrderListPage> {
       _loadDictAndOrders();
     });
   }
-
   Future<void> _loadDictAndOrders() async {
-    // 加载字典数据
     final dictProvider = context.read<DictProvider>();
     await dictProvider.loadAllDicts();
-    
     if (mounted) {
       final options = dictProvider.getDictByCode('CGDDZT');
       setState(() {
@@ -42,15 +33,11 @@ class _PurchaseOrderListPageState extends State<PurchaseOrderListPage> {
         _dictLoading = false;
       });
     }
-    
-    // 加载订单（默认不带筛选条件，显示全部）
     if (mounted) {
       context.read<PurchaseOrderProvider>().loadOrders();
     }
   }
-
   Color _getStatusColor(int status) {
-    // 根据字典的 list_class 获取颜色
     final dictItem = _statusOptions.where((d) => d.value == status.toString()).firstOrNull;
     if (dictItem != null && dictItem.listClass != null) {
       switch (dictItem.listClass) {
@@ -60,33 +47,27 @@ class _PurchaseOrderListPageState extends State<PurchaseOrderListPage> {
         case 'danger': return Colors.red;
       }
     }
-    // 默认颜色映射
     switch (status) {
-      case 1: return Colors.orange;  // 待确认
-      case 2: return Colors.blue;    // 已确认
-      case 3: return Colors.green;   // 已完成
-      case 4: return Colors.red;     // 已取消
+      case 1: return Colors.orange;  
+      case 2: return Colors.blue;    
+      case 3: return Colors.green;   
+      case 4: return Colors.red;     
       default: return Colors.grey;
     }
   }
-
   String _getStatusLabel(int status) {
-    // 从字典获取标签
     final dictItem = _statusOptions.where((d) => d.value == status.toString()).firstOrNull;
     return dictItem?.label ?? '未知';
   }
-
   void _handleSearch() {
     final statusInt = _selectedStatus != null ? int.tryParse(_selectedStatus!) : null;
     final dateStr = _selectedDate?.toIso8601String().split('T').first;
-    
     context.read<PurchaseOrderProvider>().loadOrders(
       page: 1,
       status: statusInt,
       date: dateStr,
     );
   }
-
   void _handleReset() {
     setState(() {
       _selectedStatus = null;
@@ -94,36 +75,30 @@ class _PurchaseOrderListPageState extends State<PurchaseOrderListPage> {
     });
     context.read<PurchaseOrderProvider>().clearFilters();
   }
-
   void _handleViewDetail(PurchaseOrder order) {
     Navigator.push(
       context,
       FluentPageRoute(builder: (context) => PurchaseOrderDetailPage(orderId: order.id)),
     );
   }
-
   void _handleCreate() {
     Navigator.push(
       context,
       FluentPageRoute(builder: (context) => const PurchaseOrderCreatePage()),
     );
   }
-
-  /// 格式化日期显示
   String _formatDate(String? dateStr) {
     if (dateStr == null || dateStr.isEmpty) return '-';
     try {
       final date = DateTime.parse(dateStr);
       return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
     } catch (_) {
-      // 如果已经是格式化的日期字符串，直接返回
       if (dateStr.contains('T')) {
         return dateStr.split('T').first;
       }
       return dateStr;
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return ScaffoldPage(
@@ -137,11 +112,9 @@ class _PurchaseOrderListPageState extends State<PurchaseOrderListPage> {
       ),
     );
   }
-
   Widget _buildToolbar() {
     final theme = FluentTheme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
       decoration: BoxDecoration(
@@ -157,7 +130,6 @@ class _PurchaseOrderListPageState extends State<PurchaseOrderListPage> {
       ),
       child: Column(
         children: [
-          // 标题行
           Row(
             children: [
               Container(
@@ -181,7 +153,6 @@ class _PurchaseOrderListPageState extends State<PurchaseOrderListPage> {
                 ],
               ),
               const Spacer(),
-              // 统计信息
               Consumer<PurchaseOrderProvider>(
                 builder: (context, provider, _) {
                   if (provider.orders.isEmpty) return const SizedBox.shrink();
@@ -210,10 +181,8 @@ class _PurchaseOrderListPageState extends State<PurchaseOrderListPage> {
             ],
           ),
           const SizedBox(height: 20),
-          // 筛选行
           Row(
             children: [
-              // 状态筛选（使用字典数据）
               SizedBox(
                 width: 160,
                 child: _dictLoading
@@ -222,7 +191,6 @@ class _PurchaseOrderListPageState extends State<PurchaseOrderListPage> {
                         value: _selectedStatus,
                         items: [
                           const ComboBoxItem<String?>(value: null, child: Text('全部状态')),
-                          // 过滤掉 value 为 "0" 的选项（字典中的"全部状态"）
                           ..._statusOptions.where((d) => d.value != '0').map((d) => ComboBoxItem<String>(
                             value: d.value,
                             child: Row(
@@ -243,7 +211,6 @@ class _PurchaseOrderListPageState extends State<PurchaseOrderListPage> {
                         ],
                         onChanged: (v) {
                           setState(() => _selectedStatus = v);
-                          // 选择后自动查询
                           _handleSearch();
                         },
                         placeholder: const Text('订单状态'),
@@ -251,7 +218,6 @@ class _PurchaseOrderListPageState extends State<PurchaseOrderListPage> {
                       ),
               ),
               const SizedBox(width: 16),
-              // 单个日期选择
               SizedBox(
                 width: 160,
                 child: DatePicker(
@@ -282,7 +248,6 @@ class _PurchaseOrderListPageState extends State<PurchaseOrderListPage> {
       ),
     );
   }
-
   Color _getColorByListClass(String? listClass) {
     switch (listClass) {
       case 'warning': return Colors.orange;
@@ -292,7 +257,6 @@ class _PurchaseOrderListPageState extends State<PurchaseOrderListPage> {
       default: return Colors.grey;
     }
   }
-
   Widget _buildStatCard(String label, String value, IconData icon, Color color, bool isDark) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -317,11 +281,9 @@ class _PurchaseOrderListPageState extends State<PurchaseOrderListPage> {
       ),
     );
   }
-
   Widget _buildContent() {
     final theme = FluentTheme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-
     return Consumer<PurchaseOrderProvider>(
       builder: (context, provider, _) {
         if (provider.loading) {
@@ -389,7 +351,6 @@ class _PurchaseOrderListPageState extends State<PurchaseOrderListPage> {
       },
     );
   }
-
   Widget _buildEmptyState(FluentThemeData theme, bool isDark) {
     return Center(
       child: Container(
@@ -432,11 +393,10 @@ class _PurchaseOrderListPageState extends State<PurchaseOrderListPage> {
       ),
     );
   }
-
   Widget _buildOrderCard(PurchaseOrder order, bool isDark) {
     final theme = FluentTheme.of(context);
     final statusColor = _getStatusColor(order.status);
-
+    final storeName = order.store?.name ?? '未知门店';
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: HoverButton(
@@ -447,118 +407,105 @@ class _PurchaseOrderListPageState extends State<PurchaseOrderListPage> {
             duration: const Duration(milliseconds: 200),
             curve: Curves.easeOut,
             transform: Matrix4.identity()..translate(0.0, isHovered ? -2.0 : 0.0),
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             decoration: BoxDecoration(
               color: isDark ? const Color(0xFF2D2D2D) : Colors.white,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: isHovered ? Colors.blue.withOpacity(0.5) : (isDark ? Colors.grey[100].withOpacity(0.1) : Colors.grey[30]!),
                 width: isHovered ? 2 : 1,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: isHovered ? Colors.blue.withOpacity(0.15) : Colors.black.withOpacity(isDark ? 0.3 : 0.08),
-                  blurRadius: isHovered ? 16 : 8,
-                  offset: Offset(0, isHovered ? 6 : 3),
+                  color: isHovered ? Colors.blue.withOpacity(0.12) : Colors.black.withOpacity(isDark ? 0.2 : 0.05),
+                  blurRadius: isHovered ? 12 : 6,
+                  offset: Offset(0, isHovered ? 4 : 2),
                 ),
               ],
             ),
             child: Row(
               children: [
-                // 订单图标
                 Container(
-                  width: 56,
-                  height: 56,
+                  width: 48,
+                  height: 48,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [Colors.blue, Colors.blue.lighter],
                     ),
-                    borderRadius: BorderRadius.circular(14),
-                    boxShadow: [
-                      BoxShadow(color: Colors.blue.withOpacity(0.4), blurRadius: 12, offset: const Offset(0, 4)),
-                    ],
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  child: const Center(child: Icon(FluentIcons.shopping_cart, size: 26, color: Colors.white)),
+                  child: const Center(child: Icon(FluentIcons.shopping_cart, size: 22, color: Colors.white)),
                 ),
-                const SizedBox(width: 20),
-                // 订单信息
+                const SizedBox(width: 16),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         children: [
-                          Text(order.orderNo, style: theme.typography.bodyStrong?.copyWith(fontSize: 15)),
-                          const SizedBox(width: 12),
-                          // 状态标签
+                          Text(order.orderNo, style: theme.typography.bodyStrong?.copyWith(fontSize: 14)),
+                          const SizedBox(width: 10),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                             decoration: BoxDecoration(
                               color: statusColor.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(10),
                               border: Border.all(color: statusColor.withOpacity(0.3)),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Container(
-                                  width: 6,
-                                  height: 6,
+                                  width: 5,
+                                  height: 5,
                                   decoration: BoxDecoration(
                                     color: statusColor,
                                     shape: BoxShape.circle,
-                                    boxShadow: [BoxShadow(color: statusColor.withOpacity(0.5), blurRadius: 4)],
                                   ),
                                 ),
-                                const SizedBox(width: 6),
+                                const SizedBox(width: 5),
                                 Text(_getStatusLabel(order.status), style: TextStyle(fontSize: 11, color: statusColor, fontWeight: FontWeight.w600)),
                               ],
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 8),
                       Row(
                         children: [
-                          if (order.store != null) ...[
-                            _buildInfoChip(FluentIcons.store_logo16, order.store!.name, Colors.teal, isDark),
-                            const SizedBox(width: 12),
-                          ],
-                          _buildInfoChip(FluentIcons.calendar, _formatDate(order.orderDate), Colors.purple, isDark),
+                          Icon(FluentIcons.home, size: 12, color: Colors.teal),
+                          const SizedBox(width: 4),
+                          Text(storeName, style: TextStyle(fontSize: 12, color: isDark ? Colors.grey[100] : Colors.grey[130])),
+                          const SizedBox(width: 16),
+                          Icon(FluentIcons.calendar, size: 12, color: Colors.purple),
+                          const SizedBox(width: 4),
+                          Text(_formatDate(order.orderDate), style: TextStyle(fontSize: 12, color: isDark ? Colors.grey[100] : Colors.grey[130])),
                           if (order.items != null && order.items!.isNotEmpty) ...[
-                            const SizedBox(width: 12),
-                            _buildInfoChip(FluentIcons.product_list, '${order.items!.length} 项商品', Colors.blue, isDark),
+                            const SizedBox(width: 16),
+                            Icon(FluentIcons.product_list, size: 12, color: Colors.blue),
+                            const SizedBox(width: 4),
+                            Text('${order.items!.length} 项', style: TextStyle(fontSize: 12, color: isDark ? Colors.grey[100] : Colors.grey[130])),
                           ],
                         ],
                       ),
                     ],
                   ),
                 ),
-                // 金额
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text('合计金额', style: TextStyle(fontSize: 11, color: Colors.grey[120])),
-                    const SizedBox(height: 4),
+                    Text('合计金额', style: TextStyle(fontSize: 10, color: Colors.grey[120])),
+                    const SizedBox(height: 2),
                     Text(
                       '¥${order.totalAmount.toStringAsFixed(2)}',
-                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.orange),
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.orange),
                     ),
                   ],
                 ),
-                const SizedBox(width: 16),
-                // 箭头
-                Container(
-                  width: 32,
-                  height: 32,
-                  decoration: BoxDecoration(
-                    color: isHovered ? Colors.blue.withOpacity(0.1) : Colors.transparent,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Icon(FluentIcons.chevron_right, size: 16, color: isHovered ? Colors.blue : Colors.grey[100]),
-                ),
+                const SizedBox(width: 12),
+                Icon(FluentIcons.chevron_right, size: 14, color: isHovered ? Colors.blue : Colors.grey[100]),
               ],
             ),
           );
@@ -566,35 +513,14 @@ class _PurchaseOrderListPageState extends State<PurchaseOrderListPage> {
       ),
     );
   }
-
-  Widget _buildInfoChip(IconData icon, String text, Color color, bool isDark) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.08),
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 12, color: color),
-          const SizedBox(width: 4),
-          Text(text, style: TextStyle(fontSize: 11, color: color, fontWeight: FontWeight.w500)),
-        ],
-      ),
-    );
-  }
-
   Widget _buildPagination() {
     return Consumer<PurchaseOrderProvider>(
       builder: (context, provider, _) {
         if (provider.orders.isEmpty) return const SizedBox.shrink();
         final totalPages = (provider.total / provider.pageSize).ceil();
         if (totalPages <= 1) return const SizedBox.shrink();
-
         final theme = FluentTheme.of(context);
         final isDark = theme.brightness == Brightness.dark;
-
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           decoration: BoxDecoration(

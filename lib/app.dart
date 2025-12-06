@@ -1,4 +1,4 @@
-import 'package:fluent_ui/fluent_ui.dart';
+﻿import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
 import 'core/di/service_locator.dart';
 import 'features/auth/login_screen.dart';
@@ -19,17 +19,15 @@ import 'features/supplier/supplier_repository.dart';
 import 'features/supplier/supplier_provider.dart';
 import 'features/purchase_order/purchase_order_repository.dart';
 import 'features/purchase_order/purchase_order_provider.dart';
-import 'features/dict/dict_api.dart';
 import 'features/dict/dict_repository.dart';
 import 'features/dict/dict_provider.dart';
+import 'features/inventory/inventory_repository.dart';
+import 'features/inventory/inventory_provider.dart';
 import 'core/theme/fluent_theme_provider.dart';
-
 class TowerApp extends StatelessWidget {
   const TowerApp({super.key});
-
   @override
   Widget build(BuildContext context) {
-    // Get services from ServiceLocator
     final storeApi = sl.get<StoreApi>();
     final userApi = sl.get<UserApi>();
     final menuApi = sl.get<MenuApi>();
@@ -37,7 +35,7 @@ class TowerApp extends StatelessWidget {
     final supplierRepository = sl.get<SupplierRepository>();
     final purchaseOrderRepository = sl.get<PurchaseOrderRepository>();
     final dictRepository = sl.get<DictRepository>();
-
+    final inventoryRepository = sl.get<InventoryRepository>();
     return ChangeNotifierProvider(
       create: (_) => FluentThemeProvider(),
       child: MultiProvider(
@@ -55,6 +53,8 @@ class TowerApp extends StatelessWidget {
               create: (_) => PurchaseOrderProvider(purchaseOrderRepository)),
           ChangeNotifierProvider(
               create: (_) => DictProvider(dictRepository)),
+          ChangeNotifierProvider(
+              create: (_) => InventoryProvider(inventoryRepository)),
         ],
         child: FutureBuilder(
           future: _bootstrap(context),
@@ -87,14 +87,11 @@ class TowerApp extends StatelessWidget {
     );
   }
 }
-
-/// 延迟加载 Home：需要 MenuProvider 先加载菜单
 class _DeferredHome extends StatefulWidget {
   const _DeferredHome();
   @override
   State<_DeferredHome> createState() => _DeferredHomeState();
 }
-
 class _DeferredHomeState extends State<_DeferredHome> {
   bool _ready = false;
   @override
@@ -104,7 +101,6 @@ class _DeferredHomeState extends State<_DeferredHome> {
       _prepare();
     });
   }
-
   Future<void> _prepare() async {
     final sm = SessionManager();
     if (!sm.isLoggedIn || sm.isExpired) {
@@ -114,17 +110,14 @@ class _DeferredHomeState extends State<_DeferredHome> {
       }
       return;
     }
-    // 恢复权限到 provider
     final permProvider = context.read<PermissionProvider>();
     permProvider.setPermissions(sm.permissions);
-    // 加载菜单
     final menuProvider = context.read<MenuProvider>();
     await menuProvider.load(permissionProvider: permProvider);
     if (mounted) {
       setState(() => _ready = true);
     }
   }
-
   @override
   Widget build(BuildContext context) {
     if (!_ready) {
@@ -135,11 +128,10 @@ class _DeferredHomeState extends State<_DeferredHome> {
     return const home.HomeScreen();
   }
 }
-
 Future<bool> _bootstrap(BuildContext context) async {
   final sm = SessionManager();
   if (sm.isLoggedIn && !sm.isExpired) {
-    return true; // 走自动登录流程
+    return true; 
   }
   return false;
 }

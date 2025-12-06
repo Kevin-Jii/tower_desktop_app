@@ -1,15 +1,11 @@
-import 'package:fluent_ui/fluent_ui.dart';
+﻿import 'package:fluent_ui/fluent_ui.dart';
 import 'models.dart';
-
 class StoreFormDialog extends StatefulWidget {
   final Store? store;
-
   const StoreFormDialog({super.key, this.store});
-
   @override
   State<StoreFormDialog> createState() => _StoreFormDialogState();
 }
-
 class _StoreFormDialogState extends State<StoreFormDialog> {
   final _formKey = GlobalKey<FormState>();
   final _nameCtrl = TextEditingController();
@@ -18,8 +14,6 @@ class _StoreFormDialogState extends State<StoreFormDialog> {
   final _phoneCtrl = TextEditingController();
   final _businessHoursCtrl = TextEditingController();
   final _remarkCtrl = TextEditingController();
-  int _status = 1;
-
   @override
   void initState() {
     super.initState();
@@ -31,10 +25,8 @@ class _StoreFormDialogState extends State<StoreFormDialog> {
       _phoneCtrl.text = s.phone ?? '';
       _businessHoursCtrl.text = s.businessHours ?? '';
       _remarkCtrl.text = s.remark ?? '';
-      _status = s.status ?? 1;
     }
   }
-
   @override
   void dispose() {
     _nameCtrl.dispose();
@@ -45,10 +37,8 @@ class _StoreFormDialogState extends State<StoreFormDialog> {
     _remarkCtrl.dispose();
     super.dispose();
   }
-
   void _submit() {
     if (widget.store != null) {
-      // 编辑模式
       final req = UpdateStoreRequest(
         name: _nameCtrl.text.trim(),
         address: _addressCtrl.text.trim().isEmpty ? null : _addressCtrl.text.trim(),
@@ -60,11 +50,9 @@ class _StoreFormDialogState extends State<StoreFormDialog> {
             ? null
             : _businessHoursCtrl.text.trim(),
         remark: _remarkCtrl.text.trim().isEmpty ? null : _remarkCtrl.text.trim(),
-        status: _status,
       );
       Navigator.pop(context, req);
     } else {
-      // 新增模式
       final req = CreateStoreRequest(
         name: _nameCtrl.text.trim(),
         address: _addressCtrl.text.trim().isEmpty ? null : _addressCtrl.text.trim(),
@@ -76,12 +64,11 @@ class _StoreFormDialogState extends State<StoreFormDialog> {
             ? null
             : _businessHoursCtrl.text.trim(),
         remark: _remarkCtrl.text.trim().isEmpty ? null : _remarkCtrl.text.trim(),
-        status: _status,
+        status: 1, 
       );
       Navigator.pop(context, req);
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return ContentDialog(
@@ -140,20 +127,6 @@ class _StoreFormDialogState extends State<StoreFormDialog> {
                     controller: _remarkCtrl,
                     placeholder: '请输入备注信息',
                     maxLines: 3,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                InfoLabel(
-                  label: '状态',
-                  child: ComboBox<int>(
-                    value: _status,
-                    items: const [
-                      ComboBoxItem(value: 1, child: Text('启用')),
-                      ComboBoxItem(value: 0, child: Text('禁用')),
-                    ],
-                    onChanged: (value) {
-                      setState(() => _status = value ?? 1);
-                    },
                   ),
                 ),
               ],
