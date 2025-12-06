@@ -261,7 +261,7 @@ mixin _$InventoryRecord {
   int get storeId => throw _privateConstructorUsedError;
   @JsonKey(name: 'product_id')
   int get productId => throw _privateConstructorUsedError;
-  int get type => throw _privateConstructorUsedError; 
+  int get type => throw _privateConstructorUsedError;
   double get quantity => throw _privateConstructorUsedError;
   String? get unit => throw _privateConstructorUsedError;
   String? get reason => throw _privateConstructorUsedError;
@@ -271,7 +271,7 @@ mixin _$InventoryRecord {
   @JsonKey(name: 'created_at')
   String? get createdAt => throw _privateConstructorUsedError;
   @JsonKey(name: 'updated_at')
-  String? get updatedAt => throw _privateConstructorUsedError; 
+  String? get updatedAt => throw _privateConstructorUsedError;
   InventoryStore? get store => throw _privateConstructorUsedError;
   InventoryProduct? get product => throw _privateConstructorUsedError;
   InventoryOperator? get operator => throw _privateConstructorUsedError;
@@ -693,7 +693,7 @@ abstract class _InventoryRecord implements InventoryRecord {
   @JsonKey(name: 'product_id')
   int get productId;
   @override
-  int get type; 
+  int get type;
   @override
   double get quantity;
   @override
@@ -710,7 +710,7 @@ abstract class _InventoryRecord implements InventoryRecord {
   String? get createdAt;
   @override
   @JsonKey(name: 'updated_at')
-  String? get updatedAt; 
+  String? get updatedAt;
   @override
   InventoryStore? get store;
   @override
@@ -1112,7 +1112,7 @@ mixin _$InventoryOrder {
   int? get storeId => throw _privateConstructorUsedError;
   @JsonKey(name: 'store_name')
   String? get storeName => throw _privateConstructorUsedError;
-  int get type => throw _privateConstructorUsedError; 
+  int get type => throw _privateConstructorUsedError;
   String? get reason => throw _privateConstructorUsedError;
   String? get remark => throw _privateConstructorUsedError;
   @JsonKey(name: 'total_quantity')
@@ -1128,7 +1128,7 @@ mixin _$InventoryOrder {
   @JsonKey(name: 'created_at')
   String? get createdAt => throw _privateConstructorUsedError;
   @JsonKey(name: 'updated_at')
-  String? get updatedAt => throw _privateConstructorUsedError; 
+  String? get updatedAt => throw _privateConstructorUsedError;
   InventoryStore? get store => throw _privateConstructorUsedError;
   InventoryOperator? get operator => throw _privateConstructorUsedError;
   List<InventoryOrderItem> get items => throw _privateConstructorUsedError;
@@ -1585,7 +1585,7 @@ abstract class _InventoryOrder implements InventoryOrder {
   @JsonKey(name: 'store_name')
   String? get storeName;
   @override
-  int get type; 
+  int get type;
   @override
   String? get reason;
   @override
@@ -1610,7 +1610,7 @@ abstract class _InventoryOrder implements InventoryOrder {
   String? get createdAt;
   @override
   @JsonKey(name: 'updated_at')
-  String? get updatedAt; 
+  String? get updatedAt;
   @override
   InventoryStore? get store;
   @override
@@ -1639,7 +1639,7 @@ mixin _$InventoryOrderItem {
   String? get productionDate => throw _privateConstructorUsedError;
   @JsonKey(name: 'expiry_date')
   String? get expiryDate => throw _privateConstructorUsedError;
-  String? get remark => throw _privateConstructorUsedError; 
+  String? get remark => throw _privateConstructorUsedError;
   InventoryProduct? get product => throw _privateConstructorUsedError;
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1940,7 +1940,7 @@ abstract class _InventoryOrderItem implements InventoryOrderItem {
   @JsonKey(name: 'expiry_date')
   String? get expiryDate;
   @override
-  String? get remark; 
+  String? get remark;
   @override
   InventoryProduct? get product;
   @override
@@ -1953,7 +1953,7 @@ CreateInventoryOrderRequest _$CreateInventoryOrderRequestFromJson(
   return _CreateInventoryOrderRequest.fromJson(json);
 }
 mixin _$CreateInventoryOrderRequest {
-  int get type => throw _privateConstructorUsedError; 
+  int get type => throw _privateConstructorUsedError;
   String get reason => throw _privateConstructorUsedError;
   String? get remark => throw _privateConstructorUsedError;
   List<CreateInventoryOrderItem> get items =>
@@ -2126,7 +2126,7 @@ abstract class _CreateInventoryOrderRequest
   factory _CreateInventoryOrderRequest.fromJson(Map<String, dynamic> json) =
       _$CreateInventoryOrderRequestImpl.fromJson;
   @override
-  int get type; 
+  int get type;
   @override
   String get reason;
   @override
@@ -2356,7 +2356,7 @@ CreateInventoryRecordRequest _$CreateInventoryRecordRequestFromJson(
 mixin _$CreateInventoryRecordRequest {
   @JsonKey(name: 'product_id')
   int get productId => throw _privateConstructorUsedError;
-  int get type => throw _privateConstructorUsedError; 
+  int get type => throw _privateConstructorUsedError;
   double get quantity => throw _privateConstructorUsedError;
   String get reason => throw _privateConstructorUsedError;
   String? get remark => throw _privateConstructorUsedError;
@@ -2589,7 +2589,7 @@ abstract class _CreateInventoryRecordRequest
   @JsonKey(name: 'product_id')
   int get productId;
   @override
-  int get type; 
+  int get type;
   @override
   double get quantity;
   @override

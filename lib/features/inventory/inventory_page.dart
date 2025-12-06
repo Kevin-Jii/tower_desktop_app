@@ -1008,10 +1008,19 @@ class _OrderDetailDialogState extends State<_OrderDetailDialog> {
     if (_saving) return;
     setState(() => _saving = true);
     try {
+      final itemCount = order.items.length;
+      final estimatedHeight = 32.0 * 2 + 
+          50.0 + 
+          24.0 + 
+          44.0 + 
+          (itemCount * 44.0) + 
+          24.0 + 
+          30.0; 
       final Uint8List? imageBytes = await _screenshotController.captureFromWidget(
         _buildOrderImageWidget(),
         delay: const Duration(milliseconds: 100),
         pixelRatio: 2.0,
+        targetSize: Size(700, estimatedHeight),
       );
       if (imageBytes == null) {
         if (mounted) {
@@ -1099,12 +1108,10 @@ class _OrderDetailDialogState extends State<_OrderDetailDialog> {
               horizontalInside: BorderSide(color: Color(0xFFE0E0E0)),
             ),
             columnWidths: const {
-              0: FlexColumnWidth(2.5), 
+              0: FlexColumnWidth(3),   
               1: FlexColumnWidth(1.2), 
               2: FlexColumnWidth(1),   
-              3: FlexColumnWidth(1),   
-              4: FlexColumnWidth(1),   
-              5: FlexColumnWidth(1.5), 
+              3: FlexColumnWidth(2),   
             },
             children: [
               const TableRow(
@@ -1112,8 +1119,6 @@ class _OrderDetailDialogState extends State<_OrderDetailDialog> {
                   _ReportTableHeaderCell(text: '商品名称'),
                   _ReportTableHeaderCell(text: '商品规格'),
                   _ReportTableHeaderCell(text: '数量'),
-                  _ReportTableHeaderCell(text: '单价'),
-                  _ReportTableHeaderCell(text: '金额'),
                   _ReportTableHeaderCell(text: '备注'),
                 ],
               ),
@@ -1122,8 +1127,6 @@ class _OrderDetailDialogState extends State<_OrderDetailDialog> {
                   _ReportTableDataCell(text: item.productName ?? item.product?.name ?? '-'),
                   _ReportTableDataCell(text: item.unit ?? '斤'),
                   _ReportTableDataCell(text: item.quantity.toStringAsFixed(item.quantity == item.quantity.truncate() ? 0 : 1)),
-                  const _ReportTableDataCell(text: '0.0'),
-                  const _ReportTableDataCell(text: '0.0'),
                   _ReportTableDataCell(text: item.remark ?? ''),
                 ],
               )),
