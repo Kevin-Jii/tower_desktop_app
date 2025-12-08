@@ -25,6 +25,9 @@ class _InventoryStockPageState extends State<InventoryStockPage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadProducts();
+      if (!isStockIn) {
+        context.read<InventoryProvider>().loadInventories();
+      }
     });
   }
   @override
@@ -35,6 +38,14 @@ class _InventoryStockPageState extends State<InventoryStockPage> {
   void _loadProducts() {
     context.read<SupplierProvider>().loadPurchasableProducts(keyword: _keyword.isEmpty ? null : _keyword);
   }
+  double _getStockQuantity(int productId) {
+    final inventories = context.read<InventoryProvider>().inventories;
+    final inventory = inventories.where((i) => i.productId == productId).firstOrNull;
+    return inventory?.quantity ?? 0;
+  }
+  bool _hasStock(int productId) {
+    return _getStockQuantity(productId) > 0;
+  }
   void _handleSearch() {
     _keyword = _searchController.text.trim();
     _loadProducts();
@@ -44,18 +55,40 @@ class _InventoryStockPageState extends State<InventoryStockPage> {
       if (_selectedProducts.containsKey(product.id)) {
         _selectedProducts.remove(product.id);
       } else {
+        if (!isStockIn && !_hasStock(product.id)) {
+          displayInfoBar(context, builder: (context, close) {
+            return InfoBar(
+              title: Text('${product.name} 库存不足，无法出库'),
+              severity: InfoBarSeverity.warning,
+              action: IconButton(icon: const Icon(FluentIcons.clear), onPressed: close),
+            );
+          });
+          return;
+        }
         _selectedProducts[product.id] = _SelectedProduct(
           product: product,
           quantity: 1,
           reason: isStockIn ? '采购入库' : '销售出库',
+          maxQuantity: isStockIn ? null : _getStockQuantity(product.id),
         );
       }
     });
   }
   void _updateQuantity(int productId, double quantity) {
     if (_selectedProducts.containsKey(productId)) {
+      final item = _selectedProducts[productId]!;
+      if (!isStockIn && item.maxQuantity != null && quantity > item.maxQuantity!) {
+        displayInfoBar(context, builder: (context, close) {
+          return InfoBar(
+            title: Text('${item.product.name} 出库数量不能超过库存 ${item.maxQuantity}'),
+            severity: InfoBarSeverity.warning,
+            action: IconButton(icon: const Icon(FluentIcons.clear), onPressed: close),
+          );
+        });
+        quantity = item.maxQuantity!;
+      }
       setState(() {
-        _selectedProducts[productId] = _selectedProducts[productId]!.copyWith(quantity: quantity);
+        _selectedProducts[productId] = item.copyWith(quantity: quantity);
       });
     }
   }
@@ -98,6 +131,7 @@ class _InventoryStockPageState extends State<InventoryStockPage> {
       });
       return;
     }
+    final insufficientItems = <_SelectedProduct>[];
     for (final entry in _selectedProducts.entries) {
       final item = entry.value;
       if (item.quantity <= 0) {
@@ -120,6 +154,19 @@ class _InventoryStockPageState extends State<InventoryStockPage> {
         });
         return;
       }
+      if (!isStockIn && item.maxQuantity != null && item.quantity > item.maxQuantity!) {
+        insufficientItems.add(item);
+      }
+    }
+    if (insufficientItems.isNotEmpty) {
+      displayInfoBar(context, builder: (context, close) {
+        return InfoBar(
+          title: Text('${insufficientItems.map((i) => i.product.name).join("、")} 库存不足，请调整数量'),
+          severity: InfoBarSeverity.error,
+          action: IconButton(icon: const Icon(FluentIcons.clear), onPressed: close),
+        );
+      });
+      return;
     }
     final confirmed = await showDialog<bool>(
       context: context,
@@ -175,23 +222,19 @@ class _InventoryStockPageState extends State<InventoryStockPage> {
   }
   @override
   Widget build(BuildContext context) {
+    final theme = FluentTheme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final dividerColor = isDark ? const Color(0xFF333333) : const Color(0xFFE5E5E5);
     return ScaffoldPage(
-      header: PageHeader(
-        title: Text('商品$typeLabel'),
-        leading: IconButton(
-          icon: const Icon(FluentIcons.back),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-      ),
       padding: EdgeInsets.zero,
       content: Column(
         children: [
-          _buildToolbar(),
+          _buildHeader(theme, isDark, dividerColor),
           Expanded(
             child: Row(
               children: [
                 Expanded(flex: 3, child: _buildProductList()),
-                Container(width: 1, color: Colors.grey[40]),
+                Container(width: 1, color: dividerColor),
                 Expanded(flex: 2, child: _buildSelectedList()),
               ],
             ),
@@ -200,49 +243,56 @@ class _InventoryStockPageState extends State<InventoryStockPage> {
       ),
     );
   }
-  Widget _buildToolbar() {
-    final theme = FluentTheme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+  Widget _buildHeader(FluentThemeData theme, bool isDark, Color dividerColor) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            typeColor.withOpacity(0.05),
-            isDark ? const Color(0xFF2D2D2D) : theme.micaBackgroundColor,
-          ],
-        ),
-        border: Border(bottom: BorderSide(color: theme.resources.dividerStrokeColorDefault, width: 1)),
+        color: isDark ? const Color(0xFF2D2D2D) : Colors.white,
+        border: Border(bottom: BorderSide(color: dividerColor)),
       ),
       child: Row(
         children: [
+          IconButton(
+            icon: const Icon(FluentIcons.back, size: 14),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          const SizedBox(width: 12),
           Container(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: typeColor,
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(isStockIn ? FluentIcons.add : FluentIcons.remove, size: 20, color: Colors.white),
+            child: Icon(
+              isStockIn ? FluentIcons.add : FluentIcons.remove,
+              size: 16,
+              color: Colors.white,
+            ),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 12),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Text('商品$typeLabel', style: theme.typography.subtitle?.copyWith(fontWeight: FontWeight.bold)),
-              Text('选择商品并填写数量后确认$typeLabel', style: theme.typography.caption?.copyWith(color: Colors.grey[120])),
+              Text(
+                '商品$typeLabel',
+                style: theme.typography.subtitle?.copyWith(fontWeight: FontWeight.bold),
+              ),
+              Text(
+                '选择商品并填写数量后确认$typeLabel',
+                style: theme.typography.caption?.copyWith(color: Colors.grey[100]),
+              ),
             ],
           ),
           const Spacer(),
           SizedBox(
-            width: 250,
+            width: 220,
             child: TextBox(
               controller: _searchController,
               placeholder: '搜索商品名称',
-              suffix: IconButton(
-                icon: const Icon(FluentIcons.search, size: 14),
-                onPressed: _handleSearch,
+              prefix: const Padding(
+                padding: EdgeInsets.only(left: 8),
+                child: Icon(FluentIcons.search, size: 14),
               ),
               onSubmitted: (_) => _handleSearch(),
             ),
@@ -254,14 +304,32 @@ class _InventoryStockPageState extends State<InventoryStockPage> {
   Widget _buildProductList() {
     final theme = FluentTheme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final bgColor = isDark ? const Color(0xFF1F1F1F) : const Color(0xFFF5F7FA);
     return Container(
-      color: isDark ? const Color(0xFF1F1F1F) : const Color(0xFFF5F7FA),
+      color: bgColor,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Text('可选商品', style: theme.typography.bodyStrong),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF252525) : Colors.white,
+              border: Border(bottom: BorderSide(color: isDark ? const Color(0xFF333333) : const Color(0xFFE5E5E5))),
+            ),
+            child: Row(
+              children: [
+                Icon(FluentIcons.product_list, size: 16, color: typeColor),
+                const SizedBox(width: 8),
+                Text('可选商品', style: theme.typography.bodyStrong),
+                const Spacer(),
+                Consumer<SupplierProvider>(
+                  builder: (_, p, __) => Text(
+                    '${p.purchasableProducts.length} 个',
+                    style: TextStyle(fontSize: 12, color: Colors.grey[100]),
+                  ),
+                ),
+              ],
+            ),
           ),
           Expanded(
             child: Consumer<SupplierProvider>(
@@ -274,11 +342,11 @@ class _InventoryStockPageState extends State<InventoryStockPage> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(FluentIcons.product_list, size: 48, color: Colors.grey[100]),
-                        const SizedBox(height: 16),
+                        Icon(FluentIcons.product_list, size: 48, color: Colors.grey[80]),
+                        const SizedBox(height: 12),
                         Text('暂无可选商品', style: TextStyle(color: Colors.grey[120])),
-                        const SizedBox(height: 8),
-                        Text('请先在供应商管理中绑定商品', style: TextStyle(fontSize: 12, color: Colors.grey[100])),
+                        const SizedBox(height: 4),
+                        Text('请先在供应商管理中绑定商品', style: TextStyle(fontSize: 11, color: Colors.grey[100])),
                       ],
                     ),
                   );
@@ -558,20 +626,24 @@ class _InventoryStockPageState extends State<InventoryStockPage> {
     );
   }
   Widget _buildProductItem(SupplierProduct product, bool isSelected, bool isDark) {
+    final stockQty = isStockIn ? null : _getStockQuantity(product.id);
+    final hasStock = isStockIn || (stockQty != null && stockQty > 0);
     return Padding(
       padding: const EdgeInsets.only(bottom: 4),
       child: HoverButton(
-        onPressed: () => _toggleProduct(product),
+        onPressed: hasStock ? () => _toggleProduct(product) : null,
         builder: (context, states) {
           return AnimatedContainer(
             duration: const Duration(milliseconds: 150),
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             decoration: BoxDecoration(
-              color: isSelected
-                  ? typeColor.withOpacity(0.1)
-                  : (states.isHovered 
-                      ? (isDark ? const Color(0xFF3D3D3D) : const Color(0xFFF0F0F0))
-                      : Colors.transparent),
+              color: !hasStock
+                  ? (isDark ? const Color(0xFF252525) : const Color(0xFFF5F5F5))
+                  : isSelected
+                      ? typeColor.withOpacity(0.1)
+                      : (states.isHovered
+                          ? (isDark ? const Color(0xFF3D3D3D) : const Color(0xFFF0F0F0))
+                          : Colors.transparent),
               borderRadius: BorderRadius.circular(4),
               border: Border.all(
                 color: isSelected ? typeColor : Colors.transparent,
@@ -587,7 +659,11 @@ class _InventoryStockPageState extends State<InventoryStockPage> {
                     color: isSelected ? typeColor : Colors.transparent,
                     borderRadius: BorderRadius.circular(3),
                     border: Border.all(
-                      color: isSelected ? typeColor : Colors.grey[100]!,
+                      color: !hasStock
+                          ? Colors.grey[60]!
+                          : isSelected
+                              ? typeColor
+                              : Colors.grey[100]!,
                       width: 1.5,
                     ),
                   ),
@@ -601,11 +677,32 @@ class _InventoryStockPageState extends State<InventoryStockPage> {
                     product.name,
                     style: TextStyle(
                       fontSize: 12,
-                      color: isDark ? Colors.white : const Color(0xFF333333),
+                      color: !hasStock
+                          ? Colors.grey[100]
+                          : (isDark ? Colors.white : const Color(0xFF333333)),
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
+                if (!isStockIn && stockQty != null) ...[
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: stockQty > 0
+                          ? Colors.green.withOpacity(0.1)
+                          : Colors.red.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(3),
+                    ),
+                    child: Text(
+                      stockQty > 0 ? '库存:${stockQty.toStringAsFixed(stockQty == stockQty.truncate() ? 0 : 1)}' : '无库存',
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: stockQty > 0 ? Colors.green : Colors.red,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                ],
                 if (product.unit != null)
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
@@ -628,30 +725,32 @@ class _InventoryStockPageState extends State<InventoryStockPage> {
   Widget _buildSelectedList() {
     final theme = FluentTheme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final dividerColor = isDark ? const Color(0xFF333333) : const Color(0xFFE5E5E5);
     return Container(
-      color: isDark ? const Color(0xFF2D2D2D) : Colors.white,
+      color: isDark ? const Color(0xFF252525) : Colors.white,
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              border: Border(bottom: BorderSide(color: theme.resources.dividerStrokeColorDefault)),
+              color: isDark ? const Color(0xFF2D2D2D) : Colors.white,
+              border: Border(bottom: BorderSide(color: dividerColor)),
             ),
             child: Row(
               children: [
-                Icon(FluentIcons.shopping_cart, size: 18, color: typeColor),
+                Icon(FluentIcons.shopping_cart, size: 16, color: typeColor),
                 const SizedBox(width: 8),
                 Text('已选商品', style: theme.typography.bodyStrong),
                 const Spacer(),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
                   decoration: BoxDecoration(
-                    color: typeColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(10),
+                    color: typeColor,
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
                     '${_selectedProducts.length} 项',
-                    style: TextStyle(fontSize: 12, color: typeColor, fontWeight: FontWeight.w600),
+                    style: const TextStyle(fontSize: 12, color: Colors.white, fontWeight: FontWeight.w600),
                   ),
                 ),
               ],
@@ -679,10 +778,17 @@ class _InventoryStockPageState extends State<InventoryStockPage> {
                   ),
           ),
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF1F1F1F) : const Color(0xFFF5F7FA),
-              border: Border(top: BorderSide(color: theme.resources.dividerStrokeColorDefault)),
+              color: isDark ? const Color(0xFF2D2D2D) : Colors.white,
+              border: Border(top: BorderSide(color: dividerColor)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 4,
+                  offset: const Offset(0, -2),
+                ),
+              ],
             ),
             child: Row(
               children: [
@@ -696,20 +802,19 @@ class _InventoryStockPageState extends State<InventoryStockPage> {
                   onPressed: _submitting ? null : () => Navigator.of(context).pop(),
                   child: const Text('取消'),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 10),
                 FilledButton(
                   onPressed: (_selectedProducts.isEmpty || _submitting) ? null : _submit,
-                  style: ButtonStyle(backgroundColor: WidgetStateProperty.all(typeColor)),
+                  style: ButtonStyle(
+                    backgroundColor: WidgetStateProperty.all(typeColor),
+                    padding: WidgetStateProperty.all(const EdgeInsets.symmetric(horizontal: 20, vertical: 8)),
+                  ),
                   child: _submitting
-                      ? Row(
+                      ? const Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const SizedBox(
-                              width: 14,
-                              height: 14,
-                              child: ProgressRing(strokeWidth: 2),
-                            ),
-                            const SizedBox(width: 8),
+                            SizedBox(width: 14, height: 14, child: ProgressRing(strokeWidth: 2)),
+                            SizedBox(width: 8),
                             Text('提交中...'),
                           ],
                         )
@@ -881,6 +986,9 @@ class _InventoryStockPageState extends State<InventoryStockPage> {
     );
   }
   Widget _buildConfirmDialog() {
+    final hasInsufficientStock = !isStockIn && _selectedProducts.values.any(
+      (item) => item.maxQuantity != null && item.quantity > item.maxQuantity!,
+    );
     return ContentDialog(
       title: Row(
         children: [
@@ -904,16 +1012,38 @@ class _InventoryStockPageState extends State<InventoryStockPage> {
                 itemCount: _selectedProducts.length,
                 itemBuilder: (context, index) {
                   final item = _selectedProducts.values.elementAt(index);
+                  final isInsufficient = !isStockIn && 
+                      item.maxQuantity != null && 
+                      item.quantity > item.maxQuantity!;
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Row(
                       children: [
-                        Icon(FluentIcons.product, size: 14, color: typeColor),
+                        Icon(
+                          isInsufficient ? FluentIcons.warning : FluentIcons.product,
+                          size: 14,
+                          color: isInsufficient ? Colors.red : typeColor,
+                        ),
                         const SizedBox(width: 8),
-                        Expanded(child: Text(item.product.name)),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(item.product.name),
+                              if (isInsufficient)
+                                Text(
+                                  '库存不足！当前库存: ${item.maxQuantity?.toStringAsFixed(item.maxQuantity == item.maxQuantity?.truncate() ? 0 : 1)}',
+                                  style: TextStyle(fontSize: 11, color: Colors.red),
+                                ),
+                            ],
+                          ),
+                        ),
                         Text(
-                          '${isStockIn ? '+' : '-'}${item.quantity} ${item.product.unit ?? ''}',
-                          style: TextStyle(fontWeight: FontWeight.w600, color: typeColor),
+                          '${isStockIn ? '+' : '-'}${item.quantity.toStringAsFixed(item.quantity == item.quantity.truncate() ? 0 : 1)} ${item.product.unit ?? ''}',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: isInsufficient ? Colors.red : typeColor,
+                          ),
                         ),
                       ],
                     ),
@@ -921,13 +1051,36 @@ class _InventoryStockPageState extends State<InventoryStockPage> {
                 },
               ),
             ),
+            if (hasInsufficientStock) ...[
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.red.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(6),
+                  border: Border.all(color: Colors.red.withOpacity(0.3)),
+                ),
+                child: Row(
+                  children: [
+                    Icon(FluentIcons.error_badge, size: 16, color: Colors.red),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        '部分商品库存不足，请返回调整数量后再提交',
+                        style: TextStyle(fontSize: 12, color: Colors.red),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ],
         ),
       ),
       actions: [
         Button(onPressed: () => Navigator.of(context).pop(false), child: const Text('取消')),
         FilledButton(
-          onPressed: () => Navigator.of(context).pop(true),
+          onPressed: hasInsufficientStock ? null : () => Navigator.of(context).pop(true),
           style: ButtonStyle(backgroundColor: WidgetStateProperty.all(typeColor)),
           child: Text('确认$typeLabel'),
         ),
@@ -939,14 +1092,16 @@ class _SelectedProduct {
   final SupplierProduct product;
   final double quantity;
   final String reason;
-  final DateTime? productionDate; 
-  final DateTime? expiryDate; 
+  final DateTime? productionDate;
+  final DateTime? expiryDate;
+  final double? maxQuantity; 
   _SelectedProduct({
     required this.product,
     required this.quantity,
     required this.reason,
     this.productionDate,
     this.expiryDate,
+    this.maxQuantity,
   });
   _SelectedProduct copyWith({
     SupplierProduct? product,
@@ -954,6 +1109,7 @@ class _SelectedProduct {
     String? reason,
     DateTime? productionDate,
     DateTime? expiryDate,
+    double? maxQuantity,
     bool clearProductionDate = false,
     bool clearExpiryDate = false,
   }) {
@@ -963,6 +1119,7 @@ class _SelectedProduct {
       reason: reason ?? this.reason,
       productionDate: clearProductionDate ? null : (productionDate ?? this.productionDate),
       expiryDate: clearExpiryDate ? null : (expiryDate ?? this.expiryDate),
+      maxQuantity: maxQuantity ?? this.maxQuantity,
     );
   }
 }

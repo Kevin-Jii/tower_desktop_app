@@ -447,94 +447,228 @@ class _InventoryPageState extends State<InventoryPage> {
     return date;
   }
 }
-class _InventoryListSubPage extends StatelessWidget {
+class _InventoryListSubPage extends StatefulWidget {
   const _InventoryListSubPage();
+  @override
+  State<_InventoryListSubPage> createState() => _InventoryListSubPageState();
+}
+class _InventoryListSubPageState extends State<_InventoryListSubPage> {
+  String _searchText = '';
   @override
   Widget build(BuildContext context) {
     final theme = FluentTheme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final bgBase = isDark ? const Color(0xFF202020) : const Color(0xFFF5F7FA);
+    final cardColor = isDark ? const Color(0xFF2B2B2B) : Colors.white;
+    final borderColor = isDark ? Colors.grey[100].withOpacity(0.1) : const Color(0xFFE0E0E0);
+    final dividerColor = isDark ? const Color(0xFF333333) : const Color(0xFFE5E5E5);
     return ScaffoldPage(
-      header: PageHeader(
-        title: const Text('库存列表'),
-        leading: IconButton(
-          icon: const Icon(FluentIcons.back),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-      ),
-      content: Consumer<InventoryProvider>(
-        builder: (context, provider, _) {
-          if (provider.inventoryLoading) {
-            return const Center(child: ProgressRing());
-          }
-          if (provider.inventories.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(FluentIcons.product_list, size: 64, color: Colors.grey[80]),
-                  const SizedBox(height: 16),
-                  Text('暂无库存数据', style: TextStyle(color: Colors.grey[120])),
-                ],
-              ),
-            );
-          }
-          return ListView.builder(
-            padding: const EdgeInsets.all(24),
-            itemCount: provider.inventories.length,
-            itemBuilder: (context, index) {
-              final inventory = provider.inventories[index];
-              return _buildInventoryCard(inventory, isDark, theme);
-            },
-          );
-        },
-      ),
-    );
-  }
-  Widget _buildInventoryCard(Inventory inventory, bool isDark, FluentThemeData theme) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF2D2D2D) : Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: isDark ? Colors.grey[100].withOpacity(0.1) : Colors.grey[30]!),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 48, height: 48,
-              decoration: BoxDecoration(color: Colors.teal.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
-              child: Icon(FluentIcons.product, size: 22, color: Colors.teal),
+      padding: EdgeInsets.zero,
+      content: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF2D2D2D) : Colors.white,
+              border: Border(bottom: BorderSide(color: dividerColor)),
             ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(inventory.productName ?? '未知商品', style: theme.typography.bodyStrong),
-                  const SizedBox(height: 4),
-                  Text(inventory.storeName ?? '未知门店', style: TextStyle(fontSize: 12, color: Colors.grey[120])),
-                ],
-              ),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
+            child: Row(
               children: [
-                Text('库存', style: TextStyle(fontSize: 11, color: Colors.grey[120])),
-                Row(
+                IconButton(
+                  icon: const Icon(FluentIcons.back, size: 14),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+                const SizedBox(width: 16),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(inventory.quantity.toStringAsFixed(inventory.quantity == inventory.quantity.truncate() ? 0 : 2),
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.teal)),
-                    const SizedBox(width: 4),
-                    Text(inventory.unit ?? '', style: TextStyle(fontSize: 12, color: Colors.grey[120])),
+                    Text('库存列表', style: theme.typography.subtitle?.copyWith(fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 2),
+                    Consumer<InventoryProvider>(
+                      builder: (_, provider, __) {
+                        final count = provider.inventories.where((i) => i.quantity > 0).length;
+                        return Text(
+                          '共 $count 种商品',
+                          style: theme.typography.caption?.copyWith(color: Colors.grey[100]),
+                        );
+                      },
+                    ),
                   ],
+                ),
+                const Spacer(),
+                SizedBox(
+                  width: 240,
+                  child: TextBox(
+                    placeholder: '搜索商品名称...',
+                    prefix: const Padding(
+                      padding: EdgeInsets.only(left: 8),
+                      child: Icon(FluentIcons.search, size: 14),
+                    ),
+                    onChanged: (value) => setState(() => _searchText = value),
+                  ),
                 ),
               ],
             ),
-          ],
-        ),
+          ),
+          Expanded(
+            child: Container(
+              color: bgBase,
+              child: Consumer<InventoryProvider>(
+                builder: (context, provider, _) {
+                  if (provider.inventoryLoading) {
+                    return const Center(child: ProgressRing());
+                  }
+                  final filteredList = provider.inventories.where((item) {
+                    if (item.quantity <= 0) return false;
+                    final name = item.productName ?? '';
+                    return name.contains(_searchText);
+                  }).toList();
+                  if (filteredList.isEmpty) {
+                    return _buildEmptyState();
+                  }
+                  return GridView.builder(
+                    padding: const EdgeInsets.all(24),
+                    gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                      maxCrossAxisExtent: 260,
+                      mainAxisExtent: 88,
+                      crossAxisSpacing: 12,
+                      mainAxisSpacing: 12,
+                    ),
+                    itemCount: filteredList.length,
+                    itemBuilder: (context, index) {
+                      final inventory = filteredList[index];
+                      return _buildCompactTile(inventory, isDark, theme, cardColor, borderColor);
+                    },
+                  );
+                },
+              ),
+            ),
+          ),
+        ],
       ),
+    );
+  }
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(FluentIcons.search, size: 48, color: Colors.grey[80]),
+          const SizedBox(height: 12),
+          Text('没有找到相关商品', style: TextStyle(color: Colors.grey[120])),
+        ],
+      ),
+    );
+  }
+  Widget _buildCompactTile(
+    Inventory inventory,
+    bool isDark,
+    FluentThemeData theme,
+    Color cardColor,
+    Color borderColor,
+  ) {
+    final quantity = inventory.quantity;
+    Color statusColor;
+    if (quantity <= 0) {
+      statusColor = Colors.red;
+    } else if (quantity < 10) {
+      statusColor = Colors.orange;
+    } else {
+      statusColor = Colors.green;
+    }
+    return HoverButton(
+      onPressed: () {},
+      builder: (context, states) {
+        final isHovered = states.isHovered;
+        return AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          decoration: BoxDecoration(
+            color: cardColor,
+            borderRadius: BorderRadius.circular(6),
+            border: Border.all(
+              color: isHovered ? theme.accentColor.withOpacity(0.5) : borderColor,
+              width: 1,
+            ),
+            boxShadow: [
+              if (isHovered)
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.08),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(6),
+            child: Row(
+              children: [
+                Container(
+                  width: 4,
+                  height: double.infinity,
+                  color: statusColor,
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(12, 10, 16, 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                inventory.productName ?? '未知商品',
+                                style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 6),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: isDark ? Colors.white.withOpacity(0.1) : Colors.grey[20],
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Text(
+                                  inventory.storeName ?? '总部',
+                                  style: TextStyle(fontSize: 10, color: Colors.grey[120]),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              quantity.toStringAsFixed(quantity == quantity.truncate() ? 0 : 1),
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: statusColor,
+                                height: 1.0,
+                                fontFamily: 'Segoe UI',
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              inventory.unit ?? '件',
+                              style: TextStyle(fontSize: 11, color: Colors.grey[100]),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
