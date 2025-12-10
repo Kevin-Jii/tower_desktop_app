@@ -83,4 +83,11 @@ class InventoryApi {
       fromJson: InventoryRecord.fromJson,
     );
   }
+  Future<Inventory?> updateInventory(int id, UpdateInventoryRequest request) async {
+    return await _client.putSmart<Inventory>(
+      path: '/inventories/$id',
+      data: request.toJson(),
+      fromJson: Inventory.fromJson,
+    );
+  }
 }

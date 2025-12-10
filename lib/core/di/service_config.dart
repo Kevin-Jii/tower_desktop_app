@@ -17,6 +17,8 @@ import 'package:tower_desktop_app/features/dict/dict_api.dart';
 import 'package:tower_desktop_app/features/dict/dict_repository.dart';
 import 'package:tower_desktop_app/features/inventory/inventory_api.dart';
 import 'package:tower_desktop_app/features/inventory/inventory_repository.dart';
+import 'package:tower_desktop_app/features/store_account/store_account_api.dart';
+import 'package:tower_desktop_app/features/store_account/store_account_repository.dart';
 class ServiceConfig {
   ServiceConfig._();
   static void setupServices() {
@@ -78,6 +80,12 @@ class ServiceConfig {
     );
     locator.registerLazySingleton<InventoryRepository>(
       () => InventoryRepository(sl.get<InventoryApi>()),
+    );
+    locator.registerLazySingleton<StoreAccountApi>(
+      () => StoreAccountApi(sl.get<ApiClient>()),
+    );
+    locator.registerLazySingleton<StoreAccountRepository>(
+      () => StoreAccountRepository(sl.get<StoreAccountApi>()),
     );
   }
   static void resetServices() {

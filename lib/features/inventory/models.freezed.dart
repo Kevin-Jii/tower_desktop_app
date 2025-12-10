@@ -2608,3 +2608,135 @@ abstract class _CreateInventoryRecordRequest
           _$CreateInventoryRecordRequestImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
+UpdateInventoryRequest _$UpdateInventoryRequestFromJson(
+    Map<String, dynamic> json) {
+  return _UpdateInventoryRequest.fromJson(json);
+}
+mixin _$UpdateInventoryRequest {
+  double get quantity => throw _privateConstructorUsedError;
+  String? get remark => throw _privateConstructorUsedError;
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $UpdateInventoryRequestCopyWith<UpdateInventoryRequest> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+abstract class $UpdateInventoryRequestCopyWith<$Res> {
+  factory $UpdateInventoryRequestCopyWith(UpdateInventoryRequest value,
+          $Res Function(UpdateInventoryRequest) then) =
+      _$UpdateInventoryRequestCopyWithImpl<$Res, UpdateInventoryRequest>;
+  @useResult
+  $Res call({double quantity, String? remark});
+}
+class _$UpdateInventoryRequestCopyWithImpl<$Res,
+        $Val extends UpdateInventoryRequest>
+    implements $UpdateInventoryRequestCopyWith<$Res> {
+  _$UpdateInventoryRequestCopyWithImpl(this._value, this._then);
+  final $Val _value;
+  final $Res Function($Val) _then;
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? quantity = null,
+    Object? remark = freezed,
+  }) {
+    return _then(_value.copyWith(
+      quantity: null == quantity
+          ? _value.quantity
+          : quantity 
+              as double,
+      remark: freezed == remark
+          ? _value.remark
+          : remark 
+              as String?,
+    ) as $Val);
+  }
+}
+abstract class _$$UpdateInventoryRequestImplCopyWith<$Res>
+    implements $UpdateInventoryRequestCopyWith<$Res> {
+  factory _$$UpdateInventoryRequestImplCopyWith(
+          _$UpdateInventoryRequestImpl value,
+          $Res Function(_$UpdateInventoryRequestImpl) then) =
+      __$$UpdateInventoryRequestImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({double quantity, String? remark});
+}
+class __$$UpdateInventoryRequestImplCopyWithImpl<$Res>
+    extends _$UpdateInventoryRequestCopyWithImpl<$Res,
+        _$UpdateInventoryRequestImpl>
+    implements _$$UpdateInventoryRequestImplCopyWith<$Res> {
+  __$$UpdateInventoryRequestImplCopyWithImpl(
+      _$UpdateInventoryRequestImpl _value,
+      $Res Function(_$UpdateInventoryRequestImpl) _then)
+      : super(_value, _then);
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? quantity = null,
+    Object? remark = freezed,
+  }) {
+    return _then(_$UpdateInventoryRequestImpl(
+      quantity: null == quantity
+          ? _value.quantity
+          : quantity 
+              as double,
+      remark: freezed == remark
+          ? _value.remark
+          : remark 
+              as String?,
+    ));
+  }
+}
+@JsonSerializable()
+class _$UpdateInventoryRequestImpl implements _UpdateInventoryRequest {
+  const _$UpdateInventoryRequestImpl({required this.quantity, this.remark});
+  factory _$UpdateInventoryRequestImpl.fromJson(Map<String, dynamic> json) =>
+      _$$UpdateInventoryRequestImplFromJson(json);
+  @override
+  final double quantity;
+  @override
+  final String? remark;
+  @override
+  String toString() {
+    return 'UpdateInventoryRequest(quantity: $quantity, remark: $remark)';
+  }
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$UpdateInventoryRequestImpl &&
+            (identical(other.quantity, quantity) ||
+                other.quantity == quantity) &&
+            (identical(other.remark, remark) || other.remark == remark));
+  }
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, quantity, remark);
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$UpdateInventoryRequestImplCopyWith<_$UpdateInventoryRequestImpl>
+      get copyWith => __$$UpdateInventoryRequestImplCopyWithImpl<
+          _$UpdateInventoryRequestImpl>(this, _$identity);
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$UpdateInventoryRequestImplToJson(
+      this,
+    );
+  }
+}
+abstract class _UpdateInventoryRequest implements UpdateInventoryRequest {
+  const factory _UpdateInventoryRequest(
+      {required final double quantity,
+      final String? remark}) = _$UpdateInventoryRequestImpl;
+  factory _UpdateInventoryRequest.fromJson(Map<String, dynamic> json) =
+      _$UpdateInventoryRequestImpl.fromJson;
+  @override
+  double get quantity;
+  @override
+  String? get remark;
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$UpdateInventoryRequestImplCopyWith<_$UpdateInventoryRequestImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}

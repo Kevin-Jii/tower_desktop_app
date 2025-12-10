@@ -463,7 +463,7 @@ class _InventoryListSubPageState extends State<_InventoryListSubPage> {
     final borderColor = isDark ? Colors.grey[100].withOpacity(0.1) : const Color(0xFFE0E0E0);
     final dividerColor = isDark ? const Color(0xFF333333) : const Color(0xFFE5E5E5);
     return ScaffoldPage(
-      padding: EdgeInsets.zero,
+      padding: EdgeInsets.zero, 
       content: Column(
         children: [
           Container(
@@ -482,16 +482,16 @@ class _InventoryListSubPageState extends State<_InventoryListSubPage> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('库存列表', style: theme.typography.subtitle?.copyWith(fontWeight: FontWeight.bold)),
+                    Text(
+                      '库存列表', 
+                      style: theme.typography.subtitle?.copyWith(fontWeight: FontWeight.bold)
+                    ),
                     const SizedBox(height: 2),
                     Consumer<InventoryProvider>(
-                      builder: (_, provider, __) {
-                        final count = provider.inventories.where((i) => i.quantity > 0).length;
-                        return Text(
-                          '共 $count 种商品',
-                          style: theme.typography.caption?.copyWith(color: Colors.grey[100]),
-                        );
-                      },
+                      builder: (_, provider, __) => Text(
+                        '共 ${provider.inventories.length} 种商品', 
+                        style: theme.typography.caption?.copyWith(color: Colors.grey[100])
+                      ),
                     ),
                   ],
                 ),
@@ -512,14 +512,13 @@ class _InventoryListSubPageState extends State<_InventoryListSubPage> {
           ),
           Expanded(
             child: Container(
-              color: bgBase,
+              color: bgBase, 
               child: Consumer<InventoryProvider>(
                 builder: (context, provider, _) {
                   if (provider.inventoryLoading) {
                     return const Center(child: ProgressRing());
                   }
                   final filteredList = provider.inventories.where((item) {
-                    if (item.quantity <= 0) return false;
                     final name = item.productName ?? '';
                     return name.contains(_searchText);
                   }).toList();
@@ -529,10 +528,10 @@ class _InventoryListSubPageState extends State<_InventoryListSubPage> {
                   return GridView.builder(
                     padding: const EdgeInsets.all(24),
                     gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                      maxCrossAxisExtent: 260,
-                      mainAxisExtent: 88,
-                      crossAxisSpacing: 12,
-                      mainAxisSpacing: 12,
+                      maxCrossAxisExtent: 260, 
+                      mainAxisExtent: 88,      
+                      crossAxisSpacing: 12,    
+                      mainAxisSpacing: 12,     
                     ),
                     itemCount: filteredList.length,
                     itemBuilder: (context, index) {
@@ -555,14 +554,17 @@ class _InventoryListSubPageState extends State<_InventoryListSubPage> {
         children: [
           Icon(FluentIcons.search, size: 48, color: Colors.grey[80]),
           const SizedBox(height: 12),
-          Text('没有找到相关商品', style: TextStyle(color: Colors.grey[120])),
+          Text(
+            '没有找到相关商品', 
+            style: TextStyle(color: Colors.grey[120])
+          ),
         ],
       ),
     );
   }
   Widget _buildCompactTile(
-    Inventory inventory,
-    bool isDark,
+    Inventory inventory, 
+    bool isDark, 
     FluentThemeData theme,
     Color cardColor,
     Color borderColor,
@@ -570,21 +572,22 @@ class _InventoryListSubPageState extends State<_InventoryListSubPage> {
     final quantity = inventory.quantity;
     Color statusColor;
     if (quantity <= 0) {
-      statusColor = Colors.red;
+      statusColor = Colors.red;    
     } else if (quantity < 10) {
-      statusColor = Colors.orange;
+      statusColor = Colors.orange; 
     } else {
-      statusColor = Colors.green;
+      statusColor = Colors.green;  
     }
     return HoverButton(
-      onPressed: () {},
+      onPressed: () {
+      },
       builder: (context, states) {
         final isHovered = states.isHovered;
         return AnimatedContainer(
           duration: const Duration(milliseconds: 150),
           decoration: BoxDecoration(
             color: cardColor,
-            borderRadius: BorderRadius.circular(6),
+            borderRadius: BorderRadius.circular(6), 
             border: Border.all(
               color: isHovered ? theme.accentColor.withOpacity(0.5) : borderColor,
               width: 1,
@@ -620,7 +623,10 @@ class _InventoryListSubPageState extends State<_InventoryListSubPage> {
                             children: [
                               Text(
                                 inventory.productName ?? '未知商品',
-                                style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600, 
+                                  fontSize: 14,
+                                ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -633,7 +639,10 @@ class _InventoryListSubPageState extends State<_InventoryListSubPage> {
                                 ),
                                 child: Text(
                                   inventory.storeName ?? '总部',
-                                  style: TextStyle(fontSize: 10, color: Colors.grey[120]),
+                                  style: TextStyle(
+                                    fontSize: 10, 
+                                    color: Colors.grey[120]
+                                  ),
                                 ),
                               ),
                             ],
@@ -646,17 +655,20 @@ class _InventoryListSubPageState extends State<_InventoryListSubPage> {
                             Text(
                               quantity.toStringAsFixed(quantity == quantity.truncate() ? 0 : 1),
                               style: TextStyle(
-                                fontSize: 24,
+                                fontSize: 24, 
                                 fontWeight: FontWeight.bold,
-                                color: statusColor,
+                                color: statusColor, 
                                 height: 1.0,
-                                fontFamily: 'Segoe UI',
+                                fontFamily: 'Segoe UI', 
                               ),
                             ),
                             const SizedBox(height: 2),
                             Text(
                               inventory.unit ?? '件',
-                              style: TextStyle(fontSize: 11, color: Colors.grey[100]),
+                              style: TextStyle(
+                                fontSize: 11, 
+                                color: Colors.grey[100]
+                              ),
                             ),
                           ],
                         ),
@@ -1597,6 +1609,173 @@ class _ReportTableDataCell extends StatelessWidget {
         style: const TextStyle(fontSize: 14, color: Color(0xFF333333)),
         textAlign: TextAlign.center,
       ),
+    );
+  }
+}
+class _EditInventoryDialog extends StatefulWidget {
+  final Inventory inventory;
+  const _EditInventoryDialog({required this.inventory});
+  @override
+  State<_EditInventoryDialog> createState() => _EditInventoryDialogState();
+}
+class _EditInventoryDialogState extends State<_EditInventoryDialog> {
+  late TextEditingController _quantityController;
+  late TextEditingController _remarkController;
+  bool _saving = false;
+  @override
+  void initState() {
+    super.initState();
+    _quantityController = TextEditingController(
+      text: widget.inventory.quantity.toStringAsFixed(
+        widget.inventory.quantity == widget.inventory.quantity.truncate() ? 0 : 2,
+      ),
+    );
+    _remarkController = TextEditingController();
+  }
+  @override
+  void dispose() {
+    _quantityController.dispose();
+    _remarkController.dispose();
+    super.dispose();
+  }
+  Future<void> _save() async {
+    final quantity = double.tryParse(_quantityController.text);
+    if (quantity == null || quantity < 0) {
+      displayInfoBar(context, builder: (context, close) {
+        return InfoBar(
+          title: const Text('请输入有效的数量'),
+          severity: InfoBarSeverity.warning,
+          action: IconButton(icon: const Icon(FluentIcons.clear), onPressed: close),
+        );
+      });
+      return;
+    }
+    setState(() => _saving = true);
+    final provider = context.read<InventoryProvider>();
+    final remark = _remarkController.text.trim();
+    final success = await provider.updateInventory(
+      widget.inventory.id,
+      quantity,
+      remark: remark.isEmpty ? null : remark,
+    );
+    if (mounted) {
+      setState(() => _saving = false);
+      if (success) {
+        displayInfoBar(context, builder: (context, close) {
+          return InfoBar(
+            title: const Text('库存调整成功'),
+            severity: InfoBarSeverity.success,
+            action: IconButton(icon: const Icon(FluentIcons.clear), onPressed: close),
+          );
+        });
+        Navigator.of(context).pop();
+      } else {
+        displayInfoBar(context, builder: (context, close) {
+          return InfoBar(
+            title: Text(provider.inventoryError ?? '调整失败'),
+            severity: InfoBarSeverity.error,
+            action: IconButton(icon: const Icon(FluentIcons.clear), onPressed: close),
+          );
+        });
+      }
+    }
+  }
+  @override
+  Widget build(BuildContext context) {
+    final theme = FluentTheme.of(context);
+    final inventory = widget.inventory;
+    return ContentDialog(
+      constraints: const BoxConstraints(maxWidth: 400),
+      title: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.teal.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(FluentIcons.edit, size: 18, color: Colors.teal),
+          ),
+          const SizedBox(width: 12),
+          const Text('调整库存'),
+        ],
+      ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.grey.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              children: [
+                Icon(FluentIcons.product, size: 20, color: Colors.teal),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        inventory.productName ?? '未知商品',
+                        style: theme.typography.bodyStrong,
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        '当前库存: ${inventory.quantity.toStringAsFixed(inventory.quantity == inventory.quantity.truncate() ? 0 : 2)} ${inventory.unit ?? ''}',
+                        style: TextStyle(fontSize: 12, color: Colors.grey[120]),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          InfoLabel(
+            label: '调整后数量',
+            child: TextBox(
+              controller: _quantityController,
+              placeholder: '请输入数量',
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              suffix: Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: Text(inventory.unit ?? '件', style: TextStyle(color: Colors.grey[100])),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          InfoLabel(
+            label: '调整原因（选填）',
+            child: TextBox(
+              controller: _remarkController,
+              placeholder: '如：盘点调整、损耗等',
+              maxLines: 2,
+            ),
+          ),
+        ],
+      ),
+      actions: [
+        Button(
+          onPressed: _saving ? null : () => Navigator.of(context).pop(),
+          child: const Text('取消'),
+        ),
+        FilledButton(
+          onPressed: _saving ? null : _save,
+          child: _saving
+              ? const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(width: 14, height: 14, child: ProgressRing(strokeWidth: 2)),
+                    SizedBox(width: 8),
+                    Text('保存中...'),
+                  ],
+                )
+              : const Text('保存'),
+        ),
+      ],
     );
   }
 }

@@ -6,6 +6,7 @@ import 'package:tower_desktop_app/features/supplier/supplier_management_page.dar
 import 'package:tower_desktop_app/features/purchase_order/purchase_order_list_page.dart';
 import 'package:tower_desktop_app/features/dict/dict_management_page.dart';
 import 'package:tower_desktop_app/features/inventory/inventory_page.dart';
+import 'package:tower_desktop_app/features/store_account/store_account_page.dart';
 import '../../features/menu/models.dart';
 import '../constants/menu_types.dart';
 import '../../features/user/user_management_page.dart';
@@ -25,6 +26,7 @@ class RouteManager {
     'store/purchase/index': () => const PurchaseOrderListPage(),
     'store/inventory/index': () => const InventoryPage(),
     'dingtalk/robot/index': () => const DingTalkManagementPage(),
+    'store/account/index':() => const StoreAccountPage(),
   };
   Widget? getPageForMenuItem(MenuItem menuItem) {
     if (menuItem.type != MenuType.page) return null;

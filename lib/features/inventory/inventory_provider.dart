@@ -214,4 +214,24 @@ class InventoryProvider with ChangeNotifier {
     _filterType = null;
     loadRecords(page: 1);
   }
+  Future<bool> updateInventory(int id, double quantity, {String? remark}) async {
+    _creating = true;
+    _inventoryError = null;
+    notifyListeners();
+    final request = UpdateInventoryRequest(quantity: quantity, remark: remark);
+    final result = await _repository.updateInventory(id, request);
+    _creating = false;
+    return result.when(
+      success: (_) {
+        loadInventories(page: _inventoryPage);
+        notifyListeners();
+        return true;
+      },
+      failure: (err) {
+        _inventoryError = err.message;
+        notifyListeners();
+        return false;
+      },
+    );
+  }
 }

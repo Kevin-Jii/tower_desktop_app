@@ -238,3 +238,15 @@ Map<String, dynamic> _$$CreateInventoryRecordRequestImplToJson(
       'production_date': instance.productionDate,
       'expiry_date': instance.expiryDate,
     };
+_$UpdateInventoryRequestImpl _$$UpdateInventoryRequestImplFromJson(
+        Map<String, dynamic> json) =>
+    _$UpdateInventoryRequestImpl(
+      quantity: (json['quantity'] as num).toDouble(),
+      remark: json['remark'] as String?,
+    );
+Map<String, dynamic> _$$UpdateInventoryRequestImplToJson(
+        _$UpdateInventoryRequestImpl instance) =>
+    <String, dynamic>{
+      'quantity': instance.quantity,
+      'remark': instance.remark,
+    };

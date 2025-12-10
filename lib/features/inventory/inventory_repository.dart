@@ -94,4 +94,12 @@ class InventoryRepository {
       return Result.failure(ErrorHandler.handleAny(e, stackTrace));
     }
   }
+  Future<Result<Inventory?>> updateInventory(int id, UpdateInventoryRequest request) async {
+    try {
+      final inventory = await _api.updateInventory(id, request);
+      return Result.success(inventory);
+    } catch (e, stackTrace) {
+      return Result.failure(ErrorHandler.handleAny(e, stackTrace));
+    }
+  }
 }

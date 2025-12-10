@@ -863,7 +863,7 @@ class _InventoryStockPageState extends State<InventoryStockPage> {
               const Text('数量：', style: TextStyle(fontSize: 13)),
               const SizedBox(width: 8),
               SizedBox(
-                width: 100,
+                width: 200,
                 child: NumberBox<double>(
                   value: item.quantity,
                   onChanged: (v) => _updateQuantity(productId, v ?? 0),

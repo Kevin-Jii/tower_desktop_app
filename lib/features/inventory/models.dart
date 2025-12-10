@@ -143,3 +143,11 @@ class CreateInventoryRecordRequest with _$CreateInventoryRecordRequest {
   }) = _CreateInventoryRecordRequest;
   factory CreateInventoryRecordRequest.fromJson(Map<String, dynamic> json) => _$CreateInventoryRecordRequestFromJson(json);
 }
+@freezed
+class UpdateInventoryRequest with _$UpdateInventoryRequest {
+  const factory UpdateInventoryRequest({
+    required double quantity,
+    String? remark,
+  }) = _UpdateInventoryRequest;
+  factory UpdateInventoryRequest.fromJson(Map<String, dynamic> json) => _$UpdateInventoryRequestFromJson(json);
+}
