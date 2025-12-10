@@ -30,9 +30,8 @@ mixin _$StoreAccount {
   @JsonKey(name: 'created_at')
   String? get createdAt => throw _privateConstructorUsedError;
   @JsonKey(name: 'updated_at')
-  String? get updatedAt => throw _privateConstructorUsedError; 
-  List<StoreAccountItem> get items =>
-      throw _privateConstructorUsedError; 
+  String? get updatedAt => throw _privateConstructorUsedError;
+  List<StoreAccountItem> get items => throw _privateConstructorUsedError;
   StoreAccountStore? get store => throw _privateConstructorUsedError;
   StoreAccountOperator? get operator => throw _privateConstructorUsedError;
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -515,9 +514,9 @@ abstract class _StoreAccount extends StoreAccount {
   String? get createdAt;
   @override
   @JsonKey(name: 'updated_at')
-  String? get updatedAt; 
+  String? get updatedAt;
   @override
-  List<StoreAccountItem> get items; 
+  List<StoreAccountItem> get items;
   @override
   StoreAccountStore? get store;
   @override
