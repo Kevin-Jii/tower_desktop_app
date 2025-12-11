@@ -1,4 +1,4 @@
-import 'package:fluent_ui/fluent_ui.dart';
+﻿import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
 import '../../core/widgets/fluent_info_bar.dart';
 import '../supplier/supplier_provider.dart';
@@ -7,22 +7,18 @@ import '../dict/dict_provider.dart';
 import '../dict/models.dart' as dict;
 import 'purchase_order_provider.dart';
 import 'models.dart';
-
 class PurchaseOrderCreatePage extends StatefulWidget {
   const PurchaseOrderCreatePage({super.key});
-
   @override
   State<PurchaseOrderCreatePage> createState() => _PurchaseOrderCreatePageState();
 }
-
 class _PurchaseOrderCreatePageState extends State<PurchaseOrderCreatePage> {
   DateTime _orderDate = DateTime.now();
   final _remarkController = TextEditingController();
   final List<_OrderItemData> _items = [];
   bool _loading = false;
   List<Supplier> _boundSuppliers = [];
-  List<dict.DictData> _unitOptions = []; // 单位字典选项
-
+  List<dict.DictData> _unitOptions = []; 
   @override
   void initState() {
     super.initState();
@@ -30,25 +26,20 @@ class _PurchaseOrderCreatePageState extends State<PurchaseOrderCreatePage> {
       _loadBoundSuppliers();
     });
   }
-
   @override
   void dispose() {
     _remarkController.dispose();
     super.dispose();
   }
-
   Future<void> _loadBoundSuppliers() async {
     setState(() => _loading = true);
     try {
-      // 加载字典数据
       final dictProvider = context.read<DictProvider>();
       await dictProvider.loadAllDicts();
       if (mounted) {
         _unitOptions = dictProvider.getDictByCode('GYSGL_SPDW');
       }
-      
-      // 加载门店已绑定的供应商
-      await context.read<SupplierProvider>().loadBoundSuppliers(0); // 0表示当前门店
+      await context.read<SupplierProvider>().loadBoundSuppliers(0); 
       if (mounted) {
         setState(() {
           _boundSuppliers = context.read<SupplierProvider>().boundSuppliers;
@@ -59,13 +50,11 @@ class _PurchaseOrderCreatePageState extends State<PurchaseOrderCreatePage> {
       if (mounted) setState(() => _loading = false);
     }
   }
-
   Future<void> _showAddProductsDialog() async {
     if (_boundSuppliers.isEmpty) {
       FluentInfoBarHelper.showWarning(context, '暂无已绑定的供应商，请先在门店管理中绑定供应商');
       return;
     }
-
     final result = await showDialog<List<_OrderItemData>>(
       context: context,
       builder: (context) => _AddProductsDialog(
@@ -73,33 +62,27 @@ class _PurchaseOrderCreatePageState extends State<PurchaseOrderCreatePage> {
         existingProductIds: _items.map((e) => e.product?.id ?? 0).toSet(),
       ),
     );
-
     if (result != null && result.isNotEmpty) {
       setState(() => _items.addAll(result));
     }
   }
-
   void _removeItem(int index) {
     setState(() => _items.removeAt(index));
   }
-
   void _updateItemQuantity(int index, double quantity) {
     setState(() => _items[index].quantity = quantity);
   }
-
   double get _totalAmount {
     return _items.fold(0.0, (sum, item) {
       final price = item.product?.price ?? 0;
       return sum + (price * item.quantity);
     });
   }
-
   Future<void> _handleSubmit() async {
     if (_items.isEmpty) {
       await FluentInfoBarHelper.showWarning(context, '请至少添加一个商品');
       return;
     }
-
     final request = CreatePurchaseOrderRequest(
       orderDate: _orderDate.toIso8601String().split('T').first,
       remark: _remarkController.text.isEmpty ? null : _remarkController.text,
@@ -107,11 +90,10 @@ class _PurchaseOrderCreatePageState extends State<PurchaseOrderCreatePage> {
           .map((item) => CreatePurchaseOrderItemRequest(
             productId: item.product!.id, 
             quantity: item.quantity,
-            unit: item.unit, // 传递单位编码
+            unit: item.unit, 
           ))
           .toList(),
     );
-
     final success = await context.read<PurchaseOrderProvider>().createOrder(request);
     if (success && mounted) {
       await FluentInfoBarHelper.showSuccess(context, '采购单创建成功');
@@ -121,7 +103,6 @@ class _PurchaseOrderCreatePageState extends State<PurchaseOrderCreatePage> {
       await FluentInfoBarHelper.showError(context, error);
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return ScaffoldPage(
@@ -131,12 +112,9 @@ class _PurchaseOrderCreatePageState extends State<PurchaseOrderCreatePage> {
       ),
     );
   }
-
-
   Widget _buildHeader() {
     final theme = FluentTheme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       decoration: BoxDecoration(
@@ -172,19 +150,15 @@ class _PurchaseOrderCreatePageState extends State<PurchaseOrderCreatePage> {
       ),
     );
   }
-
   Widget _buildContent() {
     final theme = FluentTheme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-
     if (_loading) return const Center(child: ProgressRing());
-
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 基本信息
           Card(
             padding: const EdgeInsets.all(20),
             backgroundColor: isDark ? const Color(0xFF2D2D2D) : Colors.white,
@@ -216,7 +190,6 @@ class _PurchaseOrderCreatePageState extends State<PurchaseOrderCreatePage> {
             ),
           ),
           const SizedBox(height: 24),
-          // 商品列表
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -251,17 +224,13 @@ class _PurchaseOrderCreatePageState extends State<PurchaseOrderCreatePage> {
       ),
     );
   }
-
-
   void _updateItemUnit(int index, String? unit) {
     setState(() => _items[index].unit = unit);
   }
-
   Widget _buildItemCard(int index, bool isDark) {
     final item = _items[index];
     final price = item.product?.price ?? 0;
     final amount = price * item.quantity;
-
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(16),
@@ -269,7 +238,6 @@ class _PurchaseOrderCreatePageState extends State<PurchaseOrderCreatePage> {
       borderRadius: BorderRadius.circular(8),
       child: Row(
         children: [
-          // 商品名称
           Expanded(
             flex: 2,
             child: Column(
@@ -282,7 +250,6 @@ class _PurchaseOrderCreatePageState extends State<PurchaseOrderCreatePage> {
             ),
           ),
           const SizedBox(width: 16),
-          // 单位选择
           SizedBox(
             width: 100,
             child: Column(
@@ -304,7 +271,6 @@ class _PurchaseOrderCreatePageState extends State<PurchaseOrderCreatePage> {
             ),
           ),
           const SizedBox(width: 16),
-          // 单价
           SizedBox(
             width: 80,
             child: Column(
@@ -316,7 +282,6 @@ class _PurchaseOrderCreatePageState extends State<PurchaseOrderCreatePage> {
             ),
           ),
           const SizedBox(width: 16),
-          // 数量
           SizedBox(
             width: 120,
             child: NumberBox<double>(
@@ -328,7 +293,6 @@ class _PurchaseOrderCreatePageState extends State<PurchaseOrderCreatePage> {
             ),
           ),
           const SizedBox(width: 16),
-          // 小计
           SizedBox(
             width: 90,
             child: Column(
@@ -345,12 +309,10 @@ class _PurchaseOrderCreatePageState extends State<PurchaseOrderCreatePage> {
       ),
     );
   }
-
   Widget _buildFooter() {
     final theme = FluentTheme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final provider = context.watch<PurchaseOrderProvider>();
-
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       decoration: BoxDecoration(
@@ -387,58 +349,35 @@ class _PurchaseOrderCreatePageState extends State<PurchaseOrderCreatePage> {
     );
   }
 }
-
-/// 订单项数据类
 class _OrderItemData {
   Supplier? supplier;
   SupplierProduct? product;
   double quantity;
-  String? unit; // 单位编码
-
+  String? unit; 
   _OrderItemData({this.supplier, this.product, this.quantity = 1, this.unit});
 }
-
-
-/// 添加商品对话框 - 先选供应商，再多选商品
 class _AddProductsDialog extends StatefulWidget {
   final List<Supplier> suppliers;
   final Set<int> existingProductIds;
-
   const _AddProductsDialog({required this.suppliers, required this.existingProductIds});
-
   @override
   State<_AddProductsDialog> createState() => _AddProductsDialogState();
 }
-
 class _AddProductsDialogState extends State<_AddProductsDialog> {
   Supplier? _selectedSupplier;
   List<SupplierProduct> _products = [];
   final Set<int> _selectedProductIds = {};
   bool _loading = false;
-
   Future<void> _loadProducts(int? supplierId) async {
     setState(() => _loading = true);
     final provider = context.read<SupplierProvider>();
-    // 使用门店可采购商品接口，按供应商筛选
     await provider.loadPurchasableProducts(supplierId: supplierId);
-    if (mounted) {
-      // 调试输出
-      debugPrint('=== loadPurchasableProducts 结果 ===');
-      debugPrint('supplierId: $supplierId');
-      debugPrint('purchasableProducts.length: ${provider.purchasableProducts.length}');
-      debugPrint('error: ${provider.error}');
-      for (var p in provider.purchasableProducts) {
-        debugPrint('  商品: ${p.id} - ${p.name} - supplierId: ${p.supplierId}');
-      }
-      setState(() {
-        // 过滤掉已添加的商品
-        _products = provider.purchasableProducts.where((p) => !widget.existingProductIds.contains(p.id)).toList();
-        _selectedProductIds.clear();
-        _loading = false;
-      });
-    }
+    setState(() {
+      _products = provider.purchasableProducts.where((p) => !widget.existingProductIds.contains(p.id)).toList();
+      _selectedProductIds.clear();
+      _loading = false;
+    });
   }
-
   void _toggleProduct(int id) {
     setState(() {
       if (_selectedProductIds.contains(id)) {
@@ -448,7 +387,6 @@ class _AddProductsDialogState extends State<_AddProductsDialog> {
       }
     });
   }
-
   void _selectAll() {
     setState(() {
       if (_selectedProductIds.length == _products.length) {
@@ -458,28 +396,23 @@ class _AddProductsDialogState extends State<_AddProductsDialog> {
       }
     });
   }
-
   void _handleConfirm() {
     if (_selectedSupplier == null || _selectedProductIds.isEmpty) return;
-
     final items = _products
         .where((p) => _selectedProductIds.contains(p.id))
         .map((p) => _OrderItemData(
           supplier: _selectedSupplier, 
           product: p, 
           quantity: 1,
-          unit: p.unit, // 使用商品的默认单位
+          unit: p.unit, 
         ))
         .toList();
-
     Navigator.pop(context, items);
   }
-
   @override
   Widget build(BuildContext context) {
     final theme = FluentTheme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-
     return ContentDialog(
       constraints: const BoxConstraints(maxWidth: 600, maxHeight: 500),
       title: const Text('添加商品'),
@@ -487,7 +420,6 @@ class _AddProductsDialogState extends State<_AddProductsDialog> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 供应商选择
           InfoLabel(
             label: '选择供应商',
             child: ComboBox<Supplier>(
@@ -502,7 +434,6 @@ class _AddProductsDialogState extends State<_AddProductsDialog> {
             ),
           ),
           const SizedBox(height: 16),
-          // 商品列表
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

@@ -25,6 +25,8 @@ import 'features/inventory/inventory_repository.dart';
 import 'features/inventory/inventory_provider.dart';
 import 'features/store_account/store_account_repository.dart';
 import 'features/store_account/store_account_provider.dart';
+import 'features/gallery/gallery_api.dart';
+import 'features/gallery/gallery_provider.dart';
 import 'core/theme/fluent_theme_provider.dart';
 class TowerApp extends StatelessWidget {
   const TowerApp({super.key});
@@ -39,6 +41,7 @@ class TowerApp extends StatelessWidget {
     final dictRepository = sl.get<DictRepository>();
     final inventoryRepository = sl.get<InventoryRepository>();
     final storeAccountRepository = sl.get<StoreAccountRepository>();
+    final galleryApi = sl.get<GalleryApi>();
     return ChangeNotifierProvider(
       create: (_) => FluentThemeProvider(),
       child: MultiProvider(
@@ -60,6 +63,8 @@ class TowerApp extends StatelessWidget {
               create: (_) => InventoryProvider(inventoryRepository)),
           ChangeNotifierProvider(
               create: (_) => StoreAccountProvider(storeAccountRepository)),
+          ChangeNotifierProvider(
+              create: (_) => GalleryProvider(galleryApi)),
         ],
         child: FutureBuilder(
           future: _bootstrap(context),

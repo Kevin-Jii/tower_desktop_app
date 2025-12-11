@@ -1,18 +1,16 @@
-import 'package:fluent_ui/fluent_ui.dart';
+﻿import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
 import '../../core/widgets/fluent_info_bar.dart';
+import '../../core/widgets/list_item_card.dart';
 import 'dingtalk_provider.dart';
 import 'models.dart';
 import '../store/store_provider.dart';
 import '../store/models.dart';
-
 class DingTalkManagementPage extends StatefulWidget {
   const DingTalkManagementPage({super.key});
-
   @override
   State<DingTalkManagementPage> createState() => _DingTalkManagementPageState();
 }
-
 class _DingTalkManagementPageState extends State<DingTalkManagementPage> {
   @override
   void initState() {
@@ -22,7 +20,6 @@ class _DingTalkManagementPageState extends State<DingTalkManagementPage> {
       context.read<StoreProvider>().loadStores(pageSize: 1000);
     });
   }
-
   @override
   Widget build(BuildContext context) {
     return ScaffoldPage(
@@ -35,10 +32,9 @@ class _DingTalkManagementPageState extends State<DingTalkManagementPage> {
       ),
     );
   }
-
   Widget _buildHeader() {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       decoration: BoxDecoration(
         color: FluentTheme.of(context).micaBackgroundColor,
         border: Border(
@@ -49,6 +45,8 @@ class _DingTalkManagementPageState extends State<DingTalkManagementPage> {
       ),
       child: Row(
         children: [
+          const Icon(FluentIcons.robot, size: 24),
+          const SizedBox(width: 12),
           Text(
             '钉钉机器人管理',
             style: FluentTheme.of(context).typography.subtitle,
@@ -56,11 +54,11 @@ class _DingTalkManagementPageState extends State<DingTalkManagementPage> {
           const Spacer(),
           FilledButton(
             onPressed: () => _openCreateDialog(),
-            child: Row(
+            child: const Row(
               mainAxisSize: MainAxisSize.min,
-              children: const [
-                Icon(FluentIcons.add, size: 16),
-                SizedBox(width: 8),
+              children: [
+                Icon(FluentIcons.add, size: 14),
+                SizedBox(width: 6),
                 Text('新增机器人'),
               ],
             ),
@@ -69,7 +67,6 @@ class _DingTalkManagementPageState extends State<DingTalkManagementPage> {
       ),
     );
   }
-
   Widget _buildContent() {
     return Consumer<DingTalkProvider>(
       builder: (context, provider, _) {
@@ -81,7 +78,9 @@ class _DingTalkManagementPageState extends State<DingTalkManagementPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(provider.error!),
+                Icon(FluentIcons.error, size: 48, color: Colors.grey[80]),
+                const SizedBox(height: 16),
+                Text(provider.error!, style: TextStyle(color: Colors.grey[100])),
                 const SizedBox(height: 16),
                 Button(
                   onPressed: () => provider.loadRobots(),
@@ -92,130 +91,83 @@ class _DingTalkManagementPageState extends State<DingTalkManagementPage> {
           );
         }
         if (provider.robots.isEmpty) {
-          return const Center(child: Text('暂无钉钉机器人配置'));
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(FluentIcons.robot, size: 64, color: Colors.grey[80]),
+                const SizedBox(height: 16),
+                Text('暂无机器人配置', style: TextStyle(color: Colors.grey[100])),
+                const SizedBox(height: 16),
+                FilledButton(
+                  onPressed: () => _openCreateDialog(),
+                  child: const Text('添加第一个机器人'),
+                ),
+              ],
+            ),
+          );
         }
-        return _buildRobotGrid(provider.robots);
+        return _buildRobotList(provider.robots);
       },
     );
   }
-
-  Widget _buildRobotGrid(List<DingTalkRobot> robots) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: GridView.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          childAspectRatio: 1.3,
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
-        ),
-        itemCount: robots.length,
-        itemBuilder: (context, index) {
-          return _buildRobotCard(robots[index]);
-        },
-      ),
+  Widget _buildRobotList(List<DingTalkRobot> robots) {
+    return ListView.builder(
+      padding: const EdgeInsets.all(24),
+      itemCount: robots.length,
+      itemBuilder: (context, index) {
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: _buildRobotCard(robots[index]),
+        );
+      },
     );
   }
-
   Widget _buildRobotCard(DingTalkRobot robot) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: robot.isEnabled ? Colors.green : Colors.red,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Icon(
-                    FluentIcons.robot,
-                    color: Colors.white,
-                    size: 24,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        robot.name,
-                        style: FluentTheme.of(context).typography.bodyStrong,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      Text(
-                        robot.botType.toUpperCase(),
-                        style: FluentTheme.of(context).typography.caption,
-                      ),
-                    ],
-                  ),
-                ),
-                ToggleSwitch(
-                  checked: robot.isEnabled,
-                  onChanged: (value) => _toggleRobotStatus(robot),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            _buildInfoRow('ID', robot.id.toString()),
-            if (robot.webhook.isNotEmpty)
-              _buildInfoRow('Webhook', robot.webhook),
-            _buildInfoRow('Client ID', robot.clientId),
-            const Spacer(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Button(
-                  onPressed: () => _testPush(robot),
-                  child: const Text('测试'),
-                ),
-                const SizedBox(width: 8),
-                FilledButton(
-                  onPressed: () => _openEditDialog(robot),
-                  child: const Text('编辑'),
-                ),
-                const SizedBox(width: 8),
-                Button(
-                  onPressed: () => _deleteRobot(robot),
-                  child: const Text('删除'),
-                ),
-              ],
-            ),
-          ],
+    final stores = context.watch<StoreProvider>().stores;
+    final storeName =
+        stores.where((s) => s.id == robot.storeId).firstOrNull?.name ?? '未绑定门店';
+    return ListItemCard(
+      icon: FluentIcons.robot,
+      iconColor: Colors.blue,
+      title: storeName,
+      subtitle: _formatWebhook(robot.webhook),
+      description: robot.remark,
+      isEnabled: robot.isEnabled,
+      onStatusChanged: (value) => _toggleRobotStatus(robot),
+      actions: [
+        ListItemAction(
+          icon: FluentIcons.send,
+          label: '测试',
+          tooltip: '测试推送',
+          onPressed: () => _testPush(robot),
         ),
-      ),
+        ListItemAction(
+          icon: FluentIcons.edit,
+          label: '编辑',
+          tooltip: '编辑机器人',
+          onPressed: () => _openEditDialog(robot),
+        ),
+        ListItemAction(
+          icon: FluentIcons.delete,
+          label: '删除',
+          tooltip: '删除机器人',
+          color: Colors.red,
+          onPressed: () => _deleteRobot(robot),
+        ),
+      ],
     );
   }
-
-  Widget _buildInfoRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 4),
-      child: Row(
-        children: [
-          Text(
-            '$label: ',
-            style: FluentTheme.of(context).typography.caption,
-          ),
-          Expanded(
-            child: Text(
-              value,
-              style: FluentTheme.of(context).typography.caption,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ],
-      ),
-    );
+  String _formatWebhook(String webhook) {
+    if (webhook.isEmpty) return '未配置 Webhook';
+    final tokenMatch = RegExp(r'access_token=([a-zA-Z0-9]+)').firstMatch(webhook);
+    if (tokenMatch != null) {
+      final token = tokenMatch.group(1)!;
+      final shortToken = token.length > 8 ? '${token.substring(0, 8)}...' : token;
+      return 'Webhook: $shortToken';
+    }
+    return webhook.length > 40 ? '${webhook.substring(0, 40)}...' : webhook;
   }
-
   void _openCreateDialog() {
     showDialog(
       context: context,
@@ -237,7 +189,6 @@ class _DingTalkManagementPageState extends State<DingTalkManagementPage> {
       ),
     );
   }
-
   void _openEditDialog(DingTalkRobot robot) {
     showDialog(
       context: context,
@@ -247,17 +198,12 @@ class _DingTalkManagementPageState extends State<DingTalkManagementPage> {
         onSubmit: (request) async {
           final provider = context.read<DingTalkProvider>();
           final updateRequest = UpdateDingTalkRobotRequest(
-            botType: request.botType,
+            botType: 'webhook',
             webhook: request.webhook,
             secret: request.secret,
-            clientId: request.clientId,
-            clientSecret: request.clientSecret,
-            agentId: request.agentId,
-            robotCode: request.robotCode,
             storeId: request.storeId,
             isEnabled: request.isEnabled,
             msgType: request.msgType,
-            openConversationId: request.openConversationId,
             remark: request.remark,
           );
           final success = await provider.updateRobot(robot, updateRequest);
@@ -274,26 +220,30 @@ class _DingTalkManagementPageState extends State<DingTalkManagementPage> {
       ),
     );
   }
-
   void _deleteRobot(DingTalkRobot robot) async {
+    final stores = context.read<StoreProvider>().stores;
+    final storeName =
+        stores.where((s) => s.id == robot.storeId).firstOrNull?.name ?? '该机器人';
     final result = await showDialog<bool>(
       context: context,
       builder: (context) => ContentDialog(
         title: const Text('确认删除'),
-        content: Text('确定要删除机器人 "${robot.name}" 吗？'),
+        content: Text('确定要删除 "$storeName" 的机器人吗？'),
         actions: [
           Button(
             onPressed: () => Navigator.pop(context, false),
             child: const Text('取消'),
           ),
           FilledButton(
+            style: ButtonStyle(
+              backgroundColor: WidgetStateProperty.all(Colors.red),
+            ),
             onPressed: () => Navigator.pop(context, true),
             child: const Text('删除'),
           ),
         ],
       ),
     );
-
     if (result == true) {
       final provider = context.read<DingTalkProvider>();
       final success = await provider.deleteRobot(robot);
@@ -307,7 +257,6 @@ class _DingTalkManagementPageState extends State<DingTalkManagementPage> {
       }
     }
   }
-
   void _toggleRobotStatus(DingTalkRobot robot) async {
     final provider = context.read<DingTalkProvider>();
     final updateRequest = UpdateDingTalkRobotRequest(
@@ -326,19 +275,16 @@ class _DingTalkManagementPageState extends State<DingTalkManagementPage> {
       );
     }
   }
-
   void _testPush(DingTalkRobot robot) async {
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (ctx) => const Center(child: ProgressRing()),
     );
-    
     try {
       final provider = context.read<DingTalkProvider>();
       final success = await provider.testPush(robot);
       Navigator.of(context).pop();
-      
       if (success) {
         await FluentInfoBarHelper.showSuccess(context, '测试推送成功');
       } else {
@@ -353,62 +299,39 @@ class _DingTalkManagementPageState extends State<DingTalkManagementPage> {
     }
   }
 }
-
-/// 机器人表单对话框
 class RobotFormDialog extends StatefulWidget {
   final String title;
   final DingTalkRobot? robot;
   final Function(CreateDingTalkRobotRequest) onSubmit;
-
   const RobotFormDialog({
     super.key,
     required this.title,
     this.robot,
     required this.onSubmit,
   });
-
   @override
   State<RobotFormDialog> createState() => _RobotFormDialogState();
 }
-
 class _RobotFormDialogState extends State<RobotFormDialog> {
-  final _formKey = GlobalKey<FormState>();
   final _webhookCtrl = TextEditingController();
   final _secretCtrl = TextEditingController();
-  final _clientIdCtrl = TextEditingController();
-  final _clientSecretCtrl = TextEditingController();
-  final _agentIdCtrl = TextEditingController();
-  final _robotCodeCtrl = TextEditingController();
-  final _openConversationIdCtrl = TextEditingController();
   final _remarkCtrl = TextEditingController();
-
-  String _botType = 'webhook';
   int? _storeId;
-  bool _isEnabled = true;
   String _msgType = 'markdown';
   List<Store> _stores = [];
-
   @override
   void initState() {
     super.initState();
     if (widget.robot != null) {
       final r = widget.robot!;
-      _botType = r.botType;
       _webhookCtrl.text = r.webhook;
       _secretCtrl.text = r.secret;
-      _clientIdCtrl.text = r.clientId;
-      _clientSecretCtrl.text = r.clientSecret;
-      _agentIdCtrl.text = r.agentId?.toString() ?? '';
-      _robotCodeCtrl.text = r.robotCode;
-      _openConversationIdCtrl.text = r.openConversationId ?? '';
       _remarkCtrl.text = r.remark ?? '';
       _storeId = r.storeId;
-      _isEnabled = r.isEnabled;
-      _msgType = r.msgType;
+      _msgType = r.msgType.isNotEmpty ? r.msgType : 'markdown';
     }
     _loadStores();
   }
-
   Future<void> _loadStores() async {
     final storeProvider = context.read<StoreProvider>();
     await storeProvider.loadStores(pageSize: 1000);
@@ -416,174 +339,95 @@ class _RobotFormDialogState extends State<RobotFormDialog> {
       _stores = storeProvider.stores;
     });
   }
-
   @override
   void dispose() {
     _webhookCtrl.dispose();
     _secretCtrl.dispose();
-    _clientIdCtrl.dispose();
-    _clientSecretCtrl.dispose();
-    _agentIdCtrl.dispose();
-    _robotCodeCtrl.dispose();
-    _openConversationIdCtrl.dispose();
     _remarkCtrl.dispose();
     super.dispose();
   }
-
   void _submit() {
+    if (_webhookCtrl.text.trim().isEmpty) {
+      FluentInfoBarHelper.showError(context, '请输入 Webhook 地址');
+      return;
+    }
     final request = CreateDingTalkRobotRequest(
       name: '',
-      botType: _botType,
-      webhook: _webhookCtrl.text,
-      secret: _secretCtrl.text,
-      clientId: _clientIdCtrl.text,
-      clientSecret: _clientSecretCtrl.text,
-      agentId: int.tryParse(_agentIdCtrl.text),
-      robotCode: _robotCodeCtrl.text,
+      botType: 'webhook',
+      webhook: _webhookCtrl.text.trim(),
+      secret: _secretCtrl.text.trim(),
       storeId: _storeId,
-      isEnabled: _isEnabled,
+      isEnabled: true,
       msgType: _msgType,
-      openConversationId: _openConversationIdCtrl.text.isEmpty
-          ? null
-          : _openConversationIdCtrl.text,
-      remark: _remarkCtrl.text,
+      remark: _remarkCtrl.text.trim(),
     );
     widget.onSubmit(request);
   }
-
   @override
   Widget build(BuildContext context) {
     return ContentDialog(
       title: Text(widget.title),
       content: SizedBox(
-        width: 600,
-        height: 500,
-        child: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                InfoLabel(
-                  label: '机器人类型',
-                  child: ComboBox<String>(
-                    value: _botType,
-                    items: const [
-                      ComboBoxItem(value: 'webhook', child: Text('Webhook')),
-                      ComboBoxItem(value: 'stream', child: Text('Stream')),
-                    ],
-                    onChanged: (value) {
-                      setState(() => _botType = value ?? 'webhook');
-                    },
-                  ),
-                ),
-                const SizedBox(height: 16),
-                if (_botType == 'webhook') ...[
-                  InfoLabel(
-                    label: 'Webhook 地址 *',
-                    child: TextBox(
-                      controller: _webhookCtrl,
-                      placeholder: 'https://oapi.dingtalk.com/robot/send?access_token=xxx',
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  InfoLabel(
-                    label: '签名密钥 (可选)',
-                    child: TextBox(
-                      controller: _secretCtrl,
-                      placeholder: 'SECxxxxxx',
-                    ),
-                  ),
-                ] else ...[
-                  InfoLabel(
-                    label: 'Client ID (AppKey) *',
-                    child: TextBox(
-                      controller: _clientIdCtrl,
-                      placeholder: '请输入 Client ID',
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  InfoLabel(
-                    label: 'Client Secret *',
-                    child: TextBox(
-                      controller: _clientSecretCtrl,
-                      placeholder: '请输入 Client Secret',
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  InfoLabel(
-                    label: 'Agent ID (可选)',
-                    child: TextBox(
-                      controller: _agentIdCtrl,
-                      placeholder: '请输入 Agent ID',
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  InfoLabel(
-                    label: '机器人编码 (RobotCode)',
-                    child: TextBox(
-                      controller: _robotCodeCtrl,
-                      placeholder: '钉钉分配的机器人编码',
-                    ),
-                  ),
-                ],
-                const SizedBox(height: 16),
-                InfoLabel(
-                  label: '消息类型',
-                  child: ComboBox<String>(
-                    value: _msgType,
-                    items: const [
-                      ComboBoxItem(value: 'markdown', child: Text('Markdown')),
-                      ComboBoxItem(value: 'text', child: Text('文本')),
-                    ],
-                    onChanged: (value) {
-                      setState(() => _msgType = value ?? 'markdown');
-                    },
-                  ),
-                ),
-                const SizedBox(height: 16),
-                InfoLabel(
-                  label: '通知群号 (可选)',
-                  child: TextBox(
-                    controller: _openConversationIdCtrl,
-                    placeholder: '请输入钉钉群的 open_conversation_id',
-                  ),
-                ),
-                const SizedBox(height: 16),
-                InfoLabel(
-                  label: '备注',
-                  child: TextBox(
-                    controller: _remarkCtrl,
-                    placeholder: '请输入备注信息',
-                    maxLines: 2,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                InfoLabel(
-                  label: '所属门店 (可选)',
-                  child: ComboBox<int>(
-                    value: _storeId,
-                    placeholder: const Text('请选择门店'),
-                    items: _stores
-                        .map((store) => ComboBoxItem<int>(
-                              value: store.id,
-                              child: Text(store.name),
-                            ))
-                        .toList(),
-                    onChanged: (value) {
-                      setState(() => _storeId = value);
-                    },
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Checkbox(
-                  checked: _isEnabled,
-                  onChanged: (v) => setState(() => _isEnabled = v ?? true),
-                  content: const Text('是否启用'),
-                ),
-              ],
+        width: 480,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            InfoLabel(
+              label: '所属门店',
+              child: ComboBox<int>(
+                value: _storeId,
+                placeholder: const Text('请选择门店'),
+                isExpanded: true,
+                items: _stores
+                    .map((store) => ComboBoxItem<int>(
+                          value: store.id,
+                          child: Text(store.name),
+                        ))
+                    .toList(),
+                onChanged: (value) => setState(() => _storeId = value),
+              ),
             ),
-          ),
+            const SizedBox(height: 16),
+            InfoLabel(
+              label: 'Webhook 地址',
+              child: TextBox(
+                controller: _webhookCtrl,
+                placeholder: 'https:
+                maxLines: 2,
+              ),
+            ),
+            const SizedBox(height: 16),
+            InfoLabel(
+              label: '签名密钥（可选）',
+              child: TextBox(
+                controller: _secretCtrl,
+                placeholder: 'SECxxxxxx',
+              ),
+            ),
+            const SizedBox(height: 16),
+            InfoLabel(
+              label: '消息格式',
+              child: ComboBox<String>(
+                value: _msgType,
+                isExpanded: true,
+                items: const [
+                  ComboBoxItem(value: 'markdown', child: Text('Markdown')),
+                  ComboBoxItem(value: 'text', child: Text('纯文本')),
+                ],
+                onChanged: (value) =>
+                    setState(() => _msgType = value ?? 'markdown'),
+              ),
+            ),
+            const SizedBox(height: 16),
+            InfoLabel(
+              label: '备注（可选）',
+              child: TextBox(
+                controller: _remarkCtrl,
+                placeholder: '请输入备注信息',
+              ),
+            ),
+          ],
         ),
       ),
       actions: [
