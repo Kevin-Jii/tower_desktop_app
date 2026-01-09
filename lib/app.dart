@@ -27,6 +27,8 @@ import 'features/store_account/store_account_repository.dart';
 import 'features/store_account/store_account_provider.dart';
 import 'features/gallery/gallery_api.dart';
 import 'features/gallery/gallery_provider.dart';
+import 'features/member/member_api.dart';
+import 'features/member/member_provider.dart';
 import 'core/theme/fluent_theme_provider.dart';
 class TowerApp extends StatelessWidget {
   const TowerApp({super.key});
@@ -42,6 +44,7 @@ class TowerApp extends StatelessWidget {
     final inventoryRepository = sl.get<InventoryRepository>();
     final storeAccountRepository = sl.get<StoreAccountRepository>();
     final galleryApi = sl.get<GalleryApi>();
+    final memberApi = sl.get<MemberApi>();
     return ChangeNotifierProvider(
       create: (_) => FluentThemeProvider(),
       child: MultiProvider(
@@ -65,6 +68,8 @@ class TowerApp extends StatelessWidget {
               create: (_) => StoreAccountProvider(storeAccountRepository)),
           ChangeNotifierProvider(
               create: (_) => GalleryProvider(galleryApi)),
+          ChangeNotifierProvider(
+              create: (_) => MemberProvider(memberApi)),
         ],
         child: FutureBuilder(
           future: _bootstrap(context),

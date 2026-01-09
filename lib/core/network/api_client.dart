@@ -1,31 +1,23 @@
-import 'package:dio/dio.dart';
+﻿import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'api_response.dart';
-
 class ApiClient {
   static final ApiClient _instance = ApiClient._internal();
   factory ApiClient() => _instance;
-
   late final Dio dio;
-
-  // 根据你的后端地址调整 (开发环境)
-  static const String baseUrl = 'http://172.19.160.1:10024/api/v1';
-
+  static const String baseUrl = 'http:
   String? _token;
   int? _userId;
   int? _storeId;
-  
   void setToken(String? token) {
     _token = token;
   }
-  
-  /// 设置用户信息（用于请求头）
   void setUserInfo({int? userId, int? storeId}) {
     _userId = userId;
     _storeId = storeId;
   }
-
   ApiClient._internal() {
     dio = Dio(BaseOptions(
       baseUrl: baseUrl,
@@ -35,18 +27,15 @@ class ApiClient {
         'Content-Type': 'application/json',
       },
     ));
-
+    dio.httpClientAdapter = IOHttpClientAdapter();
     dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) {
-        // 添加 Token
         if (_token != null && _token!.isNotEmpty) {
           options.headers['Authorization'] = 'Bearer $_token';
         }
-        // 添加用户ID
         if (_userId != null) {
           options.headers['X-User-Id'] = _userId.toString();
         }
-        // 添加门店ID
         if (_storeId != null) {
           options.headers['X-Store-Id'] = _storeId.toString();
         }
@@ -56,7 +45,6 @@ class ApiClient {
         return handler.next(response);
       },
       onError: (e, handler) {
-        // 统一错误转换
         if (kDebugMode) {
           debugPrint(
               'API Error: ${e.type} ${e.response?.statusCode} => ${e.message}');
@@ -65,8 +53,6 @@ class ApiClient {
       },
     ));
   }
-
-  // 通用 GET
   Future<T> get<T>(String path,
       {Map<String, dynamic>? queryParameters,
       T Function(dynamic json)? converter}) async {
@@ -77,8 +63,6 @@ class ApiClient {
       throw _toApiException(e);
     }
   }
-
-  // 通用 POST
   Future<T> post<T>(String path,
       {Object? data,
       Map<String, dynamic>? queryParameters,
@@ -91,8 +75,6 @@ class ApiClient {
       throw _toApiException(e);
     }
   }
-
-  // 通用 DELETE
   Future<T> delete<T>(String path,
       {Object? data,
       Map<String, dynamic>? queryParameters,
@@ -105,8 +87,6 @@ class ApiClient {
       throw _toApiException(e);
     }
   }
-
-  // 支持其它 method
   Future<T> request<T>(String path,
       {required String method,
       Object? data,
@@ -122,8 +102,6 @@ class ApiClient {
       throw _toApiException(e);
     }
   }
-
-  /// 分页 GET 请求：自动解析 meta 并构建 PageResponse
   Future<PageResponse<T>> getPage<T>(
     String path, {
     Map<String, dynamic>? queryParameters,
@@ -137,8 +115,6 @@ class ApiClient {
       throw _toApiException(e);
     }
   }
-
-  /// 分页 POST 请求：自动解析 meta 并构建 PageResponse
   Future<PageResponse<T>> postPage<T>(
     String path, {
     Object? data,
@@ -154,11 +130,6 @@ class ApiClient {
       throw _toApiException(e);
     }
   }
-
-  // ============= 智能封装方法 =============
-
-  /// 智能 POST - 自动处理 data 提取和 null 过滤
-  /// 返回 data 中的对象，如果不存在则返回 null
   Future<T?> postSmart<T>({
     required String path,
     Object? data,
@@ -167,68 +138,50 @@ class ApiClient {
     bool filterNulls = false,
   }) async {
     try {
-      // 如果需要过滤 null 值
       Object? finalData = data;
       if (filterNulls && data is Map<String, dynamic>) {
         finalData = Map<String, dynamic>.from(data)
           ..removeWhere((key, value) => value == null);
       }
-
       final resp = await dio.post(path,
           data: finalData, queryParameters: queryParameters);
       final body = _validateResponse(resp);
-
-      // 尝试从 data 字段提取
       final responseData = body['data'];
       if (responseData == null) return null;
-
       if (responseData is Map<String, dynamic>) {
         return fromJson(responseData);
       }
-
       throw ApiException('响应 data 格式错误，期望 Map，实际为 ${responseData.runtimeType}');
     } on DioException catch (e) {
       throw _toApiException(e);
     }
   }
-
-  /// 智能 PUT - 自动处理 data 提取和 null 过滤
-  /// 返回 data 中的对象，如果不存在则返回 null
   Future<T?> putSmart<T>({
     required String path,
     Object? data,
     Map<String, dynamic>? queryParameters,
     required T Function(Map<String, dynamic>) fromJson,
-    bool filterNulls = true, // PUT 默认过滤 null
+    bool filterNulls = true, 
   }) async {
     try {
-      // 如果需要过滤 null 值
       Object? finalData = data;
       if (filterNulls && data is Map<String, dynamic>) {
         finalData = Map<String, dynamic>.from(data)
           ..removeWhere((key, value) => value == null);
       }
-
       final resp = await dio.put(path,
           data: finalData, queryParameters: queryParameters);
       final body = _validateResponse(resp);
-
-      // 尝试从 data 字段提取
       final responseData = body['data'];
       if (responseData == null) return null;
-
       if (responseData is Map<String, dynamic>) {
         return fromJson(responseData);
       }
-
       throw ApiException('响应 data 格式错误，期望 Map，实际为 ${responseData.runtimeType}');
     } on DioException catch (e) {
       throw _toApiException(e);
     }
   }
-
-  /// 智能 GET - 自动处理 data 提取
-  /// 返回 data 中的对象
   Future<T> getSmart<T>({
     required String path,
     Map<String, dynamic>? queryParameters,
@@ -237,23 +190,18 @@ class ApiClient {
     try {
       final resp = await dio.get(path, queryParameters: queryParameters);
       final body = _validateResponse(resp);
-
       final responseData = body['data'];
       if (responseData == null) {
         throw ApiException('GET 请求响应 data 为空');
       }
-
       if (responseData is Map<String, dynamic>) {
         return fromJson(responseData);
       }
-
       throw ApiException('响应 data 格式错误，期望 Map，实际为 ${responseData.runtimeType}');
     } on DioException catch (e) {
       throw _toApiException(e);
     }
   }
-
-  /// 智能 DELETE - 不期望返回数据
   Future<void> deleteSmart({
     required String path,
     Object? data,
@@ -265,8 +213,6 @@ class ApiClient {
       throw _toApiException(e);
     }
   }
-
-  /// 智能 GET List - 自动提取 data.list 中的列表（适配统一格式）
   Future<List<T>> getListSmart<T>({
     required String path,
     Map<String, dynamic>? queryParameters,
@@ -275,32 +221,25 @@ class ApiClient {
     try {
       final resp = await dio.get(path, queryParameters: queryParameters);
       final body = _validateResponse(resp);
-
-      // 新的统一格式：data 是包含列表的对象 {list: [...], total: n}
       final outerData = body['data'];
       if (outerData is! Map<String, dynamic>) {
         throw ApiException('响应 data 格式错误，期望包含列表的对象，实际为 ${outerData.runtimeType}');
       }
-
       final responseData = outerData['list'];
       if (responseData == null) {
         return [];
       }
-
       if (responseData is List) {
         return responseData
             .map((item) => fromJson(Map<String, dynamic>.from(item)))
             .toList();
       }
-
       throw ApiException(
           '响应 data.list 格式错误，期望 List，实际为 ${responseData.runtimeType}');
     } on DioException catch (e) {
       throw _toApiException(e);
     }
   }
-
-  /// 简单 GET List - 自动提取 data 中的列表（适配格式：{code, message, data: [...]}）
   Future<List<T>> getSimpleList<T>({
     required String path,
     Map<String, dynamic>? queryParameters,
@@ -309,26 +248,21 @@ class ApiClient {
     try {
       final resp = await dio.get(path, queryParameters: queryParameters);
       final body = _validateResponse(resp);
-
-      // 简单格式：data 直接是列表
       final responseData = body['data'];
       if (responseData == null) {
         return [];
       }
-
       if (responseData is List) {
         return responseData
             .map((item) => fromJson(Map<String, dynamic>.from(item)))
             .toList();
       }
-
       throw ApiException(
           '响应 data 格式错误，期望 List，实际为 ${responseData.runtimeType}');
     } on DioException catch (e) {
       throw _toApiException(e);
     }
   }
-
   ApiException _toApiException(DioException e) {
     String msg;
     switch (e.type) {
@@ -354,57 +288,39 @@ class ApiClient {
     }
     return ApiException(msg, statusCode: e.response?.statusCode);
   }
-
-  // 统一解析响应: {code, message, data, [total, page, page_size]}
   T _extractData<T>(Response resp, T Function(dynamic json)? converter,
       {required String method}) {
     final body = _validateResponse(resp);
-
-    // 如果使用了 converter，直接传整个响应体（包含 data、total 等）
     if (converter != null) {
       return converter(body);
     }
-
-    // 否则只提取 data 字段
     final data = body['data'];
-
-    // 类型安全检查
-    // 当 T 为 void 时（增删改操作），data 可以为 null
     if (T == dynamic) {
       return data as T;
     }
-
-    // data 为空：GET 认为错误，非 GET 允许（增删改成功通常无 data）
     if (data == null) {
       if (method == 'GET') {
         throw ApiException('data 字段为空 (GET ${resp.requestOptions.path})');
       }
-      return null as T; // POST/PUT/DELETE 允许无 data
+      return null as T; 
     }
-
     if (T == Map<String, dynamic>) {
       if (data is Map) {
         return Map<String, dynamic>.from(data) as T;
       }
       throw ApiException('data 字段格式不正确，期望 Map，实际为 ${data.runtimeType}');
     }
-
     if (T.toString().contains('List')) {
       if (data is List) {
         return data as T;
       }
       throw ApiException('data 字段格式不正确，期望 List，实际为 ${data.runtimeType}');
     }
-
     return data as T;
   }
-
-  /// 校验响应格式和业务状态码，返回响应体 Map
   Map<String, dynamic> _validateResponse(Response resp) {
     final raw = resp.data;
     dynamic body = raw;
-
-    // 如果响应是字符串，尝试解码为 JSON
     if (raw is String) {
       try {
         body = json.decode(raw);
@@ -412,27 +328,16 @@ class ApiClient {
         throw ApiException('响应数据格式错误，无法解析 JSON');
       }
     }
-
-    // 检查后端统一响应格式 {code, message, data}
     if (body is! Map) {
       throw ApiException('响应格式错误，期望 JSON 对象');
     }
-
     final code = body['code'];
     final message = body['message'];
-
-    // 检查业务状态码
     if (code != null && code != 200) {
       throw ApiException(message?.toString() ?? '请求失败', statusCode: code);
     }
-
     return body as Map<String, dynamic>;
   }
-
-  /// 安全调用包装：统一捕获 DioException 并返回 ApiResult<T>
-  /// 使用方式：
-  ///   final result = await safeCall(() => dio.get('/path'));
-  ///   result.when(success: (data){}, error: (msg, code){});
   Future<ApiResult<R>> safeCall<R>(Future<Response> Function() action,
       {R Function(dynamic json)? transform}) async {
     try {
@@ -451,7 +356,6 @@ class ApiClient {
     }
   }
 }
-
 class ApiException implements Exception {
   final String message;
   final int? statusCode;
@@ -459,8 +363,6 @@ class ApiException implements Exception {
   @override
   String toString() => 'ApiException($statusCode): $message';
 }
-
-/// 统一结果模型（若已有则可复用此定义）
 class ApiResult<T> {
   final T? data;
   final String? error;

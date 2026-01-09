@@ -8,6 +8,7 @@ import 'package:tower_desktop_app/features/dict/dict_management_page.dart';
 import 'package:tower_desktop_app/features/inventory/inventory_page.dart';
 import 'package:tower_desktop_app/features/store_account/store_account_page.dart';
 import 'package:tower_desktop_app/features/gallery/gallery_page.dart';
+import 'package:tower_desktop_app/features/member/member_page.dart';
 import '../../features/menu/models.dart';
 import '../constants/menu_types.dart';
 import '../../features/user/user_management_page.dart';
@@ -29,6 +30,8 @@ class RouteManager {
     'store/inventory/index': () => const InventoryPage(),
     'dingtalk/robot/index': () => const DingTalkManagementPage(),
     'store/account/index': () => const StoreAccountPage(),
+    'store/member/index': () => const MemberPage(),
+    'member/index': () => const MemberPage(),
   };
   Widget? getPageForMenuItem(MenuItem menuItem) {
     if (menuItem.type != MenuType.page) return null;
@@ -73,12 +76,13 @@ class _ModulePlaceholderPage extends StatelessWidget {
             const SizedBox(height: 12),
             _buildInfoChip(context, '组件路径: ${menuItem.component}'),
             const SizedBox(height: 4),
-            _buildInfoChip(context, '路由地址: ${menuItem.path}', isSecondary: true),
+            _buildInfoChip(context, '路由地址: ${menuItem.path}',
+                isSecondary: true),
             const SizedBox(height: 24),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
-                color: Colors.blue.lightest, 
+                color: Colors.blue.lightest,
                 borderRadius: BorderRadius.circular(4),
                 border: Border.all(color: Colors.blue.light),
               ),
@@ -99,11 +103,15 @@ class _ModulePlaceholderPage extends StatelessWidget {
       ),
     );
   }
-  Widget _buildInfoChip(BuildContext context, String text, {bool isSecondary = false}) {
+  Widget _buildInfoChip(BuildContext context, String text,
+      {bool isSecondary = false}) {
     return Text(
       text,
-      style: isSecondary 
-          ? FluentTheme.of(context).typography.caption?.copyWith(color: Colors.grey[100])
+      style: isSecondary
+          ? FluentTheme.of(context)
+              .typography
+              .caption
+              ?.copyWith(color: Colors.grey[100])
           : FluentTheme.of(context).typography.body,
     );
   }

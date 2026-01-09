@@ -24,14 +24,34 @@ class GalleryApi {
       if (storeId != null) params['store_id'] = storeId;
       final resp = await _dio.get(_basePath, queryParameters: params);
       final body = resp.data;
-      final listData = body['list'] ?? body['data'] ?? [];
-      final total = body['total'] ?? 0;
-      final items = (listData as List)
-          .map((e) => GalleryImage.fromJson(Map<String, dynamic>.from(e)))
+      List<dynamic> listData = [];
+      int total = 0;
+      if (body is Map<String, dynamic>) {
+        if (body['list'] is List) {
+          listData = body['list'];
+          total = body['total'] is int ? body['total'] : int.tryParse(body['total']?.toString() ?? '0') ?? 0;
+        }
+        else if (body['data'] is List) {
+          listData = body['data'];
+          total = body['total'] is int ? body['total'] : int.tryParse(body['total']?.toString() ?? '0') ?? 0;
+        }
+        else if (body['data'] is Map<String, dynamic>) {
+          final data = body['data'] as Map<String, dynamic>;
+          if (data['list'] is List) {
+            listData = data['list'];
+          }
+          total = data['total'] is int ? data['total'] : int.tryParse(data['total']?.toString() ?? '0') ?? 0;
+        }
+      } else if (body is List) {
+        listData = body;
+      }
+      final items = listData
+          .where((e) => e is Map<String, dynamic>)
+          .map((e) => GalleryImage.fromJson(e as Map<String, dynamic>))
           .toList();
       return ApiResult.success(GalleryListResult(
         list: items,
-        total: total is int ? total : int.tryParse(total.toString()) ?? 0,
+        total: total,
         page: page,
         pageSize: pageSize,
       ));

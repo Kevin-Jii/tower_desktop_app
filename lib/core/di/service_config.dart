@@ -20,6 +20,7 @@ import 'package:tower_desktop_app/features/inventory/inventory_repository.dart';
 import 'package:tower_desktop_app/features/store_account/store_account_api.dart';
 import 'package:tower_desktop_app/features/store_account/store_account_repository.dart';
 import 'package:tower_desktop_app/features/gallery/gallery_api.dart';
+import 'package:tower_desktop_app/features/member/member_api.dart';
 class ServiceConfig {
   ServiceConfig._();
   static void setupServices() {
@@ -90,6 +91,9 @@ class ServiceConfig {
     );
     locator.registerLazySingleton<GalleryApi>(
       () => GalleryApi(sl.get<ApiClient>()),
+    );
+    locator.registerLazySingleton<MemberApi>(
+      () => MemberApi(sl.get<ApiClient>()),
     );
   }
   static void resetServices() {

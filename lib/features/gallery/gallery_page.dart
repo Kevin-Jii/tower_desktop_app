@@ -1,6 +1,7 @@
 ﻿import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart' as material;
 import 'package:flutter/services.dart';
 import '../../core/widgets/fluent_info_bar.dart';
 import '../auth/session_manager.dart';
@@ -390,7 +391,8 @@ class _GalleryPageState extends State<GalleryPage> {
     if (url == null || url.isEmpty) {
       return _buildPlaceholder();
     }
-    final token = SessionManager().token;
+    final isExternalUrl = url.startsWith('http:
+    final token = isExternalUrl ? null : SessionManager().token;
     return Image.network(
       url,
       fit: fit,
@@ -505,85 +507,110 @@ class _GalleryPageState extends State<GalleryPage> {
     }
   }
   void _showImageDetail(GalleryImage image) {
-    showDialog(
+    final screenSize = MediaQuery.of(context).size;
+    showGeneralDialog(
       context: context,
-      builder: (ctx) => ContentDialog(
-        title: Text(image.name ?? '图片详情'),
-        content: SizedBox(
-          width: 700,
-          height: 500,
-          child: Column(
+      barrierDismissible: true,
+      barrierLabel: '',
+      barrierColor: Colors.black.withOpacity(0.95),
+      transitionDuration: const Duration(milliseconds: 200),
+      pageBuilder: (ctx, animation, secondaryAnimation) {
+        return material.Material(
+          color: Colors.black,
+          child: Stack(
             children: [
-              Expanded(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: _buildAuthImage(image.url, fit: BoxFit.contain),
-                ),
+              Center(
+                child: _buildAuthImage(image.url, fit: BoxFit.contain),
               ),
-              const SizedBox(height: 16),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: FluentTheme.of(ctx).cardColor,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [Colors.black.withOpacity(0.7), Colors.transparent],
+                    ),
+                  ),
+                  child: SafeArea(
+                    bottom: false,
+                    child: Row(
                       children: [
+                        Text(
+                          image.name ?? '图片详情',
+                          style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500),
+                        ),
                         if (image.category != null) ...[
-                          _buildInfoChip('分类', GalleryCategory.labels[image.category] ?? image.category!),
                           const SizedBox(width: 16),
+                          _buildInfoChipWhite('分类', GalleryCategory.labels[image.category] ?? image.category!),
                         ],
                         if (image.fileSize != null) ...[
-                          _buildInfoChip('大小', _formatFileSize(image.fileSize!)),
                           const SizedBox(width: 16),
+                          _buildInfoChipWhite('大小', _formatFileSize(image.fileSize!)),
                         ],
-                        if (image.createdAt != null)
-                          _buildInfoChip('上传时间', image.createdAt!),
-                      ],
-                    ),
-                    if (image.remark != null && image.remark!.isNotEmpty) ...[
-                      const SizedBox(height: 8),
-                      Text('备注: ${image.remark}', style: TextStyle(color: Colors.grey[100], fontSize: 13)),
-                    ],
-                    if (image.url != null) ...[
-                      const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              image.url!,
-                              style: TextStyle(color: Colors.grey[100], fontSize: 11),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Button(
-                            onPressed: () {
+                        const Spacer(),
+                        IconButton(
+                          icon: const Icon(FluentIcons.copy, color: Colors.white),
+                          onPressed: () {
+                            if (image.url != null) {
                               Clipboard.setData(ClipboardData(text: image.url!));
                               FluentInfoBarHelper.showSuccess(ctx, '链接已复制');
-                            },
-                            child: const Text('复制链接'),
+                            }
+                          },
+                        ),
+                        const SizedBox(width: 8),
+                        IconButton(
+                          icon: const Icon(FluentIcons.cancel, color: Colors.white),
+                          onPressed: () => Navigator.pop(ctx),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.bottomCenter,
+                      end: Alignment.topCenter,
+                      colors: [Colors.black.withOpacity(0.7), Colors.transparent],
+                    ),
+                  ),
+                  child: SafeArea(
+                    top: false,
+                    child: Row(
+                      children: [
+                        if (image.remark != null && image.remark!.isNotEmpty)
+                          Text(
+                            image.remark!,
+                            style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 13),
+                          ),
+                        if (image.url != null) ...[
+                          const Spacer(),
+                          Text(
+                            image.url!.length > 60 ? '${image.url!.substring(0, 60)}...' : image.url!,
+                            style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 11),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ],
-                      ),
-                    ],
-                  ],
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ],
           ),
-        ),
-        actions: [
-          Button(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('关闭'),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
   Widget _buildInfoChip(String label, String value) {
@@ -592,6 +619,15 @@ class _GalleryPageState extends State<GalleryPage> {
       children: [
         Text('$label: ', style: TextStyle(color: Colors.grey[100], fontSize: 12)),
         Text(value, style: const TextStyle(fontSize: 12)),
+      ],
+    );
+  }
+  Widget _buildInfoChipWhite(String label, String value) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text('$label: ', style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 12)),
+        Text(value, style: const TextStyle(color: Colors.white, fontSize: 12)),
       ],
     );
   }
