@@ -23,6 +23,12 @@ dependencies:
   bitsdojo_window: ^0.1.6
   window_manager: ^0.3.9
   
+  # 系统托盘
+  tray_manager: ^0.2.3
+  
+  # SVG 支持
+  flutter_svg: ^2.0.10
+  
   # 截图和文件保存
   screenshot: ^3.0.0
   file_picker: ^8.0.0+1
@@ -44,3 +50,4 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
+    - lib/core/icons/

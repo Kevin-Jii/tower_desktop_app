@@ -554,9 +554,9 @@ class _MemberPageState extends State<MemberPage> {
               ),
               ...provider.rechargeOrders.map((order) => TableRow(
                     decoration: BoxDecoration(
-                      color: order.status == 1
+                      color: order.payStatus == 1
                           ? Colors.successPrimaryColor.withValues(alpha: 0.05)
-                          : order.status == 0
+                          : order.payStatus == 0
                               ? Colors.warningPrimaryColor.withValues(alpha: 0.05)
                               : null,
                     ),
@@ -621,7 +621,7 @@ class _MemberPageState extends State<MemberPage> {
                           padding:
                               const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                           decoration: BoxDecoration(
-                            color: _getRechargeStatusColor(order.status ?? 0),
+                            color: _getRechargeStatusColor(order.payStatus ?? 0),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
@@ -906,7 +906,7 @@ class _RechargeOrderActionButtons extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) {
-    if (order.status != 0) return const SizedBox.shrink();
+    if (order.payStatus != 0) return const SizedBox.shrink();
     return Row(
       children: [
         Tooltip(

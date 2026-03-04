@@ -80,7 +80,8 @@ class _DingTalkManagementPageState extends State<DingTalkManagementPage> {
               children: [
                 Icon(FluentIcons.error, size: 48, color: Colors.grey[80]),
                 const SizedBox(height: 16),
-                Text(provider.error!, style: TextStyle(color: Colors.grey[100])),
+                Text(provider.error!,
+                    style: TextStyle(color: Colors.grey[100])),
                 const SizedBox(height: 16),
                 Button(
                   onPressed: () => provider.loadRobots(),
@@ -160,10 +161,12 @@ class _DingTalkManagementPageState extends State<DingTalkManagementPage> {
   }
   String _formatWebhook(String webhook) {
     if (webhook.isEmpty) return '未配置 Webhook';
-    final tokenMatch = RegExp(r'access_token=([a-zA-Z0-9]+)').firstMatch(webhook);
+    final tokenMatch =
+        RegExp(r'access_token=([a-zA-Z0-9]+)').firstMatch(webhook);
     if (tokenMatch != null) {
       final token = tokenMatch.group(1)!;
-      final shortToken = token.length > 8 ? '${token.substring(0, 8)}...' : token;
+      final shortToken =
+          token.length > 8 ? '${token.substring(0, 8)}...' : token;
       return 'Webhook: $shortToken';
     }
     return webhook.length > 40 ? '${webhook.substring(0, 40)}...' : webhook;

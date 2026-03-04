@@ -173,7 +173,9 @@ class _GalleryPageState extends State<GalleryPage> {
                     )
                   : null,
               onSubmitted: (value) {
-                context.read<GalleryProvider>().search(value.isEmpty ? null : value);
+                context
+                    .read<GalleryProvider>()
+                    .search(value.isEmpty ? null : value);
               },
             ),
           ),
@@ -181,7 +183,9 @@ class _GalleryPageState extends State<GalleryPage> {
           Button(
             onPressed: () {
               final keyword = _searchController.text.trim();
-              context.read<GalleryProvider>().search(keyword.isEmpty ? null : keyword);
+              context
+                  .read<GalleryProvider>()
+                  .search(keyword.isEmpty ? null : keyword);
             },
             child: const Text('搜索'),
           ),
@@ -209,7 +213,8 @@ class _GalleryPageState extends State<GalleryPage> {
               children: [
                 Icon(FluentIcons.error, size: 48, color: Colors.grey[80]),
                 const SizedBox(height: 16),
-                Text(provider.error!, style: TextStyle(color: Colors.grey[100])),
+                Text(provider.error!,
+                    style: TextStyle(color: Colors.grey[100])),
                 const SizedBox(height: 16),
                 Button(
                   onPressed: () => provider.loadImages(refresh: true),
@@ -224,7 +229,8 @@ class _GalleryPageState extends State<GalleryPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(FluentIcons.picture_library, size: 64, color: Colors.grey[80]),
+                Icon(FluentIcons.picture_library,
+                    size: 64, color: Colors.grey[80]),
                 const SizedBox(height: 16),
                 Text('暂无图片', style: TextStyle(color: Colors.grey[100])),
                 const SizedBox(height: 16),
@@ -298,14 +304,16 @@ class _GalleryPageState extends State<GalleryPage> {
                 width: 24,
                 height: 24,
                 decoration: BoxDecoration(
-                  color: isSelected ? Colors.blue : Colors.white.withOpacity(0.9),
+                  color:
+                      isSelected ? Colors.blue : Colors.white.withOpacity(0.9),
                   borderRadius: BorderRadius.circular(4),
                   border: Border.all(
                     color: isSelected ? Colors.blue : Colors.grey[80],
                   ),
                 ),
                 child: isSelected
-                    ? const Icon(FluentIcons.check_mark, size: 14, color: Colors.white)
+                    ? const Icon(FluentIcons.check_mark,
+                        size: 14, color: Colors.white)
                     : null,
               ),
             ),
@@ -338,7 +346,8 @@ class _GalleryPageState extends State<GalleryPage> {
                   end: Alignment.topCenter,
                   colors: [Colors.black.withOpacity(0.7), Colors.transparent],
                 ),
-                borderRadius: const BorderRadius.vertical(bottom: Radius.circular(7)),
+                borderRadius:
+                    const BorderRadius.vertical(bottom: Radius.circular(7)),
               ),
               child: Row(
                 children: [
@@ -391,7 +400,8 @@ class _GalleryPageState extends State<GalleryPage> {
     if (url == null || url.isEmpty) {
       return _buildPlaceholder();
     }
-    final isExternalUrl = url.startsWith('http:
+    final isExternalUrl =
+        url.startsWith('http:
     final token = isExternalUrl ? null : SessionManager().token;
     return Image.network(
       url,
@@ -404,7 +414,8 @@ class _GalleryPageState extends State<GalleryPage> {
         return Center(
           child: ProgressRing(
             value: loadingProgress.expectedTotalBytes != null
-                ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                ? loadingProgress.cumulativeBytesLoaded /
+                    loadingProgress.expectedTotalBytes!
                 : null,
           ),
         );
@@ -444,9 +455,11 @@ class _GalleryPageState extends State<GalleryPage> {
                     value: selectedCategory,
                     isExpanded: true,
                     items: GalleryCategory.labels.entries
-                        .map((e) => ComboBoxItem(value: e.key, child: Text(e.value)))
+                        .map((e) =>
+                            ComboBoxItem(value: e.key, child: Text(e.value)))
                         .toList(),
-                    onChanged: (v) => setState(() => selectedCategory = v ?? GalleryCategory.other),
+                    onChanged: (v) => setState(
+                        () => selectedCategory = v ?? GalleryCategory.other),
                   ),
                 ),
               ),
@@ -500,7 +513,8 @@ class _GalleryPageState extends State<GalleryPage> {
         }
       }
       if (successCount > 0) {
-        await FluentInfoBarHelper.showSuccess(context, '成功上传 $successCount 张图片');
+        await FluentInfoBarHelper.showSuccess(
+            context, '成功上传 $successCount 张图片');
       } else {
         await FluentInfoBarHelper.showError(context, '上传失败');
       }
@@ -527,12 +541,16 @@ class _GalleryPageState extends State<GalleryPage> {
                 left: 0,
                 right: 0,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
-                      colors: [Colors.black.withOpacity(0.7), Colors.transparent],
+                      colors: [
+                        Colors.black.withOpacity(0.7),
+                        Colors.transparent
+                      ],
                     ),
                   ),
                   child: SafeArea(
@@ -541,29 +559,39 @@ class _GalleryPageState extends State<GalleryPage> {
                       children: [
                         Text(
                           image.name ?? '图片详情',
-                          style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500),
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500),
                         ),
                         if (image.category != null) ...[
                           const SizedBox(width: 16),
-                          _buildInfoChipWhite('分类', GalleryCategory.labels[image.category] ?? image.category!),
+                          _buildInfoChipWhite(
+                              '分类',
+                              GalleryCategory.labels[image.category] ??
+                                  image.category!),
                         ],
                         if (image.fileSize != null) ...[
                           const SizedBox(width: 16),
-                          _buildInfoChipWhite('大小', _formatFileSize(image.fileSize!)),
+                          _buildInfoChipWhite(
+                              '大小', _formatFileSize(image.fileSize!)),
                         ],
                         const Spacer(),
                         IconButton(
-                          icon: const Icon(FluentIcons.copy, color: Colors.white),
+                          icon:
+                              const Icon(FluentIcons.copy, color: Colors.white),
                           onPressed: () {
                             if (image.url != null) {
-                              Clipboard.setData(ClipboardData(text: image.url!));
+                              Clipboard.setData(
+                                  ClipboardData(text: image.url!));
                               FluentInfoBarHelper.showSuccess(ctx, '链接已复制');
                             }
                           },
                         ),
                         const SizedBox(width: 8),
                         IconButton(
-                          icon: const Icon(FluentIcons.cancel, color: Colors.white),
+                          icon: const Icon(FluentIcons.cancel,
+                              color: Colors.white),
                           onPressed: () => Navigator.pop(ctx),
                         ),
                       ],
@@ -581,7 +609,10 @@ class _GalleryPageState extends State<GalleryPage> {
                     gradient: LinearGradient(
                       begin: Alignment.bottomCenter,
                       end: Alignment.topCenter,
-                      colors: [Colors.black.withOpacity(0.7), Colors.transparent],
+                      colors: [
+                        Colors.black.withOpacity(0.7),
+                        Colors.transparent
+                      ],
                     ),
                   ),
                   child: SafeArea(
@@ -591,13 +622,19 @@ class _GalleryPageState extends State<GalleryPage> {
                         if (image.remark != null && image.remark!.isNotEmpty)
                           Text(
                             image.remark!,
-                            style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 13),
+                            style: TextStyle(
+                                color: Colors.white.withOpacity(0.8),
+                                fontSize: 13),
                           ),
                         if (image.url != null) ...[
                           const Spacer(),
                           Text(
-                            image.url!.length > 60 ? '${image.url!.substring(0, 60)}...' : image.url!,
-                            style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 11),
+                            image.url!.length > 60
+                                ? '${image.url!.substring(0, 60)}...'
+                                : image.url!,
+                            style: TextStyle(
+                                color: Colors.white.withOpacity(0.5),
+                                fontSize: 11),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -617,7 +654,8 @@ class _GalleryPageState extends State<GalleryPage> {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text('$label: ', style: TextStyle(color: Colors.grey[100], fontSize: 12)),
+        Text('$label: ',
+            style: TextStyle(color: Colors.grey[100], fontSize: 12)),
         Text(value, style: const TextStyle(fontSize: 12)),
       ],
     );
@@ -626,7 +664,9 @@ class _GalleryPageState extends State<GalleryPage> {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text('$label: ', style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 12)),
+        Text('$label: ',
+            style:
+                TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 12)),
         Text(value, style: const TextStyle(color: Colors.white, fontSize: 12)),
       ],
     );
@@ -661,9 +701,11 @@ class _GalleryPageState extends State<GalleryPage> {
                     value: category,
                     isExpanded: true,
                     items: GalleryCategory.labels.entries
-                        .map((e) => ComboBoxItem(value: e.key, child: Text(e.value)))
+                        .map((e) =>
+                            ComboBoxItem(value: e.key, child: Text(e.value)))
                         .toList(),
-                    onChanged: (v) => setState(() => category = v ?? GalleryCategory.other),
+                    onChanged: (v) =>
+                        setState(() => category = v ?? GalleryCategory.other),
                   ),
                 ),
               ),
@@ -717,9 +759,12 @@ class _GalleryPageState extends State<GalleryPage> {
         title: const Text('确认删除'),
         content: const Text('确定要删除这张图片吗？'),
         actions: [
-          Button(onPressed: () => Navigator.pop(context, false), child: const Text('取消')),
+          Button(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('取消')),
           FilledButton(
-            style: ButtonStyle(backgroundColor: WidgetStateProperty.all(Colors.red)),
+            style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.all(Colors.red)),
             onPressed: () => Navigator.pop(context, true),
             child: const Text('删除'),
           ),
@@ -727,7 +772,8 @@ class _GalleryPageState extends State<GalleryPage> {
       ),
     );
     if (result == true) {
-      final success = await context.read<GalleryProvider>().deleteImage(image.id);
+      final success =
+          await context.read<GalleryProvider>().deleteImage(image.id);
       if (success) {
         await FluentInfoBarHelper.showSuccess(context, '删除成功');
       } else {
@@ -744,9 +790,12 @@ class _GalleryPageState extends State<GalleryPage> {
         title: const Text('确认批量删除'),
         content: Text('确定要删除选中的 $count 张图片吗？'),
         actions: [
-          Button(onPressed: () => Navigator.pop(context, false), child: const Text('取消')),
+          Button(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('取消')),
           FilledButton(
-            style: ButtonStyle(backgroundColor: WidgetStateProperty.all(Colors.red)),
+            style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.all(Colors.red)),
             onPressed: () => Navigator.pop(context, true),
             child: const Text('删除'),
           ),

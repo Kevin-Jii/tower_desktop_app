@@ -1,5 +1,7 @@
 ﻿import 'package:fluent_ui/fluent_ui.dart';
+import 'package:provider/provider.dart';
 import '../../core/network/api_client.dart';
+import '../dict/dict_provider.dart';
 import 'models.dart';
 import 'member_api.dart';
 class CreateRechargeDialog extends StatefulWidget {
@@ -17,9 +19,19 @@ class _CreateRechargeDialogState extends State<CreateRechargeDialog> {
   final _formKey = GlobalKey<FormState>();
   final _amountController = TextEditingController();
   final _remarkController = TextEditingController();
-  int _payType = 1; 
+  dynamic _payType;
   bool _loading = false;
   String? _error;
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final dictProvider = context.read<DictProvider>();
+      if (dictProvider.getDictByCode('MDGL_ZFFS').isEmpty) {
+        dictProvider.loadAllDicts();
+      }
+    });
+  }
   @override
   void dispose() {
     _amountController.dispose();
@@ -28,6 +40,12 @@ class _CreateRechargeDialogState extends State<CreateRechargeDialog> {
   }
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
+    if (_payType == null) {
+      setState(() {
+        _error = '请选择支付方式';
+      });
+      return;
+    }
     final amount = double.tryParse(_amountController.text.trim());
     if (amount == null || amount <= 0) {
       setState(() {
@@ -40,12 +58,23 @@ class _CreateRechargeDialogState extends State<CreateRechargeDialog> {
       _error = null;
     });
     try {
+      int payTypeValue;
+      if (_payType is String) {
+        payTypeValue = int.parse(_payType!);
+      } else if (_payType is int) {
+        payTypeValue = _payType!;
+      } else {
+        payTypeValue = int.tryParse(_payType.toString()) ?? 0;
+      }
       final api = MemberApi(widget.apiClient);
       final request = CreateRechargeOrderRequest(
         memberId: widget.member.id,
-        amount: amount,
-        payType: _payType,
-        remark: _remarkController.text.trim().isEmpty ? null : _remarkController.text.trim(),
+        payAmount: amount,
+        giftAmount: 0,
+        payType: payTypeValue,
+        remark: _remarkController.text.trim().isEmpty
+            ? null
+            : _remarkController.text.trim(),
       );
       final result = await api.createRechargeOrder(request);
       if (result != null && mounted) {
@@ -74,6 +103,7 @@ class _CreateRechargeDialogState extends State<CreateRechargeDialog> {
           color: FluentTheme.of(context).micaBackgroundColor,
         ),
       ),
+      constraints: const BoxConstraints(maxWidth: 600),
       content: Form(
         key: _formKey,
         child: Column(
@@ -94,7 +124,8 @@ class _CreateRechargeDialogState extends State<CreateRechargeDialog> {
                   const SizedBox(width: 16),
                   Text('手机: ${widget.member.phone}'),
                   const SizedBox(width: 16),
-                  Text('当前余额: ¥${(widget.member.balance ?? 0.0).toStringAsFixed(2)}'),
+                  Text(
+                      '当前余额: ¥${(widget.member.balance ?? 0.0).toStringAsFixed(2)}'),
                 ],
               ),
             ),
@@ -123,16 +154,41 @@ class _CreateRechargeDialogState extends State<CreateRechargeDialog> {
             const SizedBox(height: 12),
             Text('支付方式', style: theme.typography.body),
             const SizedBox(height: 8),
-            Row(
-              children: [
-                _buildPayTypeOption(1, FluentIcons.chat, '微信', theme),
-                const SizedBox(width: 12),
-                _buildPayTypeOption(2, FluentIcons.payment_card, '支付宝', theme),
-                const SizedBox(width: 12),
-                _buildPayTypeOption(3, FluentIcons.money, '现金', theme),
-                const SizedBox(width: 12),
-                _buildPayTypeOption(4, FluentIcons.bank, '银行卡', theme),
-              ],
+            Consumer<DictProvider>(
+              builder: (context, dictProvider, child) {
+                final payMethods = dictProvider.getDictByCode('MDGL_ZFFS');
+                if (payMethods.isEmpty) {
+                  return const Text('加载支付方式中...');
+                }
+                final rows = <List<dynamic>>[];
+                for (var i = 0; i < payMethods.length; i += 3) {
+                  rows.add(payMethods.sublist(
+                    i,
+                    i + 3 > payMethods.length ? payMethods.length : i + 3,
+                  ));
+                }
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: rows.map((row) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Row(
+                        children: row.map((item) {
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 12),
+                            child: _buildPayTypeOption(
+                              item.value,
+                              _getPayIcon(item.label),
+                              item.label,
+                              theme,
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    );
+                  }).toList(),
+                );
+              },
             ),
             const SizedBox(height: 12),
             InfoLabel(
@@ -168,7 +224,8 @@ class _CreateRechargeDialogState extends State<CreateRechargeDialog> {
       ],
     );
   }
-  Widget _buildPayTypeOption(int type, IconData icon, String label, FluentThemeData theme) {
+  Widget _buildPayTypeOption(
+      dynamic type, IconData icon, String label, FluentThemeData theme) {
     final isSelected = _payType == type;
     return HoverButton(
       onPressed: () {
@@ -187,9 +244,7 @@ class _CreateRechargeDialogState extends State<CreateRechargeDialog> {
                     : Colors.grey[20],
             borderRadius: BorderRadius.circular(4),
             border: Border.all(
-              color: isSelected
-                  ? theme.accentColor
-                  : Colors.grey[100]!,
+              color: isSelected ? theme.accentColor : Colors.grey[100]!,
               width: isSelected ? 2 : 1,
             ),
           ),
@@ -205,6 +260,13 @@ class _CreateRechargeDialogState extends State<CreateRechargeDialog> {
       },
     );
   }
+  IconData _getPayIcon(String label) {
+    if (label.contains('微信')) return FluentIcons.chat;
+    if (label.contains('支付宝')) return FluentIcons.payment_card;
+    if (label.contains('现金')) return FluentIcons.money;
+    if (label.contains('银行')) return FluentIcons.bank;
+    return FluentIcons.payment_card;
+  }
 }
 class PayRechargeDialog extends StatefulWidget {
   final RechargeOrder order;
@@ -218,9 +280,19 @@ class PayRechargeDialog extends StatefulWidget {
   State<PayRechargeDialog> createState() => _PayRechargeDialogState();
 }
 class _PayRechargeDialogState extends State<PayRechargeDialog> {
-  int _payType = 1;
+  dynamic _payType;
   bool _loading = false;
   String? _error;
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final dictProvider = context.read<DictProvider>();
+      if (dictProvider.getDictByCode('MDGL_ZFFS').isEmpty) {
+        dictProvider.loadAllDicts();
+      }
+    });
+  }
   @override
   Widget build(BuildContext context) {
     final theme = FluentTheme.of(context);
@@ -268,16 +340,41 @@ class _PayRechargeDialogState extends State<PayRechargeDialog> {
           const SizedBox(height: 20),
           Text('选择支付方式', style: theme.typography.body),
           const SizedBox(height: 8),
-          Row(
-            children: [
-              _buildPayTypeOption(1, FluentIcons.chat, '微信', theme),
-              const SizedBox(width: 12),
-              _buildPayTypeOption(2, FluentIcons.payment_card, '支付宝', theme),
-              const SizedBox(width: 12),
-              _buildPayTypeOption(3, FluentIcons.money, '现金', theme),
-              const SizedBox(width: 12),
-              _buildPayTypeOption(4, FluentIcons.bank, '银行卡', theme),
-            ],
+          Consumer<DictProvider>(
+            builder: (context, dictProvider, child) {
+              final payMethods = dictProvider.getDictByCode('MDGL_ZFFS');
+              if (payMethods.isEmpty) {
+                return const Text('加载支付方式中...');
+              }
+              final rows = <List<dynamic>>[];
+              for (var i = 0; i < payMethods.length; i += 3) {
+                rows.add(payMethods.sublist(
+                  i,
+                  i + 3 > payMethods.length ? payMethods.length : i + 3,
+                ));
+              }
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: rows.map((row) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Row(
+                      children: row.map((item) {
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 12),
+                          child: _buildPayTypeOption(
+                            item.value,
+                            _getPayIcon(item.label),
+                            item.label,
+                            theme,
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  );
+                }).toList(),
+              );
+            },
           ),
           if (_error != null) ...[
             const SizedBox(height: 16),
@@ -303,7 +400,8 @@ class _PayRechargeDialogState extends State<PayRechargeDialog> {
       ],
     );
   }
-  Widget _buildPayTypeOption(int type, IconData icon, String label, FluentThemeData theme) {
+  Widget _buildPayTypeOption(
+      dynamic type, IconData icon, String label, FluentThemeData theme) {
     final isSelected = _payType == type;
     return HoverButton(
       onPressed: () {
@@ -322,9 +420,7 @@ class _PayRechargeDialogState extends State<PayRechargeDialog> {
                     : Colors.grey[20],
             borderRadius: BorderRadius.circular(4),
             border: Border.all(
-              color: isSelected
-                  ? theme.accentColor
-                  : Colors.grey[100]!,
+              color: isSelected ? theme.accentColor : Colors.grey[100]!,
               width: isSelected ? 2 : 1,
             ),
           ),
@@ -340,14 +436,35 @@ class _PayRechargeDialogState extends State<PayRechargeDialog> {
       },
     );
   }
+  IconData _getPayIcon(String label) {
+    if (label.contains('微信')) return FluentIcons.chat;
+    if (label.contains('支付宝')) return FluentIcons.payment_card;
+    if (label.contains('现金')) return FluentIcons.money;
+    if (label.contains('银行')) return FluentIcons.bank;
+    return FluentIcons.payment_card;
+  }
   Future<void> _pay() async {
+    if (_payType == null) {
+      setState(() {
+        _error = '请选择支付方式';
+      });
+      return;
+    }
     setState(() {
       _loading = true;
       _error = null;
     });
     try {
+      int payTypeValue;
+      if (_payType is String) {
+        payTypeValue = int.parse(_payType!);
+      } else if (_payType is int) {
+        payTypeValue = _payType!;
+      } else {
+        payTypeValue = int.tryParse(_payType.toString()) ?? 0;
+      }
       final api = MemberApi(widget.apiClient);
-      final request = PayRechargeOrderRequest(payType: _payType);
+      final request = PayRechargeOrderRequest(payType: payTypeValue);
       final result = await api.payRechargeOrder(widget.order.orderNo!, request);
       if (result != null && mounted) {
         Navigator.of(context).pop(true);

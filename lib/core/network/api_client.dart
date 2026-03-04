@@ -161,7 +161,7 @@ class ApiClient {
     Object? data,
     Map<String, dynamic>? queryParameters,
     required T Function(Map<String, dynamic>) fromJson,
-    bool filterNulls = true, 
+    bool filterNulls = true,
   }) async {
     try {
       Object? finalData = data;
@@ -223,7 +223,8 @@ class ApiClient {
       final body = _validateResponse(resp);
       final outerData = body['data'];
       if (outerData is! Map<String, dynamic>) {
-        throw ApiException('响应 data 格式错误，期望包含列表的对象，实际为 ${outerData.runtimeType}');
+        throw ApiException(
+            '响应 data 格式错误，期望包含列表的对象，实际为 ${outerData.runtimeType}');
       }
       final responseData = outerData['list'];
       if (responseData == null) {
@@ -302,7 +303,7 @@ class ApiClient {
       if (method == 'GET') {
         throw ApiException('data 字段为空 (GET ${resp.requestOptions.path})');
       }
-      return null as T; 
+      return null as T;
     }
     if (T == Map<String, dynamic>) {
       if (data is Map) {

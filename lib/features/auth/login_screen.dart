@@ -1,4 +1,5 @@
-import 'package:fluent_ui/fluent_ui.dart';
+﻿import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter/material.dart' show Icons;
 import 'package:provider/provider.dart';
 import 'package:tower_desktop_app/core/constants/ui_texts.dart';
 import 'auth_api.dart';
@@ -11,14 +12,11 @@ import 'permission_provider.dart';
 import '../home/home_screen.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/widgets/custom_window_title_bar.dart';
-
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
-
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
-
 class _LoginScreenState extends State<LoginScreen>
     with SingleTickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
@@ -27,10 +25,8 @@ class _LoginScreenState extends State<LoginScreen>
   bool _loading = false;
   bool _obscurePassword = true;
   bool _remember = false;
-  List<String> _accountHistory = [];
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
-
   @override
   void initState() {
     super.initState();
@@ -42,7 +38,6 @@ class _LoginScreenState extends State<LoginScreen>
       CurvedAnimation(parent: _animationController, curve: Curves.easeIn),
     );
     _animationController.forward();
-    
     CredentialStorage().read().then((value) {
       final (acc, pwd, remember) = value;
       if (!mounted) return;
@@ -52,13 +47,7 @@ class _LoginScreenState extends State<LoginScreen>
         _remember = remember;
       });
     });
-    
-    CredentialStorage().getAccountsHistory().then((h) {
-      if (!mounted) return;
-      setState(() => _accountHistory = h);
-    });
   }
-
   @override
   void dispose() {
     _phoneCtrl.dispose();
@@ -66,40 +55,30 @@ class _LoginScreenState extends State<LoginScreen>
     _animationController.dispose();
     super.dispose();
   }
-
   Future<void> _doLogin() async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
-
     setState(() => _loading = true);
-    
     try {
       final authApi = AuthApi();
       final resp = await authApi.login(
           LoginRequest(phone: _phoneCtrl.text.trim(), password: _pwdCtrl.text));
       final menuApi = MenuApi();
       final perms = await menuApi.getUserPermissions();
-      
       final permProvider = context.read<PermissionProvider>();
       permProvider.setPermissions(perms);
-      
       SessionManager().updateSession(
           token: resp.token,
           userInfo: resp.userInfo,
           permissions: perms,
           expiresIn: resp.expiresIn == 0 ? null : resp.expiresIn);
-      
       if (!mounted) return;
-
       final menuProvider = context.read<MenuProvider>();
       await menuProvider.load(permissionProvider: permProvider);
-      
       if (!mounted) return;
-
-      Navigator.of(context).pushReplacement(
-          FluentPageRoute(builder: (_) => const HomeScreen()));
-
+      Navigator.of(context)
+          .pushReplacement(FluentPageRoute(builder: (_) => const HomeScreen()));
       if (_remember) {
         await CredentialStorage()
             .save(account: _phoneCtrl.text.trim(), password: _pwdCtrl.text);
@@ -122,12 +101,10 @@ class _LoginScreenState extends State<LoginScreen>
       }
     }
   }
-
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isMobile = screenWidth < 800;
-
     return ScaffoldPage(
       padding: EdgeInsets.zero,
       content: Column(
@@ -156,7 +133,9 @@ class _LoginScreenState extends State<LoginScreen>
                     ),
                     child: Card(
                       borderRadius: BorderRadius.circular(24),
-                      child: isMobile ? _buildMobileLayout() : _buildDesktopLayout(),
+                      child: isMobile
+                          ? _buildMobileLayout()
+                          : _buildDesktopLayout(),
                     ),
                   ),
                 ),
@@ -167,7 +146,6 @@ class _LoginScreenState extends State<LoginScreen>
       ),
     );
   }
-
   Widget _buildMobileLayout() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(32),
@@ -181,7 +159,6 @@ class _LoginScreenState extends State<LoginScreen>
       ),
     );
   }
-
   Widget _buildDesktopLayout() {
     return Row(
       children: [
@@ -217,7 +194,6 @@ class _LoginScreenState extends State<LoginScreen>
       ],
     );
   }
-
   Widget _buildBrandingSection({bool compact = false}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -307,7 +283,6 @@ class _LoginScreenState extends State<LoginScreen>
       ],
     );
   }
-
   Widget _buildFeaturesList() {
     final features = [
       {'icon': FluentIcons.product_variant, 'text': '库存管理'},
@@ -315,7 +290,6 @@ class _LoginScreenState extends State<LoginScreen>
       {'icon': FluentIcons.chart_series, 'text': '数据分析'},
       {'icon': FluentIcons.shop, 'text': '多门店支持'},
     ];
-
     return Column(
       children: features.map((feature) {
         return Padding(
@@ -341,7 +315,6 @@ class _LoginScreenState extends State<LoginScreen>
       }).toList(),
     );
   }
-
   Widget _buildLoginForm() {
     return Form(
       key: _formKey,
@@ -359,7 +332,6 @@ class _LoginScreenState extends State<LoginScreen>
             style: FluentTheme.of(context).typography.body,
           ),
           const SizedBox(height: 40),
-          
           InfoLabel(
             label: '手机号',
             child: TextBox(
@@ -372,20 +344,40 @@ class _LoginScreenState extends State<LoginScreen>
             ),
           ),
           const SizedBox(height: 20),
-          
           InfoLabel(
             label: '密码',
-            child: PasswordBox(
-              controller: _pwdCtrl,
-              placeholder: '请输入密码',
-              revealMode: _obscurePassword 
-                  ? PasswordRevealMode.hidden 
-                  : PasswordRevealMode.visible,
-              onChanged: (value) {},
+            child: Stack(
+              children: [
+                TextBox(
+                  controller: _pwdCtrl,
+                  placeholder: '请输入密码',
+                  obscureText: _obscurePassword,
+                  prefix: const Padding(
+                    padding: EdgeInsets.only(left: 8),
+                    child: Icon(FluentIcons.lock),
+                  ),
+                  suffix: Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: MouseRegion(
+                      cursor: SystemMouseCursors.click,
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() => _obscurePassword = !_obscurePassword);
+                        },
+                        child: Icon(
+                          _obscurePassword
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                          size: 20,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 24),
-          
           Row(
             children: [
               Checkbox(
@@ -409,7 +401,6 @@ class _LoginScreenState extends State<LoginScreen>
             ],
           ),
           const SizedBox(height: 28),
-          
           FilledButton(
             onPressed: _loading ? null : _doLogin,
             child: _loading
@@ -424,7 +415,6 @@ class _LoginScreenState extends State<LoginScreen>
                   ),
           ),
           const SizedBox(height: 24),
-          
           Center(
             child: Text(
               UITexts.loginVersion,

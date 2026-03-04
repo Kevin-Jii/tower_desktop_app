@@ -115,15 +115,16 @@ _$RechargeOrderImpl _$$RechargeOrderImplFromJson(Map<String, dynamic> json) =>
       memberId: (json['member_id'] as num?)?.toInt(),
       memberName: json['member_name'] as String?,
       memberPhone: json['member_phone'] as String?,
+      totalAmount: (json['total_amount'] as num?)?.toDouble(),
       amount: (json['amount'] as num?)?.toDouble(),
       payAmount: (json['pay_amount'] as num?)?.toDouble(),
       giftAmount: (json['gift_amount'] as num?)?.toDouble(),
       payType: (json['pay_type'] as num?)?.toInt(),
       payTypeName: json['pay_type_name'] as String?,
-      status: (json['status'] as num?)?.toInt(),
+      payStatus: (json['pay_status'] as num?)?.toInt(),
       statusName: json['status_name'] as String?,
       remark: json['remark'] as String?,
-      paidAt: json['paid_at'] as String?,
+      payTime: json['pay_time'] as String?,
       createdAt: json['created_at'] as String?,
     );
 Map<String, dynamic> _$$RechargeOrderImplToJson(_$RechargeOrderImpl instance) =>
@@ -133,22 +134,24 @@ Map<String, dynamic> _$$RechargeOrderImplToJson(_$RechargeOrderImpl instance) =>
       'member_id': instance.memberId,
       'member_name': instance.memberName,
       'member_phone': instance.memberPhone,
+      'total_amount': instance.totalAmount,
       'amount': instance.amount,
       'pay_amount': instance.payAmount,
       'gift_amount': instance.giftAmount,
       'pay_type': instance.payType,
       'pay_type_name': instance.payTypeName,
-      'status': instance.status,
+      'pay_status': instance.payStatus,
       'status_name': instance.statusName,
       'remark': instance.remark,
-      'paid_at': instance.paidAt,
+      'pay_time': instance.payTime,
       'created_at': instance.createdAt,
     };
 _$CreateRechargeOrderRequestImpl _$$CreateRechargeOrderRequestImplFromJson(
         Map<String, dynamic> json) =>
     _$CreateRechargeOrderRequestImpl(
       memberId: (json['member_id'] as num).toInt(),
-      amount: (json['amount'] as num).toDouble(),
+      payAmount: (json['pay_amount'] as num).toDouble(),
+      giftAmount: (json['gift_amount'] as num?)?.toDouble(),
       payType: (json['pay_type'] as num).toInt(),
       remark: json['remark'] as String?,
     );
@@ -156,7 +159,8 @@ Map<String, dynamic> _$$CreateRechargeOrderRequestImplToJson(
         _$CreateRechargeOrderRequestImpl instance) =>
     <String, dynamic>{
       'member_id': instance.memberId,
-      'amount': instance.amount,
+      'pay_amount': instance.payAmount,
+      'gift_amount': instance.giftAmount,
       'pay_type': instance.payType,
       'remark': instance.remark,
     };

@@ -1,5 +1,6 @@
 ﻿import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
+import 'package:tray_manager/tray_manager.dart';
 import 'core/di/service_locator.dart';
 import 'features/auth/login_screen.dart';
 import 'features/auth/permission_provider.dart';
@@ -30,8 +31,35 @@ import 'features/gallery/gallery_provider.dart';
 import 'features/member/member_api.dart';
 import 'features/member/member_provider.dart';
 import 'core/theme/fluent_theme_provider.dart';
-class TowerApp extends StatelessWidget {
+import 'core/utils/system_tray.dart';
+class TowerApp extends StatefulWidget {
   const TowerApp({super.key});
+  @override
+  State<TowerApp> createState() => _TowerAppState();
+}
+class _TowerAppState extends State<TowerApp> with TrayListener {
+  @override
+  void initState() {
+    super.initState();
+    trayManager.addListener(this);
+  }
+  @override
+  void dispose() {
+    trayManager.removeListener(this);
+    super.dispose();
+  }
+  @override
+  void onTrayIconMouseDown() {
+    SystemTrayManager.handleTrayIconClick();
+  }
+  @override
+  void onTrayIconRightMouseDown() {
+    trayManager.popUpContextMenu();
+  }
+  @override
+  void onTrayMenuItemClick(MenuItem menuItem) {
+    SystemTrayManager.handleMenuItemClick(menuItem);
+  }
   @override
   Widget build(BuildContext context) {
     final storeApi = sl.get<StoreApi>();
@@ -54,22 +82,18 @@ class TowerApp extends StatelessWidget {
           ChangeNotifierProvider(
               create: (_) => UserProvider(userApi, storeApi)),
           ChangeNotifierProvider(create: (_) => StoreProvider(storeApi)),
-          ChangeNotifierProvider(
-              create: (_) => DingTalkProvider(dingTalkApi)),
+          ChangeNotifierProvider(create: (_) => DingTalkProvider(dingTalkApi)),
           ChangeNotifierProvider(
               create: (_) => SupplierProvider(supplierRepository)),
           ChangeNotifierProvider(
               create: (_) => PurchaseOrderProvider(purchaseOrderRepository)),
-          ChangeNotifierProvider(
-              create: (_) => DictProvider(dictRepository)),
+          ChangeNotifierProvider(create: (_) => DictProvider(dictRepository)),
           ChangeNotifierProvider(
               create: (_) => InventoryProvider(inventoryRepository)),
           ChangeNotifierProvider(
               create: (_) => StoreAccountProvider(storeAccountRepository)),
-          ChangeNotifierProvider(
-              create: (_) => GalleryProvider(galleryApi)),
-          ChangeNotifierProvider(
-              create: (_) => MemberProvider(memberApi)),
+          ChangeNotifierProvider(create: (_) => GalleryProvider(galleryApi)),
+          ChangeNotifierProvider(create: (_) => MemberProvider(memberApi)),
         ],
         child: FutureBuilder(
           future: _bootstrap(context),
@@ -146,7 +170,7 @@ class _DeferredHomeState extends State<_DeferredHome> {
 Future<bool> _bootstrap(BuildContext context) async {
   final sm = SessionManager();
   if (sm.isLoggedIn && !sm.isExpired) {
-    return true; 
+    return true;
   }
   return false;
 }

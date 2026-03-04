@@ -129,15 +129,16 @@ class RechargeOrder with _$RechargeOrder {
     @JsonKey(name: 'member_id') int? memberId,
     @JsonKey(name: 'member_name') String? memberName,
     @JsonKey(name: 'member_phone') String? memberPhone,
+    @JsonKey(name: 'total_amount') double? totalAmount,
     @JsonKey(name: 'amount') double? amount,
     @JsonKey(name: 'pay_amount') double? payAmount,
     @JsonKey(name: 'gift_amount') double? giftAmount,
     @JsonKey(name: 'pay_type') int? payType,
     @JsonKey(name: 'pay_type_name') String? payTypeName,
-    @JsonKey(name: 'status') int? status,
+    @JsonKey(name: 'pay_status') int? payStatus,
     @JsonKey(name: 'status_name') String? statusName,
     @JsonKey(name: 'remark') String? remark,
-    @JsonKey(name: 'paid_at') String? paidAt,
+    @JsonKey(name: 'pay_time') String? payTime,
     @JsonKey(name: 'created_at') String? createdAt,
   }) = _RechargeOrder;
   factory RechargeOrder.fromJson(Map<String, dynamic> json) => RechargeOrder(
@@ -146,15 +147,16 @@ class RechargeOrder with _$RechargeOrder {
         memberId: _convertToInt(json['member_id']) as int?,
         memberName: json['member_name'] as String?,
         memberPhone: json['member_phone'] as String?,
+        totalAmount: _convertToDouble(json['total_amount']) as double?,
         amount: _convertToDouble(json['amount']) as double?,
         payAmount: _convertToDouble(json['pay_amount']) as double?,
         giftAmount: _convertToDouble(json['gift_amount']) as double?,
         payType: _convertToInt(json['pay_type']) as int?,
         payTypeName: json['pay_type_name'] as String?,
-        status: _convertToInt(json['status']) as int?,
+        payStatus: _convertToInt(json['pay_status']) as int?,
         statusName: json['status_name'] as String?,
         remark: json['remark'] as String?,
-        paidAt: json['paid_at'] as String?,
+        payTime: json['pay_time'] as String?,
         createdAt: json['created_at'] as String?,
       );
 }
@@ -162,7 +164,8 @@ class RechargeOrder with _$RechargeOrder {
 class CreateRechargeOrderRequest with _$CreateRechargeOrderRequest {
   const factory CreateRechargeOrderRequest({
     @JsonKey(name: 'member_id') required int memberId,
-    @JsonKey(name: 'amount') required double amount,
+    @JsonKey(name: 'pay_amount') required double payAmount,
+    @JsonKey(name: 'gift_amount') double? giftAmount,
     @JsonKey(name: 'pay_type') required int payType,
     @JsonKey(name: 'remark') String? remark,
   }) = _CreateRechargeOrderRequest;

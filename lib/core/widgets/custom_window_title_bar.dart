@@ -1,15 +1,40 @@
-import 'package:fluent_ui/fluent_ui.dart';
+﻿import 'package:fluent_ui/fluent_ui.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
-
-/// 自定义窗口标题栏 - 仅处理窗口拖动和控制按钮
+import 'package:flutter_svg/flutter_svg.dart';
+import '../../core/constants/app_constants.dart';
 class CustomWindowTitleBar extends StatelessWidget {
   const CustomWindowTitleBar({super.key});
-
   @override
   Widget build(BuildContext context) {
+    final theme = FluentTheme.of(context);
     return WindowTitleBarBox(
       child: Row(
         children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 12.0),
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: SvgPicture.asset(
+                    'lib/core/icons/logo.svg',
+                    width: 20,
+                    height: 20,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  AppTexts.appName,
+                  style: theme.typography.body?.copyWith(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
           Expanded(child: MoveWindow()),
           const WindowButtons(),
         ],
@@ -17,10 +42,8 @@ class CustomWindowTitleBar extends StatelessWidget {
     );
   }
 }
-
 class WindowButtons extends StatelessWidget {
   const WindowButtons({super.key});
-
   @override
   Widget build(BuildContext context) {
     final theme = FluentTheme.of(context);
@@ -31,7 +54,6 @@ class WindowButtons extends StatelessWidget {
       mouseOver: theme.resources.subtleFillColorSecondary,
       mouseDown: theme.resources.subtleFillColorTertiary,
     );
-
     final closeButtonColors = WindowButtonColors(
       iconNormal: theme.inactiveColor,
       iconMouseDown: Colors.white,
@@ -39,7 +61,6 @@ class WindowButtons extends StatelessWidget {
       mouseOver: Colors.red,
       mouseDown: Colors.red.dark,
     );
-
     return Row(
       children: [
         MinimizeWindowButton(colors: buttonColors),
