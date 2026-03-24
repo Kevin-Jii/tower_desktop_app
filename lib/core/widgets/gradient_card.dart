@@ -1,7 +1,5 @@
-import 'package:fluent_ui/fluent_ui.dart';
+﻿import 'package:fluent_ui/fluent_ui.dart';
 import '../theme/app_theme.dart';
-
-/// 渐变卡片组件
 class GradientCard extends StatelessWidget {
   final Widget child;
   final List<Color>? gradientColors;
@@ -12,7 +10,6 @@ class GradientCard extends StatelessWidget {
   final VoidCallback? onTap;
   final bool showShadow;
   final double borderRadius;
-
   const GradientCard({
     super.key,
     required this.child,
@@ -25,7 +22,6 @@ class GradientCard extends StatelessWidget {
     this.showShadow = true,
     this.borderRadius = AppTheme.radiusMedium,
   });
-
   @override
   Widget build(BuildContext context) {
     Widget card = Container(
@@ -50,7 +46,6 @@ class GradientCard extends StatelessWidget {
       ),
       child: child,
     );
-
     if (onTap != null) {
       return MouseRegion(
         cursor: SystemMouseCursors.click,
@@ -60,12 +55,9 @@ class GradientCard extends StatelessWidget {
         ),
       );
     }
-
     return card;
   }
 }
-
-/// 图标卡片组件
 class IconCard extends StatelessWidget {
   final IconData icon;
   final String title;
@@ -73,7 +65,6 @@ class IconCard extends StatelessWidget {
   final List<Color> gradientColors;
   final VoidCallback? onTap;
   final Widget? trailing;
-
   const IconCard({
     super.key,
     required this.icon,
@@ -83,7 +74,6 @@ class IconCard extends StatelessWidget {
     this.onTap,
     this.trailing,
   });
-
   @override
   Widget build(BuildContext context) {
     return GradientCard(
@@ -137,8 +127,6 @@ class IconCard extends StatelessWidget {
     );
   }
 }
-
-/// 统计卡片组件
 class StatCard extends StatelessWidget {
   final String title;
   final String value;
@@ -146,7 +134,6 @@ class StatCard extends StatelessWidget {
   final List<Color> gradientColors;
   final String? trend;
   final bool? isPositive;
-
   const StatCard({
     super.key,
     required this.title,
@@ -156,7 +143,6 @@ class StatCard extends StatelessWidget {
     this.trend,
     this.isPositive,
   });
-
   @override
   Widget build(BuildContext context) {
     return GradientCard(
@@ -193,9 +179,7 @@ class StatCard extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
-                        isPositive == true
-                            ? FluentIcons.trending_up
-                            : FluentIcons.trending_down,
+                        isPositive == true ? FluentIcons.up : FluentIcons.down,
                         size: 12,
                         color: Colors.white,
                       ),
