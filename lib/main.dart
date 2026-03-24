@@ -1,11 +1,13 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
 import 'app.dart';
+import 'core/config/app_config.dart';
 import 'core/di/service_config.dart';
 import 'features/auth/session_manager.dart';
 import 'core/utils/system_tray.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await AppConfig.load();
   ServiceConfig.setupServices();
   await windowManager.ensureInitialized();
   WindowOptions windowOptions = const WindowOptions(

@@ -1,18 +1,14 @@
-import 'package:fluent_ui/fluent_ui.dart';
+﻿import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
 import '../../core/widgets/fluent_info_bar.dart';
 import 'purchase_order_provider.dart';
 import 'models.dart';
-
 class PurchaseOrderDetailPage extends StatefulWidget {
   final int orderId;
-
   const PurchaseOrderDetailPage({super.key, required this.orderId});
-
   @override
   State<PurchaseOrderDetailPage> createState() => _PurchaseOrderDetailPageState();
 }
-
 class _PurchaseOrderDetailPageState extends State<PurchaseOrderDetailPage> {
   @override
   void initState() {
@@ -21,13 +17,11 @@ class _PurchaseOrderDetailPageState extends State<PurchaseOrderDetailPage> {
       context.read<PurchaseOrderProvider>().loadOrderDetail(widget.orderId);
     });
   }
-
   @override
   void dispose() {
     context.read<PurchaseOrderProvider>().clearCurrentOrder();
     super.dispose();
   }
-
   Color _getStatusColor(int status) {
     switch (status) {
       case PurchaseOrderStatus.pending: return Colors.orange;
@@ -37,19 +31,18 @@ class _PurchaseOrderDetailPageState extends State<PurchaseOrderDetailPage> {
       default: return Colors.grey;
     }
   }
-
-  /// 格式化日期时间显示 (年-月-日 时:分:秒)
   String _formatDateTime(String? dateStr) {
     if (dateStr == null || dateStr.isEmpty) return '-';
     try {
       final date = DateTime.parse(dateStr);
       return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')} '
              '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}:${date.second.toString().padLeft(2, '0')}';
-    } catch (_) {
+    } on FormatException {
+      return dateStr;
+    } on Object {
       return dateStr;
     }
   }
-
   void _handleConfirm() async {
     final result = await showDialog<bool>(
       context: context,
@@ -72,7 +65,6 @@ class _PurchaseOrderDetailPageState extends State<PurchaseOrderDetailPage> {
       }
     }
   }
-
   void _handleCancel() async {
     final result = await showDialog<bool>(
       context: context,
@@ -99,8 +91,6 @@ class _PurchaseOrderDetailPageState extends State<PurchaseOrderDetailPage> {
       }
     }
   }
-
-
   @override
   Widget build(BuildContext context) {
     return ScaffoldPage(
@@ -134,13 +124,11 @@ class _PurchaseOrderDetailPageState extends State<PurchaseOrderDetailPage> {
       ),
     );
   }
-
   Widget _buildHeader(PurchaseOrder order) {
     final theme = FluentTheme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final statusColor = _getStatusColor(order.status);
     final isPending = order.status == PurchaseOrderStatus.pending;
-
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       decoration: BoxDecoration(
@@ -204,17 +192,14 @@ class _PurchaseOrderDetailPageState extends State<PurchaseOrderDetailPage> {
       ),
     );
   }
-
   Widget _buildContent(PurchaseOrder order) {
     final theme = FluentTheme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Order Summary
           Card(
             padding: const EdgeInsets.all(20),
             backgroundColor: isDark ? const Color(0xFF2D2D2D) : Colors.white,
@@ -230,7 +215,6 @@ class _PurchaseOrderDetailPageState extends State<PurchaseOrderDetailPage> {
             ),
           ),
           const SizedBox(height: 24),
-          // Order Items
           Text('订单明细', style: theme.typography.subtitle?.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           if (order.items == null || order.items!.isEmpty)
@@ -245,7 +229,6 @@ class _PurchaseOrderDetailPageState extends State<PurchaseOrderDetailPage> {
       ),
     );
   }
-
   Widget _buildSummaryItem(String label, String value, Color color) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -256,11 +239,9 @@ class _PurchaseOrderDetailPageState extends State<PurchaseOrderDetailPage> {
       ],
     );
   }
-
   Widget _buildItemCard(PurchaseOrderItem item, bool isDark) {
     final theme = FluentTheme.of(context);
     final product = item.product;
-
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(16),

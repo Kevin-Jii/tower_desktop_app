@@ -177,7 +177,9 @@ class DictProvider with ChangeNotifier {
     final list = getDictByCode(typeCode);
     try {
       return list.firstWhere((d) => d.value == value).label;
-    } catch (_) {
+    } on StateError {
+      return null;
+    } on Object {
       return null;
     }
   }

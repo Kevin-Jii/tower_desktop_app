@@ -436,7 +436,9 @@ class _InventoryPageState extends State<InventoryPage> {
     try {
       final date = DateTime.parse(dateStr);
       return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
-    } catch (_) {
+    } on FormatException {
+      return dateStr.split('T').first;
+    } on Object {
       return dateStr.split('T').first;
     }
   }
@@ -731,7 +733,7 @@ class _InventoryRecordSubPageState extends State<_InventoryRecordSubPage> {
           default:
             return true;
         }
-      } catch (_) {
+      } on Object {
         return false;
       }
     }).toList();
@@ -1135,7 +1137,9 @@ class _InventoryRecordSubPageState extends State<_InventoryRecordSubPage> {
     try {
       final date = DateTime.parse(dateStr);
       return '${date.month}/${date.day} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
-    } catch (_) {
+    } on FormatException {
+      return dateStr;
+    } on Object {
       return dateStr;
     }
   }
@@ -1315,7 +1319,10 @@ class _OrderDetailDialogState extends State<_OrderDetailDialog> {
     try {
       final date = DateTime.parse(dateStr);
       return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
-    } catch (_) {
+    } on FormatException {
+      if (dateStr.length >= 10) return dateStr.substring(0, 10);
+      return dateStr;
+    } on Object {
       if (dateStr.length >= 10) return dateStr.substring(0, 10);
       return dateStr;
     }
@@ -1563,7 +1570,9 @@ class _OrderDetailDialogState extends State<_OrderDetailDialog> {
       final date = DateTime.parse(dateStr);
       return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')} '
           '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
-    } catch (_) {
+    } on FormatException {
+      return dateStr;
+    } on Object {
       return dateStr;
     }
   }
@@ -1572,7 +1581,10 @@ class _OrderDetailDialogState extends State<_OrderDetailDialog> {
     try {
       final date = DateTime.parse(dateStr);
       return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
-    } catch (_) {
+    } on FormatException {
+      if (dateStr.length == 10) return dateStr;
+      return dateStr.split('T').first;
+    } on Object {
       if (dateStr.length == 10) return dateStr;
       return dateStr.split('T').first;
     }

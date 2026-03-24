@@ -1,4 +1,4 @@
-import 'package:fluent_ui/fluent_ui.dart';
+﻿import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
 import '../../core/widgets/fluent_info_bar.dart';
 import '../../core/constants/ui_texts.dart';
@@ -6,14 +6,36 @@ import 'menu_api.dart';
 import 'menu_manage_provider.dart';
 import 'menu_form_dialog.dart';
 import 'models.dart';
-
 class MenuManagementPage extends StatefulWidget {
   const MenuManagementPage({super.key});
   @override
   State<MenuManagementPage> createState() => _MenuManagementPageState();
 }
-
 class _MenuManagementPageState extends State<MenuManagementPage> {
+  static Color _getTypeColor(int? type) {
+    switch (type) {
+      case 1: return const Color(0xFF6B69D6); 
+      case 2: return const Color(0xFF0078D4); 
+      case 3: return const Color(0xFF00C9A7); 
+      default: return Colors.grey;
+    }
+  }
+  static IconData _getTypeIcon(int? type) {
+    switch (type) {
+      case 1: return FluentIcons.folder; 
+      case 2: return FluentIcons.page; 
+      case 3: return FluentIcons.button_control; 
+      default: return FluentIcons.circle_ring;
+    }
+  }
+  static String _getTypeText(int? type) {
+    switch (type) {
+      case 1: return '目录';
+      case 2: return '页面';
+      case 3: return '按钮';
+      default: return '未知';
+    }
+  }
   @override
   void initState() {
     super.initState();
@@ -21,7 +43,6 @@ class _MenuManagementPageState extends State<MenuManagementPage> {
       context.read<MenuManageProvider>().load();
     });
   }
-
   void _openCreate({MenuItem? parent}) async {
     final provider = context.read<MenuManageProvider>();
     final parents = provider
@@ -46,7 +67,6 @@ class _MenuManagementPageState extends State<MenuManagementPage> {
       }
     }
   }
-
   void _openEdit(MenuItem menu) async {
     final provider = context.read<MenuManageProvider>();
     final parents = provider
@@ -71,7 +91,6 @@ class _MenuManagementPageState extends State<MenuManagementPage> {
       }
     }
   }
-
   void _delete(MenuItem menu) async {
     final confirm = await showDialog<bool>(
       context: context,
@@ -100,7 +119,6 @@ class _MenuManagementPageState extends State<MenuManagementPage> {
       }
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return ScaffoldPage(
@@ -113,7 +131,6 @@ class _MenuManagementPageState extends State<MenuManagementPage> {
       ),
     );
   }
-
   Widget _buildToolbar() {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -147,7 +164,6 @@ class _MenuManagementPageState extends State<MenuManagementPage> {
       ),
     );
   }
-
   Widget _buildContent() {
     return Consumer<MenuManageProvider>(
       builder: (context, provider, _) {
@@ -176,7 +192,6 @@ class _MenuManagementPageState extends State<MenuManagementPage> {
       },
     );
   }
-
   Widget _buildMenuTree(List<MenuItem> menus) {
     return ListView.builder(
       padding: const EdgeInsets.all(16),
@@ -186,31 +201,10 @@ class _MenuManagementPageState extends State<MenuManagementPage> {
       },
     );
   }
-
   Widget _buildMenuItem(MenuItem menu, int level) {
     final provider = context.watch<MenuManageProvider>();
     final isExpanded = provider.isExpanded(menu.id);
     final hasChildren = menu.children.isNotEmpty;
-    
-    // 根据类型设置不同的颜色和图标
-    Color getTypeColor() {
-      switch (menu.type) {
-        case 1: return const Color(0xFF6B69D6); // 目录 - 紫色
-        case 2: return const Color(0xFF0078D4); // 页面 - 蓝色
-        case 3: return const Color(0xFF00C9A7); // 按钮 - 绿色
-        default: return Colors.grey;
-      }
-    }
-    
-    IconData getTypeIcon() {
-      switch (menu.type) {
-        case 1: return FluentIcons.folder; // 目录
-        case 2: return FluentIcons.page; // 页面
-        case 3: return FluentIcons.button_control; // 按钮
-        default: return FluentIcons.circle_ring;
-      }
-    }
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -220,7 +214,7 @@ class _MenuManagementPageState extends State<MenuManagementPage> {
             color: Colors.white,
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
-              color: getTypeColor().withOpacity(0.3),
+              color: _getTypeColor(menu.type).withOpacity(0.3),
               width: 2,
             ),
             boxShadow: [
@@ -235,7 +229,6 @@ class _MenuManagementPageState extends State<MenuManagementPage> {
             leading: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // 展开/折叠按钮
                 if (hasChildren)
                   IconButton(
                     icon: Icon(
@@ -246,17 +239,16 @@ class _MenuManagementPageState extends State<MenuManagementPage> {
                   )
                 else
                   const SizedBox(width: 40),
-                // 类型图标
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: getTypeColor().withOpacity(0.1),
+                    color: _getTypeColor(menu.type).withOpacity(0.1),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Icon(
-                    getTypeIcon(),
+                    _getTypeIcon(menu.type),
                     size: 20,
-                    color: getTypeColor(),
+                    color: _getTypeColor(menu.type),
                   ),
                 ),
               ],
@@ -267,14 +259,14 @@ class _MenuManagementPageState extends State<MenuManagementPage> {
                   menu.title,
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
-                    color: getTypeColor(),
+                    color: _getTypeColor(menu.type),
                   ),
                 ),
                 const SizedBox(width: 8),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                   decoration: BoxDecoration(
-                    color: getTypeColor(),
+                    color: _getTypeColor(menu.type),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -361,13 +353,11 @@ class _MenuManagementPageState extends State<MenuManagementPage> {
             ),
           ),
         ),
-        // 子菜单（只在展开时显示）
         if (hasChildren && isExpanded)
           ...menu.children.map((child) => _buildMenuItem(child, level + 1)),
       ],
     );
   }
-
   IconData _getMenuIcon(String? icon) {
     switch (icon) {
       case 'dashboard':
@@ -382,21 +372,7 @@ class _MenuManagementPageState extends State<MenuManagementPage> {
         return FluentIcons.page;
     }
   }
-
-  String _getTypeText(int? type) {
-    switch (type) {
-      case 1:
-        return '目录';
-      case 2:
-        return '页面';
-      case 3:
-        return '按钮';
-      default:
-        return '未知';
-    }
-  }
 }
-
 class MenuManagementScope extends StatelessWidget {
   const MenuManagementScope({super.key});
   @override

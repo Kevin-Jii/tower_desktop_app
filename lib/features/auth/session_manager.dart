@@ -1,38 +1,32 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/network/api_client.dart';
 import 'models.dart';
-
 class SessionManager {
   static final SessionManager _instance = SessionManager._internal();
   factory SessionManager() => _instance;
   SessionManager._internal();
-
   String? _token;
   UserInfo? _userInfo;
   List<String> _permissions = [];
-  int? _expiresIn; // 秒
-  int? _issuedAt; // epoch seconds
-
+  int? _expiresIn; 
+  int? _issuedAt; 
   String? get token => _token;
   UserInfo? get userInfo => _userInfo;
   List<String> get permissions => _permissions;
   int? get expiresIn => _expiresIn;
   int? get issuedAt => _issuedAt;
-
   bool get isLoggedIn => _token != null && _userInfo != null;
   bool get isExpired {
     if (_token == null || _expiresIn == null || _issuedAt == null) return true;
     final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
     return now >= _issuedAt! + _expiresIn!;
   }
-
   static const _kToken = 'session.token';
   static const _kUser = 'session.user';
   static const _kPerms = 'session.permissions';
   static const _kExpiresIn = 'session.expires_in';
   static const _kIssuedAt = 'session.issued_at';
-
   Future<void> init() async {
     final prefs = await SharedPreferences.getInstance();
     final savedToken = prefs.getString(_kToken);
@@ -50,21 +44,18 @@ class SessionManager {
         _expiresIn = savedExpiresIn;
         _issuedAt = savedIssuedAt;
         ApiClient().setToken(savedToken);
-        // 设置用户ID和门店ID到请求头
         ApiClient().setUserInfo(
           userId: ui.id,
           storeId: ui.storeId > 0 ? ui.storeId : null,
         );
-        // 过期检查
         if (isExpired) {
           await clear(persist: true);
         }
-      } catch (_) {
+      } on Object {
         await clear(persist: true);
       }
     }
   }
-
   void updateSession(
       {required String token,
       required UserInfo userInfo,
@@ -76,14 +67,12 @@ class SessionManager {
     _expiresIn = expiresIn;
     _issuedAt = DateTime.now().millisecondsSinceEpoch ~/ 1000;
     ApiClient().setToken(token);
-    // 设置用户ID和门店ID到请求头
     ApiClient().setUserInfo(
       userId: userInfo.id,
       storeId: userInfo.storeId > 0 ? userInfo.storeId : null,
     );
     _persist();
   }
-
   Future<void> _persist() async {
     final prefs = await SharedPreferences.getInstance();
     if (_token == null || _userInfo == null) return;
@@ -93,7 +82,6 @@ class SessionManager {
     if (_expiresIn != null) await prefs.setInt(_kExpiresIn, _expiresIn!);
     if (_issuedAt != null) await prefs.setInt(_kIssuedAt, _issuedAt!);
   }
-
   Future<void> clear({bool persist = false}) async {
     _token = null;
     _userInfo = null;
@@ -111,6 +99,5 @@ class SessionManager {
       await prefs.remove(_kIssuedAt);
     }
   }
-
   bool hasPermission(String code) => _permissions.contains(code);
 }

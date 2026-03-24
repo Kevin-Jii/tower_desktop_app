@@ -92,7 +92,12 @@ class _PurchaseOrderListPageState extends State<PurchaseOrderListPage> {
     try {
       final date = DateTime.parse(dateStr);
       return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
-    } catch (_) {
+    } on FormatException {
+      if (dateStr.contains('T')) {
+        return dateStr.split('T').first;
+      }
+      return dateStr;
+    } on Object {
       if (dateStr.contains('T')) {
         return dateStr.split('T').first;
       }
