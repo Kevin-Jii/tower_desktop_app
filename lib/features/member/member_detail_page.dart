@@ -3,6 +3,8 @@ import 'package:flutter/material.dart' show TabController;
 import 'package:provider/provider.dart';
 import '../../core/di/service_locator.dart';
 import '../../core/widgets/fluent_info_bar.dart';
+import '../dict/dict_provider.dart';
+import '../dict/models.dart';
 import 'member_api.dart';
 import 'member_provider.dart';
 import 'models.dart';
@@ -15,6 +17,7 @@ class MemberDetailPage extends StatefulWidget {
 class _MemberDetailPageState extends State<MemberDetailPage> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   late MemberDetailProvider _detailProvider;
+  List<DictData> _payTypes = [];
   @override
   void initState() {
     super.initState();
@@ -24,7 +27,17 @@ class _MemberDetailPageState extends State<MemberDetailPage> with SingleTickerPr
       _detailProvider.loadMember(widget.member.id);
       _detailProvider.loadWalletLogs(widget.member.id);
       _detailProvider.loadRechargeOrders(widget.member.id);
+      _loadPayTypes();
     });
+  }
+  Future<void> _loadPayTypes() async {
+    final dictProvider = context.read<DictProvider>();
+    await dictProvider.loadAllDicts();
+    if (mounted) {
+      setState(() {
+        _payTypes = dictProvider.getDictByCode('MDGL_ZFFS');
+      });
+    }
   }
   @override
   void dispose() {
@@ -35,14 +48,14 @@ class _MemberDetailPageState extends State<MemberDetailPage> with SingleTickerPr
     if (_detailProvider.member == null) return;
     final result = await showDialog<Map<String, dynamic>>(
       context: context,
-      builder: (_) => _RechargeDialog(member: _detailProvider.member!),
+      builder: (_) => _RechargeDialog(member: _detailProvider.member!, payTypes: _payTypes),
     );
     if (result != null && mounted) {
       final success = await _detailProvider.recharge(
         memberId: _detailProvider.member!.id,
         payAmount: result['payAmount'],
         giftAmount: result['giftAmount'],
-        payType: result['payType'],
+        payType: int.tryParse(result['payType'] ?? '0') ?? 0,
         remark: result['remark'],
       );
       if (success && mounted) {
@@ -169,21 +182,54 @@ class _MemberDetailPageState extends State<MemberDetailPage> with SingleTickerPr
                     ],
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 16),
+                  decoration: BoxDecoration(
+                    color: theme.cardColor,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                   child: Row(
                     children: [
                       Expanded(
-                        child: Button(
-                          onPressed: () => _tabController.index = 0,
-                          child: Text('流水记录', style: TextStyle(color: _tabController.index == 0 ? theme.accentColor : null)),
+                        child: GestureDetector(
+                          onTap: () => setState(() => _tabController.index = 0),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            decoration: BoxDecoration(
+                              color: _tabController.index == 0 ? theme.accentColor.withValues(alpha: 0.1) : Colors.transparent,
+                              borderRadius: BorderRadius.circular(8),
+                              border: _tabController.index == 0 ? Border(bottom: BorderSide(color: theme.accentColor, width: 2)) : null,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(FluentIcons.history, size: 16, color: _tabController.index == 0 ? theme.accentColor : Colors.grey),
+                                const SizedBox(width: 6),
+                                Text('流水记录', style: TextStyle(color: _tabController.index == 0 ? theme.accentColor : Colors.grey, fontWeight: _tabController.index == 0 ? FontWeight.bold : FontWeight.normal)),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
-                      const SizedBox(width: 8),
                       Expanded(
-                        child: Button(
-                          onPressed: () => _tabController.index = 1,
-                          child: Text('充值记录', style: TextStyle(color: _tabController.index == 1 ? theme.accentColor : null)),
+                        child: GestureDetector(
+                          onTap: () => setState(() => _tabController.index = 1),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            decoration: BoxDecoration(
+                              color: _tabController.index == 1 ? theme.accentColor.withValues(alpha: 0.1) : Colors.transparent,
+                              borderRadius: BorderRadius.circular(8),
+                              border: _tabController.index == 1 ? Border(bottom: BorderSide(color: theme.accentColor, width: 2)) : null,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(FluentIcons.money, size: 16, color: _tabController.index == 1 ? theme.accentColor : Colors.grey),
+                                const SizedBox(width: 6),
+                                Text('充值记录', style: TextStyle(color: _tabController.index == 1 ? theme.accentColor : Colors.grey, fontWeight: _tabController.index == 1 ? FontWeight.bold : FontWeight.normal)),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
                     ],
@@ -232,19 +278,55 @@ class _WalletLogList extends StatelessWidget {
         final isAdd = [ChangeTypeEnum.recharge.value, ChangeTypeEnum.adjustAdd.value, ChangeTypeEnum.refund.value].contains(log.changeType);
         return Card(
           margin: const EdgeInsets.only(bottom: 8),
-          child: ListTile(
-            leading: Container(
-              width: 40, height: 40,
-              decoration: BoxDecoration(color: (isAdd ? Colors.green : Colors.red).withValues(alpha: 0.1), borderRadius: BorderRadius.circular(20)),
-              child: Icon(isAdd ? FluentIcons.up : FluentIcons.down, color: isAdd ? Colors.green : Colors.red),
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Row(
+              children: [
+                Container(
+                  width: 44, height: 44,
+                  decoration: BoxDecoration(color: (isAdd ? Colors.green : Colors.red).withValues(alpha: 0.1), borderRadius: BorderRadius.circular(22)),
+                  child: Icon(isAdd ? FluentIcons.up : FluentIcons.down, color: isAdd ? Colors.green : Colors.red, size: 20),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(changeType?.label ?? '未知', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                      const SizedBox(height: 2),
+                      Text('订单: ${log.relatedOrderNo ?? '-'}', style: TextStyle(color: Colors.grey[120], fontSize: 11)),
+                      if (log.remark != null && log.remark!.isNotEmpty) ...[
+                        const SizedBox(height: 2),
+                        Text(log.remark!, style: TextStyle(color: Colors.grey[100], fontSize: 11)),
+                      ],
+                    ],
+                  ),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text('${isAdd ? '+' : '-'}¥${log.changeAmount ?? '0'}', style: TextStyle(fontWeight: FontWeight.bold, color: isAdd ? Colors.green : Colors.red, fontSize: 15)),
+                    const SizedBox(height: 2),
+                    Text('余额: ¥${log.balanceAfter ?? '0'}', style: TextStyle(color: Colors.grey[120], fontSize: 10)),
+                    const SizedBox(height: 2),
+                    Text(_formatTime(log.createTime), style: TextStyle(color: Colors.grey[130], fontSize: 10)),
+                  ],
+                ),
+              ],
             ),
-            title: Text(changeType?.label ?? '未知', style: const TextStyle(fontWeight: FontWeight.w500)),
-            subtitle: Text(log.remark ?? '-', style: TextStyle(color: theme.typography.caption?.color ?? Colors.grey, fontSize: 12)),
-            trailing: Text('${isAdd ? '+' : '-'}¥${log.changeAmount ?? '0'}', style: TextStyle(fontWeight: FontWeight.bold, color: isAdd ? Colors.green : Colors.red)),
           ),
         );
       },
     );
+  }
+  String _formatTime(String? time) {
+    if (time == null || time.isEmpty) return '-';
+    try {
+      final dt = DateTime.parse(time);
+      return '${dt.year}-${dt.month.toString().padLeft(2, '0')}-${dt.day.toString().padLeft(2, '0')} ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+    } catch (_) {
+      return time;
+    }
   }
 }
 class _RechargeOrderList extends StatelessWidget {
@@ -269,32 +351,46 @@ class _RechargeOrderList extends StatelessWidget {
       itemCount: provider.rechargeOrders.length,
       itemBuilder: (context, index) {
         final order = provider.rechargeOrders[index];
-        final payStatus = PayStatusEnum.fromValue(order.payStatus);
         return Card(
           margin: const EdgeInsets.only(bottom: 8),
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(12),
             child: Row(
               children: [
                 Container(
-                  width: 40, height: 40,
-                  decoration: BoxDecoration(color: _getStatusColor(order.payStatus).withValues(alpha: 0.1), borderRadius: BorderRadius.circular(20)),
-                  child: Icon(_getStatusIcon(order.payStatus), color: _getStatusColor(order.payStatus)),
+                  width: 44, height: 44,
+                  decoration: BoxDecoration(color: _getStatusColor(order.payStatus).withValues(alpha: 0.1), borderRadius: BorderRadius.circular(22)),
+                  child: Icon(_getStatusIcon(order.payStatus), color: _getStatusColor(order.payStatus), size: 20),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('订单号: ${order.orderNo ?? '-'}', style: const TextStyle(fontWeight: FontWeight.w500)),
-                      Text('¥${order.payAmount ?? '0'}', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
+                      Text('订单号: ${order.orderNo ?? '-'}', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(color: theme.accentColor.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(4)),
+                            child: Text(order.payTypeName ?? '未知', style: TextStyle(color: theme.accentColor, fontSize: 10)),
+                          ),
+                          const SizedBox(width: 8),
+                          Text('¥${order.totalAmount ?? order.payAmount ?? '0'}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                        ],
+                      ),
+                      if (order.payTime != null) ...[
+                        const SizedBox(height: 4),
+                        Text(_formatTime(order.payTime), style: TextStyle(color: Colors.grey[120], fontSize: 11)),
+                      ],
                     ],
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(color: _getStatusColor(order.payStatus).withValues(alpha: 0.1), borderRadius: BorderRadius.circular(4)),
-                  child: Text(payStatus?.label ?? '未知', style: TextStyle(color: _getStatusColor(order.payStatus), fontWeight: FontWeight.w500)),
+                  child: Text(order.statusName ?? '未知', style: TextStyle(color: _getStatusColor(order.payStatus), fontWeight: FontWeight.w600, fontSize: 12)),
                 ),
               ],
             ),
@@ -302,6 +398,15 @@ class _RechargeOrderList extends StatelessWidget {
         );
       },
     );
+  }
+  String _formatTime(String? time) {
+    if (time == null || time.isEmpty) return '-';
+    try {
+      final dt = DateTime.parse(time);
+      return '${dt.year}-${dt.month.toString().padLeft(2, '0')}-${dt.day.toString().padLeft(2, '0')} ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+    } catch (_) {
+      return time;
+    }
   }
   Color _getStatusColor(int? status) {
     switch (status) {
@@ -324,7 +429,8 @@ class _RechargeOrderList extends StatelessWidget {
 }
 class _RechargeDialog extends StatefulWidget {
   final Member member;
-  const _RechargeDialog({required this.member});
+  final List<DictData> payTypes;
+  const _RechargeDialog({required this.member, required this.payTypes});
   @override
   State<_RechargeDialog> createState() => _RechargeDialogState();
 }
@@ -333,7 +439,14 @@ class _RechargeDialogState extends State<_RechargeDialog> {
   final _payAmountCtrl = TextEditingController();
   final _giftAmountCtrl = TextEditingController();
   final _remarkCtrl = TextEditingController();
-  int _payType = 0;
+  String? _payType;
+  @override
+  void initState() {
+    super.initState();
+    if (widget.payTypes.isNotEmpty) {
+      _payType = widget.payTypes.first.value;
+    }
+  }
   @override
   void dispose() {
     _payAmountCtrl.dispose();
@@ -343,6 +456,7 @@ class _RechargeDialogState extends State<_RechargeDialog> {
   }
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
+    if (_payType == null) return;
     Navigator.pop(context, {
       'payAmount': _payAmountCtrl.text.trim(),
       'giftAmount': _giftAmountCtrl.text.trim().isEmpty ? '0' : _giftAmountCtrl.text.trim(),
@@ -392,14 +506,17 @@ class _RechargeDialogState extends State<_RechargeDialog> {
               const SizedBox(height: 16),
               const Text('支付方式', style: TextStyle(fontWeight: FontWeight.w500)),
               const SizedBox(height: 8),
-              Wrap(
-                spacing: 8,
-                children: PayTypeEnum.values.map((type) => RadioButton(
-                  checked: _payType == type.value,
-                  onChanged: (_) => setState(() => _payType = type.value),
-                  content: Text(type.label),
-                )).toList(),
-              ),
+              if (widget.payTypes.isEmpty)
+                const Text('加载中...', style: TextStyle(color: Colors.grey))
+              else
+                Wrap(
+                  spacing: 8,
+                  children: widget.payTypes.map((type) => RadioButton(
+                    checked: _payType == type.value,
+                    onChanged: (_) => setState(() => _payType = type.value),
+                    content: Text(type.label),
+                  )).toList(),
+                ),
             ],
           ),
         ),
@@ -487,7 +604,7 @@ class _AdjustBalanceDialogState extends State<_AdjustBalanceDialog> {
                 ),
               ),
               const SizedBox(height: 16),
-              InfoLabel(label: '备注', child: TextFormBox(controller: _remarkCtrl, placeholder: '请输入调整原因', validator: (v) => v == null || v.trim().isEmpty ? '请输入调整原因' : null)),
+              InfoLabel(label: '备注', child: TextFormBox(controller: _remarkCtrl, placeholder: '请输入调整原因', style: const TextStyle(fontSize: 14), validator: (v) => v == null || v.trim().isEmpty ? '请输入调整原因' : null)),
             ],
           ),
         ),

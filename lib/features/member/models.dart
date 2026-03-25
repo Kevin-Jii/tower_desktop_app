@@ -22,14 +22,14 @@ class Member with _$Member {
 class WalletLog with _$WalletLog {
   const factory WalletLog({
     required int id,
-    @JsonKey(name: 'member_id') int? memberId,
-    @JsonKey(name: 'change_type') int? changeType,
-    @JsonKey(name: 'change_amount') String? changeAmount,
-    @JsonKey(name: 'balance_before') String? balanceBefore,
-    @JsonKey(name: 'balance_after') String? balanceAfter,
+    @JsonKey(name: 'memberId') int? memberId,
+    @JsonKey(name: 'changeType') int? changeType,
+    @JsonKey(name: 'changeAmount') String? changeAmount,
+    @JsonKey(name: 'balanceBefore') String? balanceBefore,
+    @JsonKey(name: 'balanceAfter') String? balanceAfter,
+    @JsonKey(name: 'relatedOrderNo') String? relatedOrderNo,
     @JsonKey(name: 'remark') String? remark,
-    @JsonKey(name: 'order_no') String? orderNo,
-    @JsonKey(name: 'created_at') String? createdAt,
+    @JsonKey(name: 'createTime') String? createTime,
   }) = _WalletLog;
   factory WalletLog.fromJson(Map<String, dynamic> json) => _$WalletLogFromJson(json);
 }
@@ -37,14 +37,18 @@ class WalletLog with _$WalletLog {
 class RechargeOrder with _$RechargeOrder {
   const factory RechargeOrder({
     required int id,
-    @JsonKey(name: 'order_no') String? orderNo,
-    @JsonKey(name: 'member_id') int? memberId,
-    @JsonKey(name: 'member_name') String? memberName,
-    @JsonKey(name: 'pay_amount') String? payAmount,
-    @JsonKey(name: 'gift_amount') String? giftAmount,
-    @JsonKey(name: 'pay_type') int? payType,
-    @JsonKey(name: 'pay_status') int? payStatus,
-    @JsonKey(name: 'pay_time') String? payTime,
+    @JsonKey(name: 'orderNo') String? orderNo,
+    @JsonKey(name: 'memberId') int? memberId,
+    @JsonKey(name: 'memberName') String? memberName,
+    @JsonKey(name: 'memberPhone') String? memberPhone,
+    @JsonKey(name: 'payAmount') String? payAmount,
+    @JsonKey(name: 'giftAmount') String? giftAmount,
+    @JsonKey(name: 'totalAmount') String? totalAmount,
+    @JsonKey(name: 'payType') int? payType,
+    @JsonKey(name: 'payTypeName') String? payTypeName,
+    @JsonKey(name: 'payStatus') int? payStatus,
+    @JsonKey(name: 'statusName') String? statusName,
+    @JsonKey(name: 'payTime') String? payTime,
     @JsonKey(name: 'remark') String? remark,
     @JsonKey(name: 'created_at') String? createdAt,
   }) = _RechargeOrder;

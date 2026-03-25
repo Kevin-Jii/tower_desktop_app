@@ -348,22 +348,22 @@ WalletLog _$WalletLogFromJson(Map<String, dynamic> json) {
 }
 mixin _$WalletLog {
   int get id => throw _privateConstructorUsedError;
-  @JsonKey(name: 'member_id')
+  @JsonKey(name: 'memberId')
   int? get memberId => throw _privateConstructorUsedError;
-  @JsonKey(name: 'change_type')
+  @JsonKey(name: 'changeType')
   int? get changeType => throw _privateConstructorUsedError;
-  @JsonKey(name: 'change_amount')
+  @JsonKey(name: 'changeAmount')
   String? get changeAmount => throw _privateConstructorUsedError;
-  @JsonKey(name: 'balance_before')
+  @JsonKey(name: 'balanceBefore')
   String? get balanceBefore => throw _privateConstructorUsedError;
-  @JsonKey(name: 'balance_after')
+  @JsonKey(name: 'balanceAfter')
   String? get balanceAfter => throw _privateConstructorUsedError;
+  @JsonKey(name: 'relatedOrderNo')
+  String? get relatedOrderNo => throw _privateConstructorUsedError;
   @JsonKey(name: 'remark')
   String? get remark => throw _privateConstructorUsedError;
-  @JsonKey(name: 'order_no')
-  String? get orderNo => throw _privateConstructorUsedError;
-  @JsonKey(name: 'created_at')
-  String? get createdAt => throw _privateConstructorUsedError;
+  @JsonKey(name: 'createTime')
+  String? get createTime => throw _privateConstructorUsedError;
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(includeFromJson: false, includeToJson: false)
   $WalletLogCopyWith<WalletLog> get copyWith =>
@@ -375,14 +375,14 @@ abstract class $WalletLogCopyWith<$Res> {
   @useResult
   $Res call(
       {int id,
-      @JsonKey(name: 'member_id') int? memberId,
-      @JsonKey(name: 'change_type') int? changeType,
-      @JsonKey(name: 'change_amount') String? changeAmount,
-      @JsonKey(name: 'balance_before') String? balanceBefore,
-      @JsonKey(name: 'balance_after') String? balanceAfter,
+      @JsonKey(name: 'memberId') int? memberId,
+      @JsonKey(name: 'changeType') int? changeType,
+      @JsonKey(name: 'changeAmount') String? changeAmount,
+      @JsonKey(name: 'balanceBefore') String? balanceBefore,
+      @JsonKey(name: 'balanceAfter') String? balanceAfter,
+      @JsonKey(name: 'relatedOrderNo') String? relatedOrderNo,
       @JsonKey(name: 'remark') String? remark,
-      @JsonKey(name: 'order_no') String? orderNo,
-      @JsonKey(name: 'created_at') String? createdAt});
+      @JsonKey(name: 'createTime') String? createTime});
 }
 class _$WalletLogCopyWithImpl<$Res, $Val extends WalletLog>
     implements $WalletLogCopyWith<$Res> {
@@ -398,9 +398,9 @@ class _$WalletLogCopyWithImpl<$Res, $Val extends WalletLog>
     Object? changeAmount = freezed,
     Object? balanceBefore = freezed,
     Object? balanceAfter = freezed,
+    Object? relatedOrderNo = freezed,
     Object? remark = freezed,
-    Object? orderNo = freezed,
-    Object? createdAt = freezed,
+    Object? createTime = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -427,17 +427,17 @@ class _$WalletLogCopyWithImpl<$Res, $Val extends WalletLog>
           ? _value.balanceAfter
           : balanceAfter 
               as String?,
+      relatedOrderNo: freezed == relatedOrderNo
+          ? _value.relatedOrderNo
+          : relatedOrderNo 
+              as String?,
       remark: freezed == remark
           ? _value.remark
           : remark 
               as String?,
-      orderNo: freezed == orderNo
-          ? _value.orderNo
-          : orderNo 
-              as String?,
-      createdAt: freezed == createdAt
-          ? _value.createdAt
-          : createdAt 
+      createTime: freezed == createTime
+          ? _value.createTime
+          : createTime 
               as String?,
     ) as $Val);
   }
@@ -451,14 +451,14 @@ abstract class _$$WalletLogImplCopyWith<$Res>
   @useResult
   $Res call(
       {int id,
-      @JsonKey(name: 'member_id') int? memberId,
-      @JsonKey(name: 'change_type') int? changeType,
-      @JsonKey(name: 'change_amount') String? changeAmount,
-      @JsonKey(name: 'balance_before') String? balanceBefore,
-      @JsonKey(name: 'balance_after') String? balanceAfter,
+      @JsonKey(name: 'memberId') int? memberId,
+      @JsonKey(name: 'changeType') int? changeType,
+      @JsonKey(name: 'changeAmount') String? changeAmount,
+      @JsonKey(name: 'balanceBefore') String? balanceBefore,
+      @JsonKey(name: 'balanceAfter') String? balanceAfter,
+      @JsonKey(name: 'relatedOrderNo') String? relatedOrderNo,
       @JsonKey(name: 'remark') String? remark,
-      @JsonKey(name: 'order_no') String? orderNo,
-      @JsonKey(name: 'created_at') String? createdAt});
+      @JsonKey(name: 'createTime') String? createTime});
 }
 class __$$WalletLogImplCopyWithImpl<$Res>
     extends _$WalletLogCopyWithImpl<$Res, _$WalletLogImpl>
@@ -475,9 +475,9 @@ class __$$WalletLogImplCopyWithImpl<$Res>
     Object? changeAmount = freezed,
     Object? balanceBefore = freezed,
     Object? balanceAfter = freezed,
+    Object? relatedOrderNo = freezed,
     Object? remark = freezed,
-    Object? orderNo = freezed,
-    Object? createdAt = freezed,
+    Object? createTime = freezed,
   }) {
     return _then(_$WalletLogImpl(
       id: null == id
@@ -504,17 +504,17 @@ class __$$WalletLogImplCopyWithImpl<$Res>
           ? _value.balanceAfter
           : balanceAfter 
               as String?,
+      relatedOrderNo: freezed == relatedOrderNo
+          ? _value.relatedOrderNo
+          : relatedOrderNo 
+              as String?,
       remark: freezed == remark
           ? _value.remark
           : remark 
               as String?,
-      orderNo: freezed == orderNo
-          ? _value.orderNo
-          : orderNo 
-              as String?,
-      createdAt: freezed == createdAt
-          ? _value.createdAt
-          : createdAt 
+      createTime: freezed == createTime
+          ? _value.createTime
+          : createTime 
               as String?,
     ));
   }
@@ -523,45 +523,45 @@ class __$$WalletLogImplCopyWithImpl<$Res>
 class _$WalletLogImpl implements _WalletLog {
   const _$WalletLogImpl(
       {required this.id,
-      @JsonKey(name: 'member_id') this.memberId,
-      @JsonKey(name: 'change_type') this.changeType,
-      @JsonKey(name: 'change_amount') this.changeAmount,
-      @JsonKey(name: 'balance_before') this.balanceBefore,
-      @JsonKey(name: 'balance_after') this.balanceAfter,
+      @JsonKey(name: 'memberId') this.memberId,
+      @JsonKey(name: 'changeType') this.changeType,
+      @JsonKey(name: 'changeAmount') this.changeAmount,
+      @JsonKey(name: 'balanceBefore') this.balanceBefore,
+      @JsonKey(name: 'balanceAfter') this.balanceAfter,
+      @JsonKey(name: 'relatedOrderNo') this.relatedOrderNo,
       @JsonKey(name: 'remark') this.remark,
-      @JsonKey(name: 'order_no') this.orderNo,
-      @JsonKey(name: 'created_at') this.createdAt});
+      @JsonKey(name: 'createTime') this.createTime});
   factory _$WalletLogImpl.fromJson(Map<String, dynamic> json) =>
       _$$WalletLogImplFromJson(json);
   @override
   final int id;
   @override
-  @JsonKey(name: 'member_id')
+  @JsonKey(name: 'memberId')
   final int? memberId;
   @override
-  @JsonKey(name: 'change_type')
+  @JsonKey(name: 'changeType')
   final int? changeType;
   @override
-  @JsonKey(name: 'change_amount')
+  @JsonKey(name: 'changeAmount')
   final String? changeAmount;
   @override
-  @JsonKey(name: 'balance_before')
+  @JsonKey(name: 'balanceBefore')
   final String? balanceBefore;
   @override
-  @JsonKey(name: 'balance_after')
+  @JsonKey(name: 'balanceAfter')
   final String? balanceAfter;
+  @override
+  @JsonKey(name: 'relatedOrderNo')
+  final String? relatedOrderNo;
   @override
   @JsonKey(name: 'remark')
   final String? remark;
   @override
-  @JsonKey(name: 'order_no')
-  final String? orderNo;
-  @override
-  @JsonKey(name: 'created_at')
-  final String? createdAt;
+  @JsonKey(name: 'createTime')
+  final String? createTime;
   @override
   String toString() {
-    return 'WalletLog(id: $id, memberId: $memberId, changeType: $changeType, changeAmount: $changeAmount, balanceBefore: $balanceBefore, balanceAfter: $balanceAfter, remark: $remark, orderNo: $orderNo, createdAt: $createdAt)';
+    return 'WalletLog(id: $id, memberId: $memberId, changeType: $changeType, changeAmount: $changeAmount, balanceBefore: $balanceBefore, balanceAfter: $balanceAfter, relatedOrderNo: $relatedOrderNo, remark: $remark, createTime: $createTime)';
   }
   @override
   bool operator ==(Object other) {
@@ -579,15 +579,25 @@ class _$WalletLogImpl implements _WalletLog {
                 other.balanceBefore == balanceBefore) &&
             (identical(other.balanceAfter, balanceAfter) ||
                 other.balanceAfter == balanceAfter) &&
+            (identical(other.relatedOrderNo, relatedOrderNo) ||
+                other.relatedOrderNo == relatedOrderNo) &&
             (identical(other.remark, remark) || other.remark == remark) &&
-            (identical(other.orderNo, orderNo) || other.orderNo == orderNo) &&
-            (identical(other.createdAt, createdAt) ||
-                other.createdAt == createdAt));
+            (identical(other.createTime, createTime) ||
+                other.createTime == createTime));
   }
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, memberId, changeType,
-      changeAmount, balanceBefore, balanceAfter, remark, orderNo, createdAt);
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      memberId,
+      changeType,
+      changeAmount,
+      balanceBefore,
+      balanceAfter,
+      relatedOrderNo,
+      remark,
+      createTime);
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
@@ -603,42 +613,42 @@ class _$WalletLogImpl implements _WalletLog {
 abstract class _WalletLog implements WalletLog {
   const factory _WalletLog(
       {required final int id,
-      @JsonKey(name: 'member_id') final int? memberId,
-      @JsonKey(name: 'change_type') final int? changeType,
-      @JsonKey(name: 'change_amount') final String? changeAmount,
-      @JsonKey(name: 'balance_before') final String? balanceBefore,
-      @JsonKey(name: 'balance_after') final String? balanceAfter,
+      @JsonKey(name: 'memberId') final int? memberId,
+      @JsonKey(name: 'changeType') final int? changeType,
+      @JsonKey(name: 'changeAmount') final String? changeAmount,
+      @JsonKey(name: 'balanceBefore') final String? balanceBefore,
+      @JsonKey(name: 'balanceAfter') final String? balanceAfter,
+      @JsonKey(name: 'relatedOrderNo') final String? relatedOrderNo,
       @JsonKey(name: 'remark') final String? remark,
-      @JsonKey(name: 'order_no') final String? orderNo,
-      @JsonKey(name: 'created_at') final String? createdAt}) = _$WalletLogImpl;
+      @JsonKey(name: 'createTime') final String? createTime}) = _$WalletLogImpl;
   factory _WalletLog.fromJson(Map<String, dynamic> json) =
       _$WalletLogImpl.fromJson;
   @override
   int get id;
   @override
-  @JsonKey(name: 'member_id')
+  @JsonKey(name: 'memberId')
   int? get memberId;
   @override
-  @JsonKey(name: 'change_type')
+  @JsonKey(name: 'changeType')
   int? get changeType;
   @override
-  @JsonKey(name: 'change_amount')
+  @JsonKey(name: 'changeAmount')
   String? get changeAmount;
   @override
-  @JsonKey(name: 'balance_before')
+  @JsonKey(name: 'balanceBefore')
   String? get balanceBefore;
   @override
-  @JsonKey(name: 'balance_after')
+  @JsonKey(name: 'balanceAfter')
   String? get balanceAfter;
+  @override
+  @JsonKey(name: 'relatedOrderNo')
+  String? get relatedOrderNo;
   @override
   @JsonKey(name: 'remark')
   String? get remark;
   @override
-  @JsonKey(name: 'order_no')
-  String? get orderNo;
-  @override
-  @JsonKey(name: 'created_at')
-  String? get createdAt;
+  @JsonKey(name: 'createTime')
+  String? get createTime;
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$WalletLogImplCopyWith<_$WalletLogImpl> get copyWith =>
@@ -649,21 +659,29 @@ RechargeOrder _$RechargeOrderFromJson(Map<String, dynamic> json) {
 }
 mixin _$RechargeOrder {
   int get id => throw _privateConstructorUsedError;
-  @JsonKey(name: 'order_no')
+  @JsonKey(name: 'orderNo')
   String? get orderNo => throw _privateConstructorUsedError;
-  @JsonKey(name: 'member_id')
+  @JsonKey(name: 'memberId')
   int? get memberId => throw _privateConstructorUsedError;
-  @JsonKey(name: 'member_name')
+  @JsonKey(name: 'memberName')
   String? get memberName => throw _privateConstructorUsedError;
-  @JsonKey(name: 'pay_amount')
+  @JsonKey(name: 'memberPhone')
+  String? get memberPhone => throw _privateConstructorUsedError;
+  @JsonKey(name: 'payAmount')
   String? get payAmount => throw _privateConstructorUsedError;
-  @JsonKey(name: 'gift_amount')
+  @JsonKey(name: 'giftAmount')
   String? get giftAmount => throw _privateConstructorUsedError;
-  @JsonKey(name: 'pay_type')
+  @JsonKey(name: 'totalAmount')
+  String? get totalAmount => throw _privateConstructorUsedError;
+  @JsonKey(name: 'payType')
   int? get payType => throw _privateConstructorUsedError;
-  @JsonKey(name: 'pay_status')
+  @JsonKey(name: 'payTypeName')
+  String? get payTypeName => throw _privateConstructorUsedError;
+  @JsonKey(name: 'payStatus')
   int? get payStatus => throw _privateConstructorUsedError;
-  @JsonKey(name: 'pay_time')
+  @JsonKey(name: 'statusName')
+  String? get statusName => throw _privateConstructorUsedError;
+  @JsonKey(name: 'payTime')
   String? get payTime => throw _privateConstructorUsedError;
   @JsonKey(name: 'remark')
   String? get remark => throw _privateConstructorUsedError;
@@ -681,14 +699,18 @@ abstract class $RechargeOrderCopyWith<$Res> {
   @useResult
   $Res call(
       {int id,
-      @JsonKey(name: 'order_no') String? orderNo,
-      @JsonKey(name: 'member_id') int? memberId,
-      @JsonKey(name: 'member_name') String? memberName,
-      @JsonKey(name: 'pay_amount') String? payAmount,
-      @JsonKey(name: 'gift_amount') String? giftAmount,
-      @JsonKey(name: 'pay_type') int? payType,
-      @JsonKey(name: 'pay_status') int? payStatus,
-      @JsonKey(name: 'pay_time') String? payTime,
+      @JsonKey(name: 'orderNo') String? orderNo,
+      @JsonKey(name: 'memberId') int? memberId,
+      @JsonKey(name: 'memberName') String? memberName,
+      @JsonKey(name: 'memberPhone') String? memberPhone,
+      @JsonKey(name: 'payAmount') String? payAmount,
+      @JsonKey(name: 'giftAmount') String? giftAmount,
+      @JsonKey(name: 'totalAmount') String? totalAmount,
+      @JsonKey(name: 'payType') int? payType,
+      @JsonKey(name: 'payTypeName') String? payTypeName,
+      @JsonKey(name: 'payStatus') int? payStatus,
+      @JsonKey(name: 'statusName') String? statusName,
+      @JsonKey(name: 'payTime') String? payTime,
       @JsonKey(name: 'remark') String? remark,
       @JsonKey(name: 'created_at') String? createdAt});
 }
@@ -704,10 +726,14 @@ class _$RechargeOrderCopyWithImpl<$Res, $Val extends RechargeOrder>
     Object? orderNo = freezed,
     Object? memberId = freezed,
     Object? memberName = freezed,
+    Object? memberPhone = freezed,
     Object? payAmount = freezed,
     Object? giftAmount = freezed,
+    Object? totalAmount = freezed,
     Object? payType = freezed,
+    Object? payTypeName = freezed,
     Object? payStatus = freezed,
+    Object? statusName = freezed,
     Object? payTime = freezed,
     Object? remark = freezed,
     Object? createdAt = freezed,
@@ -729,6 +755,10 @@ class _$RechargeOrderCopyWithImpl<$Res, $Val extends RechargeOrder>
           ? _value.memberName
           : memberName 
               as String?,
+      memberPhone: freezed == memberPhone
+          ? _value.memberPhone
+          : memberPhone 
+              as String?,
       payAmount: freezed == payAmount
           ? _value.payAmount
           : payAmount 
@@ -737,14 +767,26 @@ class _$RechargeOrderCopyWithImpl<$Res, $Val extends RechargeOrder>
           ? _value.giftAmount
           : giftAmount 
               as String?,
+      totalAmount: freezed == totalAmount
+          ? _value.totalAmount
+          : totalAmount 
+              as String?,
       payType: freezed == payType
           ? _value.payType
           : payType 
               as int?,
+      payTypeName: freezed == payTypeName
+          ? _value.payTypeName
+          : payTypeName 
+              as String?,
       payStatus: freezed == payStatus
           ? _value.payStatus
           : payStatus 
               as int?,
+      statusName: freezed == statusName
+          ? _value.statusName
+          : statusName 
+              as String?,
       payTime: freezed == payTime
           ? _value.payTime
           : payTime 
@@ -769,14 +811,18 @@ abstract class _$$RechargeOrderImplCopyWith<$Res>
   @useResult
   $Res call(
       {int id,
-      @JsonKey(name: 'order_no') String? orderNo,
-      @JsonKey(name: 'member_id') int? memberId,
-      @JsonKey(name: 'member_name') String? memberName,
-      @JsonKey(name: 'pay_amount') String? payAmount,
-      @JsonKey(name: 'gift_amount') String? giftAmount,
-      @JsonKey(name: 'pay_type') int? payType,
-      @JsonKey(name: 'pay_status') int? payStatus,
-      @JsonKey(name: 'pay_time') String? payTime,
+      @JsonKey(name: 'orderNo') String? orderNo,
+      @JsonKey(name: 'memberId') int? memberId,
+      @JsonKey(name: 'memberName') String? memberName,
+      @JsonKey(name: 'memberPhone') String? memberPhone,
+      @JsonKey(name: 'payAmount') String? payAmount,
+      @JsonKey(name: 'giftAmount') String? giftAmount,
+      @JsonKey(name: 'totalAmount') String? totalAmount,
+      @JsonKey(name: 'payType') int? payType,
+      @JsonKey(name: 'payTypeName') String? payTypeName,
+      @JsonKey(name: 'payStatus') int? payStatus,
+      @JsonKey(name: 'statusName') String? statusName,
+      @JsonKey(name: 'payTime') String? payTime,
       @JsonKey(name: 'remark') String? remark,
       @JsonKey(name: 'created_at') String? createdAt});
 }
@@ -793,10 +839,14 @@ class __$$RechargeOrderImplCopyWithImpl<$Res>
     Object? orderNo = freezed,
     Object? memberId = freezed,
     Object? memberName = freezed,
+    Object? memberPhone = freezed,
     Object? payAmount = freezed,
     Object? giftAmount = freezed,
+    Object? totalAmount = freezed,
     Object? payType = freezed,
+    Object? payTypeName = freezed,
     Object? payStatus = freezed,
+    Object? statusName = freezed,
     Object? payTime = freezed,
     Object? remark = freezed,
     Object? createdAt = freezed,
@@ -818,6 +868,10 @@ class __$$RechargeOrderImplCopyWithImpl<$Res>
           ? _value.memberName
           : memberName 
               as String?,
+      memberPhone: freezed == memberPhone
+          ? _value.memberPhone
+          : memberPhone 
+              as String?,
       payAmount: freezed == payAmount
           ? _value.payAmount
           : payAmount 
@@ -826,14 +880,26 @@ class __$$RechargeOrderImplCopyWithImpl<$Res>
           ? _value.giftAmount
           : giftAmount 
               as String?,
+      totalAmount: freezed == totalAmount
+          ? _value.totalAmount
+          : totalAmount 
+              as String?,
       payType: freezed == payType
           ? _value.payType
           : payType 
               as int?,
+      payTypeName: freezed == payTypeName
+          ? _value.payTypeName
+          : payTypeName 
+              as String?,
       payStatus: freezed == payStatus
           ? _value.payStatus
           : payStatus 
               as int?,
+      statusName: freezed == statusName
+          ? _value.statusName
+          : statusName 
+              as String?,
       payTime: freezed == payTime
           ? _value.payTime
           : payTime 
@@ -853,14 +919,18 @@ class __$$RechargeOrderImplCopyWithImpl<$Res>
 class _$RechargeOrderImpl implements _RechargeOrder {
   const _$RechargeOrderImpl(
       {required this.id,
-      @JsonKey(name: 'order_no') this.orderNo,
-      @JsonKey(name: 'member_id') this.memberId,
-      @JsonKey(name: 'member_name') this.memberName,
-      @JsonKey(name: 'pay_amount') this.payAmount,
-      @JsonKey(name: 'gift_amount') this.giftAmount,
-      @JsonKey(name: 'pay_type') this.payType,
-      @JsonKey(name: 'pay_status') this.payStatus,
-      @JsonKey(name: 'pay_time') this.payTime,
+      @JsonKey(name: 'orderNo') this.orderNo,
+      @JsonKey(name: 'memberId') this.memberId,
+      @JsonKey(name: 'memberName') this.memberName,
+      @JsonKey(name: 'memberPhone') this.memberPhone,
+      @JsonKey(name: 'payAmount') this.payAmount,
+      @JsonKey(name: 'giftAmount') this.giftAmount,
+      @JsonKey(name: 'totalAmount') this.totalAmount,
+      @JsonKey(name: 'payType') this.payType,
+      @JsonKey(name: 'payTypeName') this.payTypeName,
+      @JsonKey(name: 'payStatus') this.payStatus,
+      @JsonKey(name: 'statusName') this.statusName,
+      @JsonKey(name: 'payTime') this.payTime,
       @JsonKey(name: 'remark') this.remark,
       @JsonKey(name: 'created_at') this.createdAt});
   factory _$RechargeOrderImpl.fromJson(Map<String, dynamic> json) =>
@@ -868,28 +938,40 @@ class _$RechargeOrderImpl implements _RechargeOrder {
   @override
   final int id;
   @override
-  @JsonKey(name: 'order_no')
+  @JsonKey(name: 'orderNo')
   final String? orderNo;
   @override
-  @JsonKey(name: 'member_id')
+  @JsonKey(name: 'memberId')
   final int? memberId;
   @override
-  @JsonKey(name: 'member_name')
+  @JsonKey(name: 'memberName')
   final String? memberName;
   @override
-  @JsonKey(name: 'pay_amount')
+  @JsonKey(name: 'memberPhone')
+  final String? memberPhone;
+  @override
+  @JsonKey(name: 'payAmount')
   final String? payAmount;
   @override
-  @JsonKey(name: 'gift_amount')
+  @JsonKey(name: 'giftAmount')
   final String? giftAmount;
   @override
-  @JsonKey(name: 'pay_type')
+  @JsonKey(name: 'totalAmount')
+  final String? totalAmount;
+  @override
+  @JsonKey(name: 'payType')
   final int? payType;
   @override
-  @JsonKey(name: 'pay_status')
+  @JsonKey(name: 'payTypeName')
+  final String? payTypeName;
+  @override
+  @JsonKey(name: 'payStatus')
   final int? payStatus;
   @override
-  @JsonKey(name: 'pay_time')
+  @JsonKey(name: 'statusName')
+  final String? statusName;
+  @override
+  @JsonKey(name: 'payTime')
   final String? payTime;
   @override
   @JsonKey(name: 'remark')
@@ -899,7 +981,7 @@ class _$RechargeOrderImpl implements _RechargeOrder {
   final String? createdAt;
   @override
   String toString() {
-    return 'RechargeOrder(id: $id, orderNo: $orderNo, memberId: $memberId, memberName: $memberName, payAmount: $payAmount, giftAmount: $giftAmount, payType: $payType, payStatus: $payStatus, payTime: $payTime, remark: $remark, createdAt: $createdAt)';
+    return 'RechargeOrder(id: $id, orderNo: $orderNo, memberId: $memberId, memberName: $memberName, memberPhone: $memberPhone, payAmount: $payAmount, giftAmount: $giftAmount, totalAmount: $totalAmount, payType: $payType, payTypeName: $payTypeName, payStatus: $payStatus, statusName: $statusName, payTime: $payTime, remark: $remark, createdAt: $createdAt)';
   }
   @override
   bool operator ==(Object other) {
@@ -912,13 +994,21 @@ class _$RechargeOrderImpl implements _RechargeOrder {
                 other.memberId == memberId) &&
             (identical(other.memberName, memberName) ||
                 other.memberName == memberName) &&
+            (identical(other.memberPhone, memberPhone) ||
+                other.memberPhone == memberPhone) &&
             (identical(other.payAmount, payAmount) ||
                 other.payAmount == payAmount) &&
             (identical(other.giftAmount, giftAmount) ||
                 other.giftAmount == giftAmount) &&
+            (identical(other.totalAmount, totalAmount) ||
+                other.totalAmount == totalAmount) &&
             (identical(other.payType, payType) || other.payType == payType) &&
+            (identical(other.payTypeName, payTypeName) ||
+                other.payTypeName == payTypeName) &&
             (identical(other.payStatus, payStatus) ||
                 other.payStatus == payStatus) &&
+            (identical(other.statusName, statusName) ||
+                other.statusName == statusName) &&
             (identical(other.payTime, payTime) || other.payTime == payTime) &&
             (identical(other.remark, remark) || other.remark == remark) &&
             (identical(other.createdAt, createdAt) ||
@@ -932,10 +1022,14 @@ class _$RechargeOrderImpl implements _RechargeOrder {
       orderNo,
       memberId,
       memberName,
+      memberPhone,
       payAmount,
       giftAmount,
+      totalAmount,
       payType,
+      payTypeName,
       payStatus,
+      statusName,
       payTime,
       remark,
       createdAt);
@@ -954,14 +1048,18 @@ class _$RechargeOrderImpl implements _RechargeOrder {
 abstract class _RechargeOrder implements RechargeOrder {
   const factory _RechargeOrder(
           {required final int id,
-          @JsonKey(name: 'order_no') final String? orderNo,
-          @JsonKey(name: 'member_id') final int? memberId,
-          @JsonKey(name: 'member_name') final String? memberName,
-          @JsonKey(name: 'pay_amount') final String? payAmount,
-          @JsonKey(name: 'gift_amount') final String? giftAmount,
-          @JsonKey(name: 'pay_type') final int? payType,
-          @JsonKey(name: 'pay_status') final int? payStatus,
-          @JsonKey(name: 'pay_time') final String? payTime,
+          @JsonKey(name: 'orderNo') final String? orderNo,
+          @JsonKey(name: 'memberId') final int? memberId,
+          @JsonKey(name: 'memberName') final String? memberName,
+          @JsonKey(name: 'memberPhone') final String? memberPhone,
+          @JsonKey(name: 'payAmount') final String? payAmount,
+          @JsonKey(name: 'giftAmount') final String? giftAmount,
+          @JsonKey(name: 'totalAmount') final String? totalAmount,
+          @JsonKey(name: 'payType') final int? payType,
+          @JsonKey(name: 'payTypeName') final String? payTypeName,
+          @JsonKey(name: 'payStatus') final int? payStatus,
+          @JsonKey(name: 'statusName') final String? statusName,
+          @JsonKey(name: 'payTime') final String? payTime,
           @JsonKey(name: 'remark') final String? remark,
           @JsonKey(name: 'created_at') final String? createdAt}) =
       _$RechargeOrderImpl;
@@ -970,28 +1068,40 @@ abstract class _RechargeOrder implements RechargeOrder {
   @override
   int get id;
   @override
-  @JsonKey(name: 'order_no')
+  @JsonKey(name: 'orderNo')
   String? get orderNo;
   @override
-  @JsonKey(name: 'member_id')
+  @JsonKey(name: 'memberId')
   int? get memberId;
   @override
-  @JsonKey(name: 'member_name')
+  @JsonKey(name: 'memberName')
   String? get memberName;
   @override
-  @JsonKey(name: 'pay_amount')
+  @JsonKey(name: 'memberPhone')
+  String? get memberPhone;
+  @override
+  @JsonKey(name: 'payAmount')
   String? get payAmount;
   @override
-  @JsonKey(name: 'gift_amount')
+  @JsonKey(name: 'giftAmount')
   String? get giftAmount;
   @override
-  @JsonKey(name: 'pay_type')
+  @JsonKey(name: 'totalAmount')
+  String? get totalAmount;
+  @override
+  @JsonKey(name: 'payType')
   int? get payType;
   @override
-  @JsonKey(name: 'pay_status')
+  @JsonKey(name: 'payTypeName')
+  String? get payTypeName;
+  @override
+  @JsonKey(name: 'payStatus')
   int? get payStatus;
   @override
-  @JsonKey(name: 'pay_time')
+  @JsonKey(name: 'statusName')
+  String? get statusName;
+  @override
+  @JsonKey(name: 'payTime')
   String? get payTime;
   @override
   @JsonKey(name: 'remark')
