@@ -4,60 +4,34 @@ import 'models.dart';
 class MemberProvider extends ChangeNotifier {
   final MemberApi _api;
   MemberProvider(this._api);
-  List<Member> _members = [];
-  List<Member> get members => _members;
-  bool _loading = false;
-  bool get loading => _loading;
-  String? _error;
-  String? get error => _error;
+  List<Member> _list = [];
   int _page = 1;
   int _pageSize = 20;
   int _total = 0;
-  bool _hasMore = false;
-  String _keyword = '';
-  List<WalletLog> _walletLogs = [];
-  List<WalletLog> get walletLogs => _walletLogs;
-  bool _walletLogsLoading = false;
-  bool get walletLogsLoading => _walletLogsLoading;
-  String? _walletLogsError;
-  String? get walletLogsError => _walletLogsError;
-  int _walletLogsPage = 1;
-  int _walletLogsTotal = 0;
-  bool _walletLogsHasMore = false;
-  List<RechargeOrder> _rechargeOrders = [];
-  List<RechargeOrder> get rechargeOrders => _rechargeOrders;
-  bool _rechargeOrdersLoading = false;
-  bool get rechargeOrdersLoading => _rechargeOrdersLoading;
-  String? _rechargeOrdersError;
-  String? get rechargeOrdersError => _rechargeOrdersError;
-  int _rechargeOrdersPage = 1;
-  int _rechargeOrdersTotal = 0;
-  bool _rechargeOrdersHasMore = false;
-  Member? _selectedMember;
-  Member? get selectedMember => _selectedMember;
-  Future<void> loadMembers({bool refresh = false, String? keyword}) async {
-    if (refresh) {
-      _page = 1;
-      _keyword = keyword ?? '';
-    }
-    if (!_hasMore && !refresh) return;
+  bool _loading = false;
+  String? _error;
+  String? _keyword;
+  List<Member> get list => _list;
+  int get page => _page;
+  int get pageSize => _pageSize;
+  int get total => _total;
+  bool get loading => _loading;
+  String? get error => _error;
+  String? get keyword => _keyword;
+  Future<void> loadMembers({String? keyword, int? page}) async {
     _loading = true;
     _error = null;
     notifyListeners();
     try {
-      final response = await _api.getMembers(
-        page: _page,
+      final resp = await _api.getMembers(
+        keyword: keyword,
+        page: page ?? _page,
         pageSize: _pageSize,
-        keyword: _keyword,
       );
-      if (refresh) {
-        _members = response.list;
-      } else {
-        _members.addAll(response.list);
-      }
-      _total = response.total;
-      _hasMore = response.hasNextPage;
-      _page++;
+      _list = resp.list;
+      _total = resp.total ?? 0;
+      _keyword = keyword;
+      if (page != null) _page = page;
     } catch (e) {
       _error = e.toString();
     } finally {
@@ -65,63 +39,37 @@ class MemberProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
-  Future<void> searchMembers(String keyword) async {
-    _keyword = keyword;
-    await loadMembers(refresh: true);
+  Future<void> refresh() => loadMembers(keyword: _keyword, page: 1);
+  void setPage(int newPage) {
+    if (newPage < 1) return;
+    loadMembers(keyword: _keyword, page: newPage);
   }
-  Future<Member?> findByPhone(String phone) async {
+  Future<Member?> createMember(CreateMemberReq req) async {
     try {
-      return await _api.getMemberByPhone(phone);
+      final member = await _api.createMember(req);
+      await refresh();
+      return member;
     } catch (e) {
+      _error = e.toString();
+      notifyListeners();
       return null;
     }
   }
-  Future<bool> createMember(CreateMemberRequest request) async {
-    _loading = true;
-    notifyListeners();
+  Future<Member?> updateMember(int id, UpdateMemberReq req) async {
     try {
-      final result = await _api.createMember(request);
-      if (result != null) {
-        _members.insert(0, result);
-        notifyListeners();
-        return true;
-      }
-      return false;
+      final member = await _api.updateMember(id, req);
+      await refresh();
+      return member;
     } catch (e) {
       _error = e.toString();
       notifyListeners();
-      return false;
-    } finally {
-      _loading = false;
-    }
-  }
-  Future<bool> updateMember(int id, UpdateMemberRequest request) async {
-    _loading = true;
-    notifyListeners();
-    try {
-      final result = await _api.updateMember(id, request);
-      if (result != null) {
-        final index = _members.indexWhere((m) => m.id == id);
-        if (index != -1) {
-          _members[index] = result;
-          notifyListeners();
-        }
-        return true;
-      }
-      return false;
-    } catch (e) {
-      _error = e.toString();
-      notifyListeners();
-      return false;
-    } finally {
-      _loading = false;
+      return null;
     }
   }
   Future<bool> deleteMember(int id) async {
     try {
       await _api.deleteMember(id);
-      _members.removeWhere((m) => m.id == id);
-      notifyListeners();
+      await refresh();
       return true;
     } catch (e) {
       _error = e.toString();
@@ -129,146 +77,128 @@ class MemberProvider extends ChangeNotifier {
       return false;
     }
   }
-  Future<bool> adjustBalance(int memberId, AdjustBalanceRequest request) async {
+  void clearError() {
+    _error = null;
+    notifyListeners();
+  }
+}
+class MemberDetailProvider extends ChangeNotifier {
+  final MemberApi _api;
+  MemberDetailProvider(this._api);
+  Member? _member;
+  List<WalletLog> _walletLogs = [];
+  List<RechargeOrder> _rechargeOrders = [];
+  bool _loading = false;
+  String? _error;
+  int _logPage = 1;
+  int _logPageSize = 20;
+  int _logTotal = 0;
+  int _orderPage = 1;
+  int _orderPageSize = 20;
+  int _orderTotal = 0;
+  Member? get member => _member;
+  List<WalletLog> get walletLogs => _walletLogs;
+  List<RechargeOrder> get rechargeOrders => _rechargeOrders;
+  bool get loading => _loading;
+  String? get error => _error;
+  int get logPage => _logPage;
+  int get logTotal => _logTotal;
+  int get orderPage => _orderPage;
+  int get orderTotal => _orderTotal;
+  Future<void> loadMember(int id) async {
+    _loading = true;
+    _error = null;
+    notifyListeners();
     try {
-      final result = await _api.adjustBalance(memberId, request);
-      if (result != null) {
-        final index = _members.indexWhere((m) => m.id == memberId);
-        if (index != -1) {
-          _members[index] = result;
-          notifyListeners();
-        }
-        return true;
-      }
-      return false;
+      _member = await _api.getMemberById(id);
     } catch (e) {
       _error = e.toString();
+    } finally {
+      _loading = false;
+      notifyListeners();
+    }
+  }
+  Future<void> loadWalletLogs(int memberId, {int? page}) async {
+    try {
+      final resp = await _api.getWalletLogs(
+        memberId: memberId,
+        page: page ?? _logPage,
+        pageSize: _logPageSize,
+      );
+      _walletLogs = resp.list;
+      _logTotal = resp.total ?? 0;
+      if (page != null) _logPage = page;
+      notifyListeners();
+    } catch (e) {
+      _error = e.toString();
+      notifyListeners();
+    }
+  }
+  Future<void> loadRechargeOrders(int memberId, {int? page}) async {
+    try {
+      final resp = await _api.getRechargeOrders(
+        memberId: memberId,
+        page: page ?? _orderPage,
+        pageSize: _orderPageSize,
+      );
+      _rechargeOrders = resp.list;
+      _orderTotal = resp.total ?? 0;
+      if (page != null) _orderPage = page;
+      notifyListeners();
+    } catch (e) {
+      _error = e.toString();
+      notifyListeners();
+    }
+  }
+  Future<bool> recharge({
+    required int memberId,
+    required String payAmount,
+    String? giftAmount,
+    required int payType,
+    String? remark,
+  }) async {
+    _loading = true;
+    _error = null;
+    notifyListeners();
+    try {
+      await _api.createRechargeOrder(CreateRechargeOrderReq(
+        memberId: memberId,
+        payAmount: payAmount,
+        giftAmount: giftAmount,
+        payType: payType,
+        remark: remark,
+      ));
+      await loadMember(memberId);
+      return true;
+    } catch (e) {
+      _error = e.toString();
+      _loading = false;
       notifyListeners();
       return false;
     }
   }
-  void selectMember(Member? member) {
-    _selectedMember = member;
-    notifyListeners();
-  }
-  Future<void> loadWalletLogs({
-    bool refresh = false,
-    int? memberId,
-    int? type,
-    String? startDate,
-    String? endDate,
+  Future<bool> adjustBalance({
+    required int memberId,
+    required String amount,
+    required int type,
+    String? remark,
+    int? version,
   }) async {
-    if (refresh) {
-      _walletLogsPage = 1;
-    }
-    if (!_walletLogsHasMore && !refresh) return;
-    _walletLogsLoading = true;
-    _walletLogsError = null;
+    _loading = true;
+    _error = null;
     notifyListeners();
     try {
-      final response = await _api.getWalletLogs(
-        page: _walletLogsPage,
-        pageSize: _pageSize,
-        memberId: memberId,
+      await _api.adjustBalance(memberId, AdjustBalanceReq(
+        amount: amount,
         type: type,
-        startDate: startDate,
-        endDate: endDate,
-      );
-      if (refresh) {
-        _walletLogs = response.list;
-      } else {
-        _walletLogs.addAll(response.list);
-      }
-      _walletLogsTotal = response.total;
-      _walletLogsHasMore = response.hasNextPage;
-      _walletLogsPage++;
-    } catch (e) {
-      _walletLogsError = e.toString();
-    } finally {
-      _walletLogsLoading = false;
-      notifyListeners();
-    }
-  }
-  Future<void> loadRechargeOrders({
-    bool refresh = false,
-    int? memberId,
-    int? status,
-    String? startDate,
-    String? endDate,
-  }) async {
-    if (refresh) {
-      _rechargeOrdersPage = 1;
-    }
-    if (!_rechargeOrdersHasMore && !refresh) return;
-    _rechargeOrdersLoading = true;
-    _rechargeOrdersError = null;
-    notifyListeners();
-    try {
-      final response = await _api.getRechargeOrders(
-        page: _rechargeOrdersPage,
-        pageSize: _pageSize,
-        memberId: memberId,
-        status: status,
-        startDate: startDate,
-        endDate: endDate,
-      );
-      if (refresh) {
-        _rechargeOrders = response.list;
-      } else {
-        _rechargeOrders.addAll(response.list);
-      }
-      _rechargeOrdersTotal = response.total;
-      _rechargeOrdersHasMore = response.hasNextPage;
-      _rechargeOrdersPage++;
-    } catch (e) {
-      _rechargeOrdersError = e.toString();
-    } finally {
-      _rechargeOrdersLoading = false;
-      notifyListeners();
-    }
-  }
-  Future<bool> createRechargeOrder(CreateRechargeOrderRequest request) async {
-    try {
-      final result = await _api.createRechargeOrder(request);
-      if (result != null) {
-        _rechargeOrders.insert(0, result);
-        notifyListeners();
-        return true;
-      }
-      return false;
-    } catch (e) {
-      _error = e.toString();
-      notifyListeners();
-      return false;
-    }
-  }
-  Future<bool> payRechargeOrder(
-      String orderNo, PayRechargeOrderRequest request) async {
-    try {
-      final result = await _api.payRechargeOrder(orderNo, request);
-      if (result != null) {
-        final index = _rechargeOrders.indexWhere((o) => o.orderNo == orderNo);
-        if (index != -1) {
-          _rechargeOrders[index] = result;
-          notifyListeners();
-        }
-        return true;
-      }
-      return false;
-    } catch (e) {
-      _error = e.toString();
-      notifyListeners();
-      return false;
-    }
-  }
-  Future<bool> cancelRechargeOrder(String orderNo) async {
-    try {
-      await _api.cancelRechargeOrder(orderNo);
-      _rechargeOrders.removeWhere((o) => o.orderNo == orderNo);
-      notifyListeners();
+        remark: remark,
+        version: version,
+      ));
+      await loadMember(memberId);
       return true;
     } catch (e) {
       _error = e.toString();
+      _loading = false;
       notifyListeners();
       return false;
     }

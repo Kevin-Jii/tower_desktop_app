@@ -301,17 +301,25 @@ class ApiClient {
     }
     if (data == null) {
       if (method == 'GET') {
+        final typeStr = T.toString();
+        if ((typeStr == 'Map<String, dynamic>' || typeStr == 'Map<dynamic, dynamic>') && body.isNotEmpty) {
+          return body as T;
+        }
+        if (typeStr.contains('List') && body.isNotEmpty) {
+          throw ApiException('data 字段为空，但响应体无数据 (GET ${resp.requestOptions.path})');
+        }
         throw ApiException('data 字段为空 (GET ${resp.requestOptions.path})');
       }
       return null as T;
     }
-    if (T == Map<String, dynamic>) {
+    final typeStr = T.toString();
+    if (typeStr == 'Map<String, dynamic>' || typeStr == 'Map<dynamic, dynamic>') {
       if (data is Map) {
         return Map<String, dynamic>.from(data) as T;
       }
       throw ApiException('data 字段格式不正确，期望 Map，实际为 ${data.runtimeType}');
     }
-    if (T.toString().contains('List')) {
+    if (typeStr.contains('List')) {
       if (data is List) {
         return data as T;
       }
@@ -333,9 +341,12 @@ class ApiClient {
       throw ApiException('响应格式错误，期望 JSON 对象');
     }
     final code = body['code'];
-    final message = body['message'];
-    if (code != null && code != 200) {
-      throw ApiException(message?.toString() ?? '请求失败', statusCode: code);
+    if (code != null) {
+      final codeInt = code is int ? code : (code is double ? code.toInt() : null);
+      if (codeInt != null && codeInt != 200) {
+        final message = body['message'];
+        throw ApiException(message?.toString() ?? '请求失败', statusCode: codeInt);
+      }
     }
     return body as Map<String, dynamic>;
   }

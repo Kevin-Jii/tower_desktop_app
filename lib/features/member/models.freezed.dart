@@ -7,6 +7,8 @@ Member _$MemberFromJson(Map<String, dynamic> json) {
 }
 mixin _$Member {
   int get id => throw _privateConstructorUsedError;
+  @JsonKey(name: 'uid')
+  String? get uid => throw _privateConstructorUsedError;
   @JsonKey(name: 'name')
   String? get name => throw _privateConstructorUsedError;
   @JsonKey(name: 'phone')
@@ -16,17 +18,11 @@ mixin _$Member {
   @JsonKey(name: 'level_name')
   String? get levelName => throw _privateConstructorUsedError;
   @JsonKey(name: 'balance')
-  double? get balance => throw _privateConstructorUsedError;
-  @JsonKey(name: 'total_recharge')
-  double? get totalRecharge => throw _privateConstructorUsedError;
-  @JsonKey(name: 'total_consume')
-  double? get totalConsume => throw _privateConstructorUsedError;
+  String? get balance => throw _privateConstructorUsedError;
   @JsonKey(name: 'points')
   int? get points => throw _privateConstructorUsedError;
-  @JsonKey(name: 'remark')
-  String? get remark => throw _privateConstructorUsedError;
-  @JsonKey(name: 'status')
-  int? get status => throw _privateConstructorUsedError;
+  @JsonKey(name: 'version')
+  int? get version => throw _privateConstructorUsedError;
   @JsonKey(name: 'created_at')
   String? get createdAt => throw _privateConstructorUsedError;
   @JsonKey(name: 'updated_at')
@@ -41,16 +37,14 @@ abstract class $MemberCopyWith<$Res> {
   @useResult
   $Res call(
       {int id,
+      @JsonKey(name: 'uid') String? uid,
       @JsonKey(name: 'name') String? name,
       @JsonKey(name: 'phone') String? phone,
       @JsonKey(name: 'level_id') int? levelId,
       @JsonKey(name: 'level_name') String? levelName,
-      @JsonKey(name: 'balance') double? balance,
-      @JsonKey(name: 'total_recharge') double? totalRecharge,
-      @JsonKey(name: 'total_consume') double? totalConsume,
+      @JsonKey(name: 'balance') String? balance,
       @JsonKey(name: 'points') int? points,
-      @JsonKey(name: 'remark') String? remark,
-      @JsonKey(name: 'status') int? status,
+      @JsonKey(name: 'version') int? version,
       @JsonKey(name: 'created_at') String? createdAt,
       @JsonKey(name: 'updated_at') String? updatedAt});
 }
@@ -63,16 +57,14 @@ class _$MemberCopyWithImpl<$Res, $Val extends Member>
   @override
   $Res call({
     Object? id = null,
+    Object? uid = freezed,
     Object? name = freezed,
     Object? phone = freezed,
     Object? levelId = freezed,
     Object? levelName = freezed,
     Object? balance = freezed,
-    Object? totalRecharge = freezed,
-    Object? totalConsume = freezed,
     Object? points = freezed,
-    Object? remark = freezed,
-    Object? status = freezed,
+    Object? version = freezed,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
   }) {
@@ -81,6 +73,10 @@ class _$MemberCopyWithImpl<$Res, $Val extends Member>
           ? _value.id
           : id 
               as int,
+      uid: freezed == uid
+          ? _value.uid
+          : uid 
+              as String?,
       name: freezed == name
           ? _value.name
           : name 
@@ -100,26 +96,14 @@ class _$MemberCopyWithImpl<$Res, $Val extends Member>
       balance: freezed == balance
           ? _value.balance
           : balance 
-              as double?,
-      totalRecharge: freezed == totalRecharge
-          ? _value.totalRecharge
-          : totalRecharge 
-              as double?,
-      totalConsume: freezed == totalConsume
-          ? _value.totalConsume
-          : totalConsume 
-              as double?,
+              as String?,
       points: freezed == points
           ? _value.points
           : points 
               as int?,
-      remark: freezed == remark
-          ? _value.remark
-          : remark 
-              as String?,
-      status: freezed == status
-          ? _value.status
-          : status 
+      version: freezed == version
+          ? _value.version
+          : version 
               as int?,
       createdAt: freezed == createdAt
           ? _value.createdAt
@@ -140,16 +124,14 @@ abstract class _$$MemberImplCopyWith<$Res> implements $MemberCopyWith<$Res> {
   @useResult
   $Res call(
       {int id,
+      @JsonKey(name: 'uid') String? uid,
       @JsonKey(name: 'name') String? name,
       @JsonKey(name: 'phone') String? phone,
       @JsonKey(name: 'level_id') int? levelId,
       @JsonKey(name: 'level_name') String? levelName,
-      @JsonKey(name: 'balance') double? balance,
-      @JsonKey(name: 'total_recharge') double? totalRecharge,
-      @JsonKey(name: 'total_consume') double? totalConsume,
+      @JsonKey(name: 'balance') String? balance,
       @JsonKey(name: 'points') int? points,
-      @JsonKey(name: 'remark') String? remark,
-      @JsonKey(name: 'status') int? status,
+      @JsonKey(name: 'version') int? version,
       @JsonKey(name: 'created_at') String? createdAt,
       @JsonKey(name: 'updated_at') String? updatedAt});
 }
@@ -163,16 +145,14 @@ class __$$MemberImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = null,
+    Object? uid = freezed,
     Object? name = freezed,
     Object? phone = freezed,
     Object? levelId = freezed,
     Object? levelName = freezed,
     Object? balance = freezed,
-    Object? totalRecharge = freezed,
-    Object? totalConsume = freezed,
     Object? points = freezed,
-    Object? remark = freezed,
-    Object? status = freezed,
+    Object? version = freezed,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
   }) {
@@ -181,6 +161,10 @@ class __$$MemberImplCopyWithImpl<$Res>
           ? _value.id
           : id 
               as int,
+      uid: freezed == uid
+          ? _value.uid
+          : uid 
+              as String?,
       name: freezed == name
           ? _value.name
           : name 
@@ -200,26 +184,14 @@ class __$$MemberImplCopyWithImpl<$Res>
       balance: freezed == balance
           ? _value.balance
           : balance 
-              as double?,
-      totalRecharge: freezed == totalRecharge
-          ? _value.totalRecharge
-          : totalRecharge 
-              as double?,
-      totalConsume: freezed == totalConsume
-          ? _value.totalConsume
-          : totalConsume 
-              as double?,
+              as String?,
       points: freezed == points
           ? _value.points
           : points 
               as int?,
-      remark: freezed == remark
-          ? _value.remark
-          : remark 
-              as String?,
-      status: freezed == status
-          ? _value.status
-          : status 
+      version: freezed == version
+          ? _value.version
+          : version 
               as int?,
       createdAt: freezed == createdAt
           ? _value.createdAt
@@ -233,25 +205,26 @@ class __$$MemberImplCopyWithImpl<$Res>
   }
 }
 @JsonSerializable()
-class _$MemberImpl with DiagnosticableTreeMixin implements _Member {
+class _$MemberImpl implements _Member {
   const _$MemberImpl(
       {required this.id,
+      @JsonKey(name: 'uid') this.uid,
       @JsonKey(name: 'name') this.name,
       @JsonKey(name: 'phone') this.phone,
       @JsonKey(name: 'level_id') this.levelId,
       @JsonKey(name: 'level_name') this.levelName,
       @JsonKey(name: 'balance') this.balance,
-      @JsonKey(name: 'total_recharge') this.totalRecharge,
-      @JsonKey(name: 'total_consume') this.totalConsume,
       @JsonKey(name: 'points') this.points,
-      @JsonKey(name: 'remark') this.remark,
-      @JsonKey(name: 'status') this.status,
+      @JsonKey(name: 'version') this.version,
       @JsonKey(name: 'created_at') this.createdAt,
       @JsonKey(name: 'updated_at') this.updatedAt});
   factory _$MemberImpl.fromJson(Map<String, dynamic> json) =>
       _$$MemberImplFromJson(json);
   @override
   final int id;
+  @override
+  @JsonKey(name: 'uid')
+  final String? uid;
   @override
   @JsonKey(name: 'name')
   final String? name;
@@ -266,22 +239,13 @@ class _$MemberImpl with DiagnosticableTreeMixin implements _Member {
   final String? levelName;
   @override
   @JsonKey(name: 'balance')
-  final double? balance;
-  @override
-  @JsonKey(name: 'total_recharge')
-  final double? totalRecharge;
-  @override
-  @JsonKey(name: 'total_consume')
-  final double? totalConsume;
+  final String? balance;
   @override
   @JsonKey(name: 'points')
   final int? points;
   @override
-  @JsonKey(name: 'remark')
-  final String? remark;
-  @override
-  @JsonKey(name: 'status')
-  final int? status;
+  @JsonKey(name: 'version')
+  final int? version;
   @override
   @JsonKey(name: 'created_at')
   final String? createdAt;
@@ -289,27 +253,8 @@ class _$MemberImpl with DiagnosticableTreeMixin implements _Member {
   @JsonKey(name: 'updated_at')
   final String? updatedAt;
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Member(id: $id, name: $name, phone: $phone, levelId: $levelId, levelName: $levelName, balance: $balance, totalRecharge: $totalRecharge, totalConsume: $totalConsume, points: $points, remark: $remark, status: $status, createdAt: $createdAt, updatedAt: $updatedAt)';
-  }
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'Member'))
-      ..add(DiagnosticsProperty('id', id))
-      ..add(DiagnosticsProperty('name', name))
-      ..add(DiagnosticsProperty('phone', phone))
-      ..add(DiagnosticsProperty('levelId', levelId))
-      ..add(DiagnosticsProperty('levelName', levelName))
-      ..add(DiagnosticsProperty('balance', balance))
-      ..add(DiagnosticsProperty('totalRecharge', totalRecharge))
-      ..add(DiagnosticsProperty('totalConsume', totalConsume))
-      ..add(DiagnosticsProperty('points', points))
-      ..add(DiagnosticsProperty('remark', remark))
-      ..add(DiagnosticsProperty('status', status))
-      ..add(DiagnosticsProperty('createdAt', createdAt))
-      ..add(DiagnosticsProperty('updatedAt', updatedAt));
+  String toString() {
+    return 'Member(id: $id, uid: $uid, name: $name, phone: $phone, levelId: $levelId, levelName: $levelName, balance: $balance, points: $points, version: $version, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
   @override
   bool operator ==(Object other) {
@@ -317,19 +262,15 @@ class _$MemberImpl with DiagnosticableTreeMixin implements _Member {
         (other.runtimeType == runtimeType &&
             other is _$MemberImpl &&
             (identical(other.id, id) || other.id == id) &&
+            (identical(other.uid, uid) || other.uid == uid) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.phone, phone) || other.phone == phone) &&
             (identical(other.levelId, levelId) || other.levelId == levelId) &&
             (identical(other.levelName, levelName) ||
                 other.levelName == levelName) &&
             (identical(other.balance, balance) || other.balance == balance) &&
-            (identical(other.totalRecharge, totalRecharge) ||
-                other.totalRecharge == totalRecharge) &&
-            (identical(other.totalConsume, totalConsume) ||
-                other.totalConsume == totalConsume) &&
             (identical(other.points, points) || other.points == points) &&
-            (identical(other.remark, remark) || other.remark == remark) &&
-            (identical(other.status, status) || other.status == status) &&
+            (identical(other.version, version) || other.version == version) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.updatedAt, updatedAt) ||
@@ -337,21 +278,8 @@ class _$MemberImpl with DiagnosticableTreeMixin implements _Member {
   }
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      name,
-      phone,
-      levelId,
-      levelName,
-      balance,
-      totalRecharge,
-      totalConsume,
-      points,
-      remark,
-      status,
-      createdAt,
-      updatedAt);
+  int get hashCode => Object.hash(runtimeType, id, uid, name, phone, levelId,
+      levelName, balance, points, version, createdAt, updatedAt);
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
@@ -367,21 +295,22 @@ class _$MemberImpl with DiagnosticableTreeMixin implements _Member {
 abstract class _Member implements Member {
   const factory _Member(
       {required final int id,
+      @JsonKey(name: 'uid') final String? uid,
       @JsonKey(name: 'name') final String? name,
       @JsonKey(name: 'phone') final String? phone,
       @JsonKey(name: 'level_id') final int? levelId,
       @JsonKey(name: 'level_name') final String? levelName,
-      @JsonKey(name: 'balance') final double? balance,
-      @JsonKey(name: 'total_recharge') final double? totalRecharge,
-      @JsonKey(name: 'total_consume') final double? totalConsume,
+      @JsonKey(name: 'balance') final String? balance,
       @JsonKey(name: 'points') final int? points,
-      @JsonKey(name: 'remark') final String? remark,
-      @JsonKey(name: 'status') final int? status,
+      @JsonKey(name: 'version') final int? version,
       @JsonKey(name: 'created_at') final String? createdAt,
       @JsonKey(name: 'updated_at') final String? updatedAt}) = _$MemberImpl;
   factory _Member.fromJson(Map<String, dynamic> json) = _$MemberImpl.fromJson;
   @override
   int get id;
+  @override
+  @JsonKey(name: 'uid')
+  String? get uid;
   @override
   @JsonKey(name: 'name')
   String? get name;
@@ -396,22 +325,13 @@ abstract class _Member implements Member {
   String? get levelName;
   @override
   @JsonKey(name: 'balance')
-  double? get balance;
-  @override
-  @JsonKey(name: 'total_recharge')
-  double? get totalRecharge;
-  @override
-  @JsonKey(name: 'total_consume')
-  double? get totalConsume;
+  String? get balance;
   @override
   @JsonKey(name: 'points')
   int? get points;
   @override
-  @JsonKey(name: 'remark')
-  String? get remark;
-  @override
-  @JsonKey(name: 'status')
-  int? get status;
+  @JsonKey(name: 'version')
+  int? get version;
   @override
   @JsonKey(name: 'created_at')
   String? get createdAt;
@@ -423,599 +343,6 @@ abstract class _Member implements Member {
   _$$MemberImplCopyWith<_$MemberImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
-CreateMemberRequest _$CreateMemberRequestFromJson(Map<String, dynamic> json) {
-  return _CreateMemberRequest.fromJson(json);
-}
-mixin _$CreateMemberRequest {
-  @JsonKey(name: 'name')
-  String get name => throw _privateConstructorUsedError;
-  @JsonKey(name: 'phone')
-  String get phone => throw _privateConstructorUsedError;
-  @JsonKey(name: 'level_id')
-  int? get levelId => throw _privateConstructorUsedError;
-  @JsonKey(name: 'remark')
-  String? get remark => throw _privateConstructorUsedError;
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  $CreateMemberRequestCopyWith<CreateMemberRequest> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-abstract class $CreateMemberRequestCopyWith<$Res> {
-  factory $CreateMemberRequestCopyWith(
-          CreateMemberRequest value, $Res Function(CreateMemberRequest) then) =
-      _$CreateMemberRequestCopyWithImpl<$Res, CreateMemberRequest>;
-  @useResult
-  $Res call(
-      {@JsonKey(name: 'name') String name,
-      @JsonKey(name: 'phone') String phone,
-      @JsonKey(name: 'level_id') int? levelId,
-      @JsonKey(name: 'remark') String? remark});
-}
-class _$CreateMemberRequestCopyWithImpl<$Res, $Val extends CreateMemberRequest>
-    implements $CreateMemberRequestCopyWith<$Res> {
-  _$CreateMemberRequestCopyWithImpl(this._value, this._then);
-  final $Val _value;
-  final $Res Function($Val) _then;
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? name = null,
-    Object? phone = null,
-    Object? levelId = freezed,
-    Object? remark = freezed,
-  }) {
-    return _then(_value.copyWith(
-      name: null == name
-          ? _value.name
-          : name 
-              as String,
-      phone: null == phone
-          ? _value.phone
-          : phone 
-              as String,
-      levelId: freezed == levelId
-          ? _value.levelId
-          : levelId 
-              as int?,
-      remark: freezed == remark
-          ? _value.remark
-          : remark 
-              as String?,
-    ) as $Val);
-  }
-}
-abstract class _$$CreateMemberRequestImplCopyWith<$Res>
-    implements $CreateMemberRequestCopyWith<$Res> {
-  factory _$$CreateMemberRequestImplCopyWith(_$CreateMemberRequestImpl value,
-          $Res Function(_$CreateMemberRequestImpl) then) =
-      __$$CreateMemberRequestImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {@JsonKey(name: 'name') String name,
-      @JsonKey(name: 'phone') String phone,
-      @JsonKey(name: 'level_id') int? levelId,
-      @JsonKey(name: 'remark') String? remark});
-}
-class __$$CreateMemberRequestImplCopyWithImpl<$Res>
-    extends _$CreateMemberRequestCopyWithImpl<$Res, _$CreateMemberRequestImpl>
-    implements _$$CreateMemberRequestImplCopyWith<$Res> {
-  __$$CreateMemberRequestImplCopyWithImpl(_$CreateMemberRequestImpl _value,
-      $Res Function(_$CreateMemberRequestImpl) _then)
-      : super(_value, _then);
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? name = null,
-    Object? phone = null,
-    Object? levelId = freezed,
-    Object? remark = freezed,
-  }) {
-    return _then(_$CreateMemberRequestImpl(
-      name: null == name
-          ? _value.name
-          : name 
-              as String,
-      phone: null == phone
-          ? _value.phone
-          : phone 
-              as String,
-      levelId: freezed == levelId
-          ? _value.levelId
-          : levelId 
-              as int?,
-      remark: freezed == remark
-          ? _value.remark
-          : remark 
-              as String?,
-    ));
-  }
-}
-@JsonSerializable()
-class _$CreateMemberRequestImpl
-    with DiagnosticableTreeMixin
-    implements _CreateMemberRequest {
-  const _$CreateMemberRequestImpl(
-      {@JsonKey(name: 'name') required this.name,
-      @JsonKey(name: 'phone') required this.phone,
-      @JsonKey(name: 'level_id') this.levelId,
-      @JsonKey(name: 'remark') this.remark});
-  factory _$CreateMemberRequestImpl.fromJson(Map<String, dynamic> json) =>
-      _$$CreateMemberRequestImplFromJson(json);
-  @override
-  @JsonKey(name: 'name')
-  final String name;
-  @override
-  @JsonKey(name: 'phone')
-  final String phone;
-  @override
-  @JsonKey(name: 'level_id')
-  final int? levelId;
-  @override
-  @JsonKey(name: 'remark')
-  final String? remark;
-  @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'CreateMemberRequest(name: $name, phone: $phone, levelId: $levelId, remark: $remark)';
-  }
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'CreateMemberRequest'))
-      ..add(DiagnosticsProperty('name', name))
-      ..add(DiagnosticsProperty('phone', phone))
-      ..add(DiagnosticsProperty('levelId', levelId))
-      ..add(DiagnosticsProperty('remark', remark));
-  }
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$CreateMemberRequestImpl &&
-            (identical(other.name, name) || other.name == name) &&
-            (identical(other.phone, phone) || other.phone == phone) &&
-            (identical(other.levelId, levelId) || other.levelId == levelId) &&
-            (identical(other.remark, remark) || other.remark == remark));
-  }
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  int get hashCode => Object.hash(runtimeType, name, phone, levelId, remark);
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$CreateMemberRequestImplCopyWith<_$CreateMemberRequestImpl> get copyWith =>
-      __$$CreateMemberRequestImplCopyWithImpl<_$CreateMemberRequestImpl>(
-          this, _$identity);
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$CreateMemberRequestImplToJson(
-      this,
-    );
-  }
-}
-abstract class _CreateMemberRequest implements CreateMemberRequest {
-  const factory _CreateMemberRequest(
-          {@JsonKey(name: 'name') required final String name,
-          @JsonKey(name: 'phone') required final String phone,
-          @JsonKey(name: 'level_id') final int? levelId,
-          @JsonKey(name: 'remark') final String? remark}) =
-      _$CreateMemberRequestImpl;
-  factory _CreateMemberRequest.fromJson(Map<String, dynamic> json) =
-      _$CreateMemberRequestImpl.fromJson;
-  @override
-  @JsonKey(name: 'name')
-  String get name;
-  @override
-  @JsonKey(name: 'phone')
-  String get phone;
-  @override
-  @JsonKey(name: 'level_id')
-  int? get levelId;
-  @override
-  @JsonKey(name: 'remark')
-  String? get remark;
-  @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$CreateMemberRequestImplCopyWith<_$CreateMemberRequestImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-UpdateMemberRequest _$UpdateMemberRequestFromJson(Map<String, dynamic> json) {
-  return _UpdateMemberRequest.fromJson(json);
-}
-mixin _$UpdateMemberRequest {
-  @JsonKey(name: 'name')
-  String? get name => throw _privateConstructorUsedError;
-  @JsonKey(name: 'phone')
-  String? get phone => throw _privateConstructorUsedError;
-  @JsonKey(name: 'level_id')
-  int? get levelId => throw _privateConstructorUsedError;
-  @JsonKey(name: 'remark')
-  String? get remark => throw _privateConstructorUsedError;
-  @JsonKey(name: 'status')
-  int? get status => throw _privateConstructorUsedError;
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  $UpdateMemberRequestCopyWith<UpdateMemberRequest> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-abstract class $UpdateMemberRequestCopyWith<$Res> {
-  factory $UpdateMemberRequestCopyWith(
-          UpdateMemberRequest value, $Res Function(UpdateMemberRequest) then) =
-      _$UpdateMemberRequestCopyWithImpl<$Res, UpdateMemberRequest>;
-  @useResult
-  $Res call(
-      {@JsonKey(name: 'name') String? name,
-      @JsonKey(name: 'phone') String? phone,
-      @JsonKey(name: 'level_id') int? levelId,
-      @JsonKey(name: 'remark') String? remark,
-      @JsonKey(name: 'status') int? status});
-}
-class _$UpdateMemberRequestCopyWithImpl<$Res, $Val extends UpdateMemberRequest>
-    implements $UpdateMemberRequestCopyWith<$Res> {
-  _$UpdateMemberRequestCopyWithImpl(this._value, this._then);
-  final $Val _value;
-  final $Res Function($Val) _then;
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? name = freezed,
-    Object? phone = freezed,
-    Object? levelId = freezed,
-    Object? remark = freezed,
-    Object? status = freezed,
-  }) {
-    return _then(_value.copyWith(
-      name: freezed == name
-          ? _value.name
-          : name 
-              as String?,
-      phone: freezed == phone
-          ? _value.phone
-          : phone 
-              as String?,
-      levelId: freezed == levelId
-          ? _value.levelId
-          : levelId 
-              as int?,
-      remark: freezed == remark
-          ? _value.remark
-          : remark 
-              as String?,
-      status: freezed == status
-          ? _value.status
-          : status 
-              as int?,
-    ) as $Val);
-  }
-}
-abstract class _$$UpdateMemberRequestImplCopyWith<$Res>
-    implements $UpdateMemberRequestCopyWith<$Res> {
-  factory _$$UpdateMemberRequestImplCopyWith(_$UpdateMemberRequestImpl value,
-          $Res Function(_$UpdateMemberRequestImpl) then) =
-      __$$UpdateMemberRequestImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {@JsonKey(name: 'name') String? name,
-      @JsonKey(name: 'phone') String? phone,
-      @JsonKey(name: 'level_id') int? levelId,
-      @JsonKey(name: 'remark') String? remark,
-      @JsonKey(name: 'status') int? status});
-}
-class __$$UpdateMemberRequestImplCopyWithImpl<$Res>
-    extends _$UpdateMemberRequestCopyWithImpl<$Res, _$UpdateMemberRequestImpl>
-    implements _$$UpdateMemberRequestImplCopyWith<$Res> {
-  __$$UpdateMemberRequestImplCopyWithImpl(_$UpdateMemberRequestImpl _value,
-      $Res Function(_$UpdateMemberRequestImpl) _then)
-      : super(_value, _then);
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? name = freezed,
-    Object? phone = freezed,
-    Object? levelId = freezed,
-    Object? remark = freezed,
-    Object? status = freezed,
-  }) {
-    return _then(_$UpdateMemberRequestImpl(
-      name: freezed == name
-          ? _value.name
-          : name 
-              as String?,
-      phone: freezed == phone
-          ? _value.phone
-          : phone 
-              as String?,
-      levelId: freezed == levelId
-          ? _value.levelId
-          : levelId 
-              as int?,
-      remark: freezed == remark
-          ? _value.remark
-          : remark 
-              as String?,
-      status: freezed == status
-          ? _value.status
-          : status 
-              as int?,
-    ));
-  }
-}
-@JsonSerializable()
-class _$UpdateMemberRequestImpl
-    with DiagnosticableTreeMixin
-    implements _UpdateMemberRequest {
-  const _$UpdateMemberRequestImpl(
-      {@JsonKey(name: 'name') this.name,
-      @JsonKey(name: 'phone') this.phone,
-      @JsonKey(name: 'level_id') this.levelId,
-      @JsonKey(name: 'remark') this.remark,
-      @JsonKey(name: 'status') this.status});
-  factory _$UpdateMemberRequestImpl.fromJson(Map<String, dynamic> json) =>
-      _$$UpdateMemberRequestImplFromJson(json);
-  @override
-  @JsonKey(name: 'name')
-  final String? name;
-  @override
-  @JsonKey(name: 'phone')
-  final String? phone;
-  @override
-  @JsonKey(name: 'level_id')
-  final int? levelId;
-  @override
-  @JsonKey(name: 'remark')
-  final String? remark;
-  @override
-  @JsonKey(name: 'status')
-  final int? status;
-  @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'UpdateMemberRequest(name: $name, phone: $phone, levelId: $levelId, remark: $remark, status: $status)';
-  }
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'UpdateMemberRequest'))
-      ..add(DiagnosticsProperty('name', name))
-      ..add(DiagnosticsProperty('phone', phone))
-      ..add(DiagnosticsProperty('levelId', levelId))
-      ..add(DiagnosticsProperty('remark', remark))
-      ..add(DiagnosticsProperty('status', status));
-  }
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$UpdateMemberRequestImpl &&
-            (identical(other.name, name) || other.name == name) &&
-            (identical(other.phone, phone) || other.phone == phone) &&
-            (identical(other.levelId, levelId) || other.levelId == levelId) &&
-            (identical(other.remark, remark) || other.remark == remark) &&
-            (identical(other.status, status) || other.status == status));
-  }
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  int get hashCode =>
-      Object.hash(runtimeType, name, phone, levelId, remark, status);
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$UpdateMemberRequestImplCopyWith<_$UpdateMemberRequestImpl> get copyWith =>
-      __$$UpdateMemberRequestImplCopyWithImpl<_$UpdateMemberRequestImpl>(
-          this, _$identity);
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$UpdateMemberRequestImplToJson(
-      this,
-    );
-  }
-}
-abstract class _UpdateMemberRequest implements UpdateMemberRequest {
-  const factory _UpdateMemberRequest(
-      {@JsonKey(name: 'name') final String? name,
-      @JsonKey(name: 'phone') final String? phone,
-      @JsonKey(name: 'level_id') final int? levelId,
-      @JsonKey(name: 'remark') final String? remark,
-      @JsonKey(name: 'status') final int? status}) = _$UpdateMemberRequestImpl;
-  factory _UpdateMemberRequest.fromJson(Map<String, dynamic> json) =
-      _$UpdateMemberRequestImpl.fromJson;
-  @override
-  @JsonKey(name: 'name')
-  String? get name;
-  @override
-  @JsonKey(name: 'phone')
-  String? get phone;
-  @override
-  @JsonKey(name: 'level_id')
-  int? get levelId;
-  @override
-  @JsonKey(name: 'remark')
-  String? get remark;
-  @override
-  @JsonKey(name: 'status')
-  int? get status;
-  @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$UpdateMemberRequestImplCopyWith<_$UpdateMemberRequestImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-AdjustBalanceRequest _$AdjustBalanceRequestFromJson(Map<String, dynamic> json) {
-  return _AdjustBalanceRequest.fromJson(json);
-}
-mixin _$AdjustBalanceRequest {
-  @JsonKey(name: 'amount')
-  double get amount => throw _privateConstructorUsedError;
-  @JsonKey(name: 'type')
-  int get type => throw _privateConstructorUsedError;
-  @JsonKey(name: 'remark')
-  String? get remark => throw _privateConstructorUsedError;
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  $AdjustBalanceRequestCopyWith<AdjustBalanceRequest> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-abstract class $AdjustBalanceRequestCopyWith<$Res> {
-  factory $AdjustBalanceRequestCopyWith(AdjustBalanceRequest value,
-          $Res Function(AdjustBalanceRequest) then) =
-      _$AdjustBalanceRequestCopyWithImpl<$Res, AdjustBalanceRequest>;
-  @useResult
-  $Res call(
-      {@JsonKey(name: 'amount') double amount,
-      @JsonKey(name: 'type') int type,
-      @JsonKey(name: 'remark') String? remark});
-}
-class _$AdjustBalanceRequestCopyWithImpl<$Res,
-        $Val extends AdjustBalanceRequest>
-    implements $AdjustBalanceRequestCopyWith<$Res> {
-  _$AdjustBalanceRequestCopyWithImpl(this._value, this._then);
-  final $Val _value;
-  final $Res Function($Val) _then;
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? amount = null,
-    Object? type = null,
-    Object? remark = freezed,
-  }) {
-    return _then(_value.copyWith(
-      amount: null == amount
-          ? _value.amount
-          : amount 
-              as double,
-      type: null == type
-          ? _value.type
-          : type 
-              as int,
-      remark: freezed == remark
-          ? _value.remark
-          : remark 
-              as String?,
-    ) as $Val);
-  }
-}
-abstract class _$$AdjustBalanceRequestImplCopyWith<$Res>
-    implements $AdjustBalanceRequestCopyWith<$Res> {
-  factory _$$AdjustBalanceRequestImplCopyWith(_$AdjustBalanceRequestImpl value,
-          $Res Function(_$AdjustBalanceRequestImpl) then) =
-      __$$AdjustBalanceRequestImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {@JsonKey(name: 'amount') double amount,
-      @JsonKey(name: 'type') int type,
-      @JsonKey(name: 'remark') String? remark});
-}
-class __$$AdjustBalanceRequestImplCopyWithImpl<$Res>
-    extends _$AdjustBalanceRequestCopyWithImpl<$Res, _$AdjustBalanceRequestImpl>
-    implements _$$AdjustBalanceRequestImplCopyWith<$Res> {
-  __$$AdjustBalanceRequestImplCopyWithImpl(_$AdjustBalanceRequestImpl _value,
-      $Res Function(_$AdjustBalanceRequestImpl) _then)
-      : super(_value, _then);
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? amount = null,
-    Object? type = null,
-    Object? remark = freezed,
-  }) {
-    return _then(_$AdjustBalanceRequestImpl(
-      amount: null == amount
-          ? _value.amount
-          : amount 
-              as double,
-      type: null == type
-          ? _value.type
-          : type 
-              as int,
-      remark: freezed == remark
-          ? _value.remark
-          : remark 
-              as String?,
-    ));
-  }
-}
-@JsonSerializable()
-class _$AdjustBalanceRequestImpl
-    with DiagnosticableTreeMixin
-    implements _AdjustBalanceRequest {
-  const _$AdjustBalanceRequestImpl(
-      {@JsonKey(name: 'amount') required this.amount,
-      @JsonKey(name: 'type') required this.type,
-      @JsonKey(name: 'remark') this.remark});
-  factory _$AdjustBalanceRequestImpl.fromJson(Map<String, dynamic> json) =>
-      _$$AdjustBalanceRequestImplFromJson(json);
-  @override
-  @JsonKey(name: 'amount')
-  final double amount;
-  @override
-  @JsonKey(name: 'type')
-  final int type;
-  @override
-  @JsonKey(name: 'remark')
-  final String? remark;
-  @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'AdjustBalanceRequest(amount: $amount, type: $type, remark: $remark)';
-  }
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'AdjustBalanceRequest'))
-      ..add(DiagnosticsProperty('amount', amount))
-      ..add(DiagnosticsProperty('type', type))
-      ..add(DiagnosticsProperty('remark', remark));
-  }
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$AdjustBalanceRequestImpl &&
-            (identical(other.amount, amount) || other.amount == amount) &&
-            (identical(other.type, type) || other.type == type) &&
-            (identical(other.remark, remark) || other.remark == remark));
-  }
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  int get hashCode => Object.hash(runtimeType, amount, type, remark);
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$AdjustBalanceRequestImplCopyWith<_$AdjustBalanceRequestImpl>
-      get copyWith =>
-          __$$AdjustBalanceRequestImplCopyWithImpl<_$AdjustBalanceRequestImpl>(
-              this, _$identity);
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$AdjustBalanceRequestImplToJson(
-      this,
-    );
-  }
-}
-abstract class _AdjustBalanceRequest implements AdjustBalanceRequest {
-  const factory _AdjustBalanceRequest(
-          {@JsonKey(name: 'amount') required final double amount,
-          @JsonKey(name: 'type') required final int type,
-          @JsonKey(name: 'remark') final String? remark}) =
-      _$AdjustBalanceRequestImpl;
-  factory _AdjustBalanceRequest.fromJson(Map<String, dynamic> json) =
-      _$AdjustBalanceRequestImpl.fromJson;
-  @override
-  @JsonKey(name: 'amount')
-  double get amount;
-  @override
-  @JsonKey(name: 'type')
-  int get type;
-  @override
-  @JsonKey(name: 'remark')
-  String? get remark;
-  @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$AdjustBalanceRequestImplCopyWith<_$AdjustBalanceRequestImpl>
-      get copyWith => throw _privateConstructorUsedError;
-}
 WalletLog _$WalletLogFromJson(Map<String, dynamic> json) {
   return _WalletLog.fromJson(json);
 }
@@ -1023,20 +350,14 @@ mixin _$WalletLog {
   int get id => throw _privateConstructorUsedError;
   @JsonKey(name: 'member_id')
   int? get memberId => throw _privateConstructorUsedError;
-  @JsonKey(name: 'member_name')
-  String? get memberName => throw _privateConstructorUsedError;
-  @JsonKey(name: 'member_phone')
-  String? get memberPhone => throw _privateConstructorUsedError;
-  @JsonKey(name: 'type')
-  int? get type => throw _privateConstructorUsedError;
-  @JsonKey(name: 'type_name')
-  String? get typeName => throw _privateConstructorUsedError;
-  @JsonKey(name: 'amount')
-  double? get amount => throw _privateConstructorUsedError;
+  @JsonKey(name: 'change_type')
+  int? get changeType => throw _privateConstructorUsedError;
+  @JsonKey(name: 'change_amount')
+  String? get changeAmount => throw _privateConstructorUsedError;
   @JsonKey(name: 'balance_before')
-  double? get balanceBefore => throw _privateConstructorUsedError;
+  String? get balanceBefore => throw _privateConstructorUsedError;
   @JsonKey(name: 'balance_after')
-  double? get balanceAfter => throw _privateConstructorUsedError;
+  String? get balanceAfter => throw _privateConstructorUsedError;
   @JsonKey(name: 'remark')
   String? get remark => throw _privateConstructorUsedError;
   @JsonKey(name: 'order_no')
@@ -1055,13 +376,10 @@ abstract class $WalletLogCopyWith<$Res> {
   $Res call(
       {int id,
       @JsonKey(name: 'member_id') int? memberId,
-      @JsonKey(name: 'member_name') String? memberName,
-      @JsonKey(name: 'member_phone') String? memberPhone,
-      @JsonKey(name: 'type') int? type,
-      @JsonKey(name: 'type_name') String? typeName,
-      @JsonKey(name: 'amount') double? amount,
-      @JsonKey(name: 'balance_before') double? balanceBefore,
-      @JsonKey(name: 'balance_after') double? balanceAfter,
+      @JsonKey(name: 'change_type') int? changeType,
+      @JsonKey(name: 'change_amount') String? changeAmount,
+      @JsonKey(name: 'balance_before') String? balanceBefore,
+      @JsonKey(name: 'balance_after') String? balanceAfter,
       @JsonKey(name: 'remark') String? remark,
       @JsonKey(name: 'order_no') String? orderNo,
       @JsonKey(name: 'created_at') String? createdAt});
@@ -1076,11 +394,8 @@ class _$WalletLogCopyWithImpl<$Res, $Val extends WalletLog>
   $Res call({
     Object? id = null,
     Object? memberId = freezed,
-    Object? memberName = freezed,
-    Object? memberPhone = freezed,
-    Object? type = freezed,
-    Object? typeName = freezed,
-    Object? amount = freezed,
+    Object? changeType = freezed,
+    Object? changeAmount = freezed,
     Object? balanceBefore = freezed,
     Object? balanceAfter = freezed,
     Object? remark = freezed,
@@ -1096,34 +411,22 @@ class _$WalletLogCopyWithImpl<$Res, $Val extends WalletLog>
           ? _value.memberId
           : memberId 
               as int?,
-      memberName: freezed == memberName
-          ? _value.memberName
-          : memberName 
-              as String?,
-      memberPhone: freezed == memberPhone
-          ? _value.memberPhone
-          : memberPhone 
-              as String?,
-      type: freezed == type
-          ? _value.type
-          : type 
+      changeType: freezed == changeType
+          ? _value.changeType
+          : changeType 
               as int?,
-      typeName: freezed == typeName
-          ? _value.typeName
-          : typeName 
+      changeAmount: freezed == changeAmount
+          ? _value.changeAmount
+          : changeAmount 
               as String?,
-      amount: freezed == amount
-          ? _value.amount
-          : amount 
-              as double?,
       balanceBefore: freezed == balanceBefore
           ? _value.balanceBefore
           : balanceBefore 
-              as double?,
+              as String?,
       balanceAfter: freezed == balanceAfter
           ? _value.balanceAfter
           : balanceAfter 
-              as double?,
+              as String?,
       remark: freezed == remark
           ? _value.remark
           : remark 
@@ -1149,13 +452,10 @@ abstract class _$$WalletLogImplCopyWith<$Res>
   $Res call(
       {int id,
       @JsonKey(name: 'member_id') int? memberId,
-      @JsonKey(name: 'member_name') String? memberName,
-      @JsonKey(name: 'member_phone') String? memberPhone,
-      @JsonKey(name: 'type') int? type,
-      @JsonKey(name: 'type_name') String? typeName,
-      @JsonKey(name: 'amount') double? amount,
-      @JsonKey(name: 'balance_before') double? balanceBefore,
-      @JsonKey(name: 'balance_after') double? balanceAfter,
+      @JsonKey(name: 'change_type') int? changeType,
+      @JsonKey(name: 'change_amount') String? changeAmount,
+      @JsonKey(name: 'balance_before') String? balanceBefore,
+      @JsonKey(name: 'balance_after') String? balanceAfter,
       @JsonKey(name: 'remark') String? remark,
       @JsonKey(name: 'order_no') String? orderNo,
       @JsonKey(name: 'created_at') String? createdAt});
@@ -1171,11 +471,8 @@ class __$$WalletLogImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? memberId = freezed,
-    Object? memberName = freezed,
-    Object? memberPhone = freezed,
-    Object? type = freezed,
-    Object? typeName = freezed,
-    Object? amount = freezed,
+    Object? changeType = freezed,
+    Object? changeAmount = freezed,
     Object? balanceBefore = freezed,
     Object? balanceAfter = freezed,
     Object? remark = freezed,
@@ -1191,34 +488,22 @@ class __$$WalletLogImplCopyWithImpl<$Res>
           ? _value.memberId
           : memberId 
               as int?,
-      memberName: freezed == memberName
-          ? _value.memberName
-          : memberName 
-              as String?,
-      memberPhone: freezed == memberPhone
-          ? _value.memberPhone
-          : memberPhone 
-              as String?,
-      type: freezed == type
-          ? _value.type
-          : type 
+      changeType: freezed == changeType
+          ? _value.changeType
+          : changeType 
               as int?,
-      typeName: freezed == typeName
-          ? _value.typeName
-          : typeName 
+      changeAmount: freezed == changeAmount
+          ? _value.changeAmount
+          : changeAmount 
               as String?,
-      amount: freezed == amount
-          ? _value.amount
-          : amount 
-              as double?,
       balanceBefore: freezed == balanceBefore
           ? _value.balanceBefore
           : balanceBefore 
-              as double?,
+              as String?,
       balanceAfter: freezed == balanceAfter
           ? _value.balanceAfter
           : balanceAfter 
-              as double?,
+              as String?,
       remark: freezed == remark
           ? _value.remark
           : remark 
@@ -1235,15 +520,12 @@ class __$$WalletLogImplCopyWithImpl<$Res>
   }
 }
 @JsonSerializable()
-class _$WalletLogImpl with DiagnosticableTreeMixin implements _WalletLog {
+class _$WalletLogImpl implements _WalletLog {
   const _$WalletLogImpl(
       {required this.id,
       @JsonKey(name: 'member_id') this.memberId,
-      @JsonKey(name: 'member_name') this.memberName,
-      @JsonKey(name: 'member_phone') this.memberPhone,
-      @JsonKey(name: 'type') this.type,
-      @JsonKey(name: 'type_name') this.typeName,
-      @JsonKey(name: 'amount') this.amount,
+      @JsonKey(name: 'change_type') this.changeType,
+      @JsonKey(name: 'change_amount') this.changeAmount,
       @JsonKey(name: 'balance_before') this.balanceBefore,
       @JsonKey(name: 'balance_after') this.balanceAfter,
       @JsonKey(name: 'remark') this.remark,
@@ -1257,26 +539,17 @@ class _$WalletLogImpl with DiagnosticableTreeMixin implements _WalletLog {
   @JsonKey(name: 'member_id')
   final int? memberId;
   @override
-  @JsonKey(name: 'member_name')
-  final String? memberName;
+  @JsonKey(name: 'change_type')
+  final int? changeType;
   @override
-  @JsonKey(name: 'member_phone')
-  final String? memberPhone;
-  @override
-  @JsonKey(name: 'type')
-  final int? type;
-  @override
-  @JsonKey(name: 'type_name')
-  final String? typeName;
-  @override
-  @JsonKey(name: 'amount')
-  final double? amount;
+  @JsonKey(name: 'change_amount')
+  final String? changeAmount;
   @override
   @JsonKey(name: 'balance_before')
-  final double? balanceBefore;
+  final String? balanceBefore;
   @override
   @JsonKey(name: 'balance_after')
-  final double? balanceAfter;
+  final String? balanceAfter;
   @override
   @JsonKey(name: 'remark')
   final String? remark;
@@ -1287,26 +560,8 @@ class _$WalletLogImpl with DiagnosticableTreeMixin implements _WalletLog {
   @JsonKey(name: 'created_at')
   final String? createdAt;
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'WalletLog(id: $id, memberId: $memberId, memberName: $memberName, memberPhone: $memberPhone, type: $type, typeName: $typeName, amount: $amount, balanceBefore: $balanceBefore, balanceAfter: $balanceAfter, remark: $remark, orderNo: $orderNo, createdAt: $createdAt)';
-  }
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'WalletLog'))
-      ..add(DiagnosticsProperty('id', id))
-      ..add(DiagnosticsProperty('memberId', memberId))
-      ..add(DiagnosticsProperty('memberName', memberName))
-      ..add(DiagnosticsProperty('memberPhone', memberPhone))
-      ..add(DiagnosticsProperty('type', type))
-      ..add(DiagnosticsProperty('typeName', typeName))
-      ..add(DiagnosticsProperty('amount', amount))
-      ..add(DiagnosticsProperty('balanceBefore', balanceBefore))
-      ..add(DiagnosticsProperty('balanceAfter', balanceAfter))
-      ..add(DiagnosticsProperty('remark', remark))
-      ..add(DiagnosticsProperty('orderNo', orderNo))
-      ..add(DiagnosticsProperty('createdAt', createdAt));
+  String toString() {
+    return 'WalletLog(id: $id, memberId: $memberId, changeType: $changeType, changeAmount: $changeAmount, balanceBefore: $balanceBefore, balanceAfter: $balanceAfter, remark: $remark, orderNo: $orderNo, createdAt: $createdAt)';
   }
   @override
   bool operator ==(Object other) {
@@ -1316,14 +571,10 @@ class _$WalletLogImpl with DiagnosticableTreeMixin implements _WalletLog {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.memberId, memberId) ||
                 other.memberId == memberId) &&
-            (identical(other.memberName, memberName) ||
-                other.memberName == memberName) &&
-            (identical(other.memberPhone, memberPhone) ||
-                other.memberPhone == memberPhone) &&
-            (identical(other.type, type) || other.type == type) &&
-            (identical(other.typeName, typeName) ||
-                other.typeName == typeName) &&
-            (identical(other.amount, amount) || other.amount == amount) &&
+            (identical(other.changeType, changeType) ||
+                other.changeType == changeType) &&
+            (identical(other.changeAmount, changeAmount) ||
+                other.changeAmount == changeAmount) &&
             (identical(other.balanceBefore, balanceBefore) ||
                 other.balanceBefore == balanceBefore) &&
             (identical(other.balanceAfter, balanceAfter) ||
@@ -1335,20 +586,8 @@ class _$WalletLogImpl with DiagnosticableTreeMixin implements _WalletLog {
   }
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      memberId,
-      memberName,
-      memberPhone,
-      type,
-      typeName,
-      amount,
-      balanceBefore,
-      balanceAfter,
-      remark,
-      orderNo,
-      createdAt);
+  int get hashCode => Object.hash(runtimeType, id, memberId, changeType,
+      changeAmount, balanceBefore, balanceAfter, remark, orderNo, createdAt);
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
@@ -1365,13 +604,10 @@ abstract class _WalletLog implements WalletLog {
   const factory _WalletLog(
       {required final int id,
       @JsonKey(name: 'member_id') final int? memberId,
-      @JsonKey(name: 'member_name') final String? memberName,
-      @JsonKey(name: 'member_phone') final String? memberPhone,
-      @JsonKey(name: 'type') final int? type,
-      @JsonKey(name: 'type_name') final String? typeName,
-      @JsonKey(name: 'amount') final double? amount,
-      @JsonKey(name: 'balance_before') final double? balanceBefore,
-      @JsonKey(name: 'balance_after') final double? balanceAfter,
+      @JsonKey(name: 'change_type') final int? changeType,
+      @JsonKey(name: 'change_amount') final String? changeAmount,
+      @JsonKey(name: 'balance_before') final String? balanceBefore,
+      @JsonKey(name: 'balance_after') final String? balanceAfter,
       @JsonKey(name: 'remark') final String? remark,
       @JsonKey(name: 'order_no') final String? orderNo,
       @JsonKey(name: 'created_at') final String? createdAt}) = _$WalletLogImpl;
@@ -1383,26 +619,17 @@ abstract class _WalletLog implements WalletLog {
   @JsonKey(name: 'member_id')
   int? get memberId;
   @override
-  @JsonKey(name: 'member_name')
-  String? get memberName;
+  @JsonKey(name: 'change_type')
+  int? get changeType;
   @override
-  @JsonKey(name: 'member_phone')
-  String? get memberPhone;
-  @override
-  @JsonKey(name: 'type')
-  int? get type;
-  @override
-  @JsonKey(name: 'type_name')
-  String? get typeName;
-  @override
-  @JsonKey(name: 'amount')
-  double? get amount;
+  @JsonKey(name: 'change_amount')
+  String? get changeAmount;
   @override
   @JsonKey(name: 'balance_before')
-  double? get balanceBefore;
+  String? get balanceBefore;
   @override
   @JsonKey(name: 'balance_after')
-  double? get balanceAfter;
+  String? get balanceAfter;
   @override
   @JsonKey(name: 'remark')
   String? get remark;
@@ -1428,28 +655,18 @@ mixin _$RechargeOrder {
   int? get memberId => throw _privateConstructorUsedError;
   @JsonKey(name: 'member_name')
   String? get memberName => throw _privateConstructorUsedError;
-  @JsonKey(name: 'member_phone')
-  String? get memberPhone => throw _privateConstructorUsedError;
-  @JsonKey(name: 'total_amount')
-  double? get totalAmount => throw _privateConstructorUsedError;
-  @JsonKey(name: 'amount')
-  double? get amount => throw _privateConstructorUsedError;
   @JsonKey(name: 'pay_amount')
-  double? get payAmount => throw _privateConstructorUsedError;
+  String? get payAmount => throw _privateConstructorUsedError;
   @JsonKey(name: 'gift_amount')
-  double? get giftAmount => throw _privateConstructorUsedError;
+  String? get giftAmount => throw _privateConstructorUsedError;
   @JsonKey(name: 'pay_type')
   int? get payType => throw _privateConstructorUsedError;
-  @JsonKey(name: 'pay_type_name')
-  String? get payTypeName => throw _privateConstructorUsedError;
   @JsonKey(name: 'pay_status')
   int? get payStatus => throw _privateConstructorUsedError;
-  @JsonKey(name: 'status_name')
-  String? get statusName => throw _privateConstructorUsedError;
-  @JsonKey(name: 'remark')
-  String? get remark => throw _privateConstructorUsedError;
   @JsonKey(name: 'pay_time')
   String? get payTime => throw _privateConstructorUsedError;
+  @JsonKey(name: 'remark')
+  String? get remark => throw _privateConstructorUsedError;
   @JsonKey(name: 'created_at')
   String? get createdAt => throw _privateConstructorUsedError;
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -1467,17 +684,12 @@ abstract class $RechargeOrderCopyWith<$Res> {
       @JsonKey(name: 'order_no') String? orderNo,
       @JsonKey(name: 'member_id') int? memberId,
       @JsonKey(name: 'member_name') String? memberName,
-      @JsonKey(name: 'member_phone') String? memberPhone,
-      @JsonKey(name: 'total_amount') double? totalAmount,
-      @JsonKey(name: 'amount') double? amount,
-      @JsonKey(name: 'pay_amount') double? payAmount,
-      @JsonKey(name: 'gift_amount') double? giftAmount,
+      @JsonKey(name: 'pay_amount') String? payAmount,
+      @JsonKey(name: 'gift_amount') String? giftAmount,
       @JsonKey(name: 'pay_type') int? payType,
-      @JsonKey(name: 'pay_type_name') String? payTypeName,
       @JsonKey(name: 'pay_status') int? payStatus,
-      @JsonKey(name: 'status_name') String? statusName,
-      @JsonKey(name: 'remark') String? remark,
       @JsonKey(name: 'pay_time') String? payTime,
+      @JsonKey(name: 'remark') String? remark,
       @JsonKey(name: 'created_at') String? createdAt});
 }
 class _$RechargeOrderCopyWithImpl<$Res, $Val extends RechargeOrder>
@@ -1492,17 +704,12 @@ class _$RechargeOrderCopyWithImpl<$Res, $Val extends RechargeOrder>
     Object? orderNo = freezed,
     Object? memberId = freezed,
     Object? memberName = freezed,
-    Object? memberPhone = freezed,
-    Object? totalAmount = freezed,
-    Object? amount = freezed,
     Object? payAmount = freezed,
     Object? giftAmount = freezed,
     Object? payType = freezed,
-    Object? payTypeName = freezed,
     Object? payStatus = freezed,
-    Object? statusName = freezed,
-    Object? remark = freezed,
     Object? payTime = freezed,
+    Object? remark = freezed,
     Object? createdAt = freezed,
   }) {
     return _then(_value.copyWith(
@@ -1522,49 +729,29 @@ class _$RechargeOrderCopyWithImpl<$Res, $Val extends RechargeOrder>
           ? _value.memberName
           : memberName 
               as String?,
-      memberPhone: freezed == memberPhone
-          ? _value.memberPhone
-          : memberPhone 
-              as String?,
-      totalAmount: freezed == totalAmount
-          ? _value.totalAmount
-          : totalAmount 
-              as double?,
-      amount: freezed == amount
-          ? _value.amount
-          : amount 
-              as double?,
       payAmount: freezed == payAmount
           ? _value.payAmount
           : payAmount 
-              as double?,
+              as String?,
       giftAmount: freezed == giftAmount
           ? _value.giftAmount
           : giftAmount 
-              as double?,
+              as String?,
       payType: freezed == payType
           ? _value.payType
           : payType 
               as int?,
-      payTypeName: freezed == payTypeName
-          ? _value.payTypeName
-          : payTypeName 
-              as String?,
       payStatus: freezed == payStatus
           ? _value.payStatus
           : payStatus 
               as int?,
-      statusName: freezed == statusName
-          ? _value.statusName
-          : statusName 
+      payTime: freezed == payTime
+          ? _value.payTime
+          : payTime 
               as String?,
       remark: freezed == remark
           ? _value.remark
           : remark 
-              as String?,
-      payTime: freezed == payTime
-          ? _value.payTime
-          : payTime 
               as String?,
       createdAt: freezed == createdAt
           ? _value.createdAt
@@ -1585,17 +772,12 @@ abstract class _$$RechargeOrderImplCopyWith<$Res>
       @JsonKey(name: 'order_no') String? orderNo,
       @JsonKey(name: 'member_id') int? memberId,
       @JsonKey(name: 'member_name') String? memberName,
-      @JsonKey(name: 'member_phone') String? memberPhone,
-      @JsonKey(name: 'total_amount') double? totalAmount,
-      @JsonKey(name: 'amount') double? amount,
-      @JsonKey(name: 'pay_amount') double? payAmount,
-      @JsonKey(name: 'gift_amount') double? giftAmount,
+      @JsonKey(name: 'pay_amount') String? payAmount,
+      @JsonKey(name: 'gift_amount') String? giftAmount,
       @JsonKey(name: 'pay_type') int? payType,
-      @JsonKey(name: 'pay_type_name') String? payTypeName,
       @JsonKey(name: 'pay_status') int? payStatus,
-      @JsonKey(name: 'status_name') String? statusName,
-      @JsonKey(name: 'remark') String? remark,
       @JsonKey(name: 'pay_time') String? payTime,
+      @JsonKey(name: 'remark') String? remark,
       @JsonKey(name: 'created_at') String? createdAt});
 }
 class __$$RechargeOrderImplCopyWithImpl<$Res>
@@ -1611,17 +793,12 @@ class __$$RechargeOrderImplCopyWithImpl<$Res>
     Object? orderNo = freezed,
     Object? memberId = freezed,
     Object? memberName = freezed,
-    Object? memberPhone = freezed,
-    Object? totalAmount = freezed,
-    Object? amount = freezed,
     Object? payAmount = freezed,
     Object? giftAmount = freezed,
     Object? payType = freezed,
-    Object? payTypeName = freezed,
     Object? payStatus = freezed,
-    Object? statusName = freezed,
-    Object? remark = freezed,
     Object? payTime = freezed,
+    Object? remark = freezed,
     Object? createdAt = freezed,
   }) {
     return _then(_$RechargeOrderImpl(
@@ -1641,49 +818,29 @@ class __$$RechargeOrderImplCopyWithImpl<$Res>
           ? _value.memberName
           : memberName 
               as String?,
-      memberPhone: freezed == memberPhone
-          ? _value.memberPhone
-          : memberPhone 
-              as String?,
-      totalAmount: freezed == totalAmount
-          ? _value.totalAmount
-          : totalAmount 
-              as double?,
-      amount: freezed == amount
-          ? _value.amount
-          : amount 
-              as double?,
       payAmount: freezed == payAmount
           ? _value.payAmount
           : payAmount 
-              as double?,
+              as String?,
       giftAmount: freezed == giftAmount
           ? _value.giftAmount
           : giftAmount 
-              as double?,
+              as String?,
       payType: freezed == payType
           ? _value.payType
           : payType 
               as int?,
-      payTypeName: freezed == payTypeName
-          ? _value.payTypeName
-          : payTypeName 
-              as String?,
       payStatus: freezed == payStatus
           ? _value.payStatus
           : payStatus 
               as int?,
-      statusName: freezed == statusName
-          ? _value.statusName
-          : statusName 
+      payTime: freezed == payTime
+          ? _value.payTime
+          : payTime 
               as String?,
       remark: freezed == remark
           ? _value.remark
           : remark 
-              as String?,
-      payTime: freezed == payTime
-          ? _value.payTime
-          : payTime 
               as String?,
       createdAt: freezed == createdAt
           ? _value.createdAt
@@ -1693,25 +850,18 @@ class __$$RechargeOrderImplCopyWithImpl<$Res>
   }
 }
 @JsonSerializable()
-class _$RechargeOrderImpl
-    with DiagnosticableTreeMixin
-    implements _RechargeOrder {
+class _$RechargeOrderImpl implements _RechargeOrder {
   const _$RechargeOrderImpl(
       {required this.id,
       @JsonKey(name: 'order_no') this.orderNo,
       @JsonKey(name: 'member_id') this.memberId,
       @JsonKey(name: 'member_name') this.memberName,
-      @JsonKey(name: 'member_phone') this.memberPhone,
-      @JsonKey(name: 'total_amount') this.totalAmount,
-      @JsonKey(name: 'amount') this.amount,
       @JsonKey(name: 'pay_amount') this.payAmount,
       @JsonKey(name: 'gift_amount') this.giftAmount,
       @JsonKey(name: 'pay_type') this.payType,
-      @JsonKey(name: 'pay_type_name') this.payTypeName,
       @JsonKey(name: 'pay_status') this.payStatus,
-      @JsonKey(name: 'status_name') this.statusName,
-      @JsonKey(name: 'remark') this.remark,
       @JsonKey(name: 'pay_time') this.payTime,
+      @JsonKey(name: 'remark') this.remark,
       @JsonKey(name: 'created_at') this.createdAt});
   factory _$RechargeOrderImpl.fromJson(Map<String, dynamic> json) =>
       _$$RechargeOrderImplFromJson(json);
@@ -1727,66 +877,29 @@ class _$RechargeOrderImpl
   @JsonKey(name: 'member_name')
   final String? memberName;
   @override
-  @JsonKey(name: 'member_phone')
-  final String? memberPhone;
-  @override
-  @JsonKey(name: 'total_amount')
-  final double? totalAmount;
-  @override
-  @JsonKey(name: 'amount')
-  final double? amount;
-  @override
   @JsonKey(name: 'pay_amount')
-  final double? payAmount;
+  final String? payAmount;
   @override
   @JsonKey(name: 'gift_amount')
-  final double? giftAmount;
+  final String? giftAmount;
   @override
   @JsonKey(name: 'pay_type')
   final int? payType;
   @override
-  @JsonKey(name: 'pay_type_name')
-  final String? payTypeName;
-  @override
   @JsonKey(name: 'pay_status')
   final int? payStatus;
-  @override
-  @JsonKey(name: 'status_name')
-  final String? statusName;
-  @override
-  @JsonKey(name: 'remark')
-  final String? remark;
   @override
   @JsonKey(name: 'pay_time')
   final String? payTime;
   @override
+  @JsonKey(name: 'remark')
+  final String? remark;
+  @override
   @JsonKey(name: 'created_at')
   final String? createdAt;
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'RechargeOrder(id: $id, orderNo: $orderNo, memberId: $memberId, memberName: $memberName, memberPhone: $memberPhone, totalAmount: $totalAmount, amount: $amount, payAmount: $payAmount, giftAmount: $giftAmount, payType: $payType, payTypeName: $payTypeName, payStatus: $payStatus, statusName: $statusName, remark: $remark, payTime: $payTime, createdAt: $createdAt)';
-  }
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'RechargeOrder'))
-      ..add(DiagnosticsProperty('id', id))
-      ..add(DiagnosticsProperty('orderNo', orderNo))
-      ..add(DiagnosticsProperty('memberId', memberId))
-      ..add(DiagnosticsProperty('memberName', memberName))
-      ..add(DiagnosticsProperty('memberPhone', memberPhone))
-      ..add(DiagnosticsProperty('totalAmount', totalAmount))
-      ..add(DiagnosticsProperty('amount', amount))
-      ..add(DiagnosticsProperty('payAmount', payAmount))
-      ..add(DiagnosticsProperty('giftAmount', giftAmount))
-      ..add(DiagnosticsProperty('payType', payType))
-      ..add(DiagnosticsProperty('payTypeName', payTypeName))
-      ..add(DiagnosticsProperty('payStatus', payStatus))
-      ..add(DiagnosticsProperty('statusName', statusName))
-      ..add(DiagnosticsProperty('remark', remark))
-      ..add(DiagnosticsProperty('payTime', payTime))
-      ..add(DiagnosticsProperty('createdAt', createdAt));
+  String toString() {
+    return 'RechargeOrder(id: $id, orderNo: $orderNo, memberId: $memberId, memberName: $memberName, payAmount: $payAmount, giftAmount: $giftAmount, payType: $payType, payStatus: $payStatus, payTime: $payTime, remark: $remark, createdAt: $createdAt)';
   }
   @override
   bool operator ==(Object other) {
@@ -1799,24 +912,15 @@ class _$RechargeOrderImpl
                 other.memberId == memberId) &&
             (identical(other.memberName, memberName) ||
                 other.memberName == memberName) &&
-            (identical(other.memberPhone, memberPhone) ||
-                other.memberPhone == memberPhone) &&
-            (identical(other.totalAmount, totalAmount) ||
-                other.totalAmount == totalAmount) &&
-            (identical(other.amount, amount) || other.amount == amount) &&
             (identical(other.payAmount, payAmount) ||
                 other.payAmount == payAmount) &&
             (identical(other.giftAmount, giftAmount) ||
                 other.giftAmount == giftAmount) &&
             (identical(other.payType, payType) || other.payType == payType) &&
-            (identical(other.payTypeName, payTypeName) ||
-                other.payTypeName == payTypeName) &&
             (identical(other.payStatus, payStatus) ||
                 other.payStatus == payStatus) &&
-            (identical(other.statusName, statusName) ||
-                other.statusName == statusName) &&
-            (identical(other.remark, remark) || other.remark == remark) &&
             (identical(other.payTime, payTime) || other.payTime == payTime) &&
+            (identical(other.remark, remark) || other.remark == remark) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt));
   }
@@ -1828,17 +932,12 @@ class _$RechargeOrderImpl
       orderNo,
       memberId,
       memberName,
-      memberPhone,
-      totalAmount,
-      amount,
       payAmount,
       giftAmount,
       payType,
-      payTypeName,
       payStatus,
-      statusName,
-      remark,
       payTime,
+      remark,
       createdAt);
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
@@ -1858,17 +957,12 @@ abstract class _RechargeOrder implements RechargeOrder {
           @JsonKey(name: 'order_no') final String? orderNo,
           @JsonKey(name: 'member_id') final int? memberId,
           @JsonKey(name: 'member_name') final String? memberName,
-          @JsonKey(name: 'member_phone') final String? memberPhone,
-          @JsonKey(name: 'total_amount') final double? totalAmount,
-          @JsonKey(name: 'amount') final double? amount,
-          @JsonKey(name: 'pay_amount') final double? payAmount,
-          @JsonKey(name: 'gift_amount') final double? giftAmount,
+          @JsonKey(name: 'pay_amount') final String? payAmount,
+          @JsonKey(name: 'gift_amount') final String? giftAmount,
           @JsonKey(name: 'pay_type') final int? payType,
-          @JsonKey(name: 'pay_type_name') final String? payTypeName,
           @JsonKey(name: 'pay_status') final int? payStatus,
-          @JsonKey(name: 'status_name') final String? statusName,
-          @JsonKey(name: 'remark') final String? remark,
           @JsonKey(name: 'pay_time') final String? payTime,
+          @JsonKey(name: 'remark') final String? remark,
           @JsonKey(name: 'created_at') final String? createdAt}) =
       _$RechargeOrderImpl;
   factory _RechargeOrder.fromJson(Map<String, dynamic> json) =
@@ -1885,38 +979,23 @@ abstract class _RechargeOrder implements RechargeOrder {
   @JsonKey(name: 'member_name')
   String? get memberName;
   @override
-  @JsonKey(name: 'member_phone')
-  String? get memberPhone;
-  @override
-  @JsonKey(name: 'total_amount')
-  double? get totalAmount;
-  @override
-  @JsonKey(name: 'amount')
-  double? get amount;
-  @override
   @JsonKey(name: 'pay_amount')
-  double? get payAmount;
+  String? get payAmount;
   @override
   @JsonKey(name: 'gift_amount')
-  double? get giftAmount;
+  String? get giftAmount;
   @override
   @JsonKey(name: 'pay_type')
   int? get payType;
   @override
-  @JsonKey(name: 'pay_type_name')
-  String? get payTypeName;
-  @override
   @JsonKey(name: 'pay_status')
   int? get payStatus;
   @override
-  @JsonKey(name: 'status_name')
-  String? get statusName;
+  @JsonKey(name: 'pay_time')
+  String? get payTime;
   @override
   @JsonKey(name: 'remark')
   String? get remark;
-  @override
-  @JsonKey(name: 'pay_time')
-  String? get payTime;
   @override
   @JsonKey(name: 'created_at')
   String? get createdAt;
@@ -1925,43 +1004,519 @@ abstract class _RechargeOrder implements RechargeOrder {
   _$$RechargeOrderImplCopyWith<_$RechargeOrderImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
-CreateRechargeOrderRequest _$CreateRechargeOrderRequestFromJson(
-    Map<String, dynamic> json) {
-  return _CreateRechargeOrderRequest.fromJson(json);
+CreateMemberReq _$CreateMemberReqFromJson(Map<String, dynamic> json) {
+  return _CreateMemberReq.fromJson(json);
 }
-mixin _$CreateRechargeOrderRequest {
-  @JsonKey(name: 'member_id')
+mixin _$CreateMemberReq {
+  String? get uid => throw _privateConstructorUsedError;
+  String get name => throw _privateConstructorUsedError;
+  String get phone => throw _privateConstructorUsedError;
+  int? get levelId => throw _privateConstructorUsedError;
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $CreateMemberReqCopyWith<CreateMemberReq> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+abstract class $CreateMemberReqCopyWith<$Res> {
+  factory $CreateMemberReqCopyWith(
+          CreateMemberReq value, $Res Function(CreateMemberReq) then) =
+      _$CreateMemberReqCopyWithImpl<$Res, CreateMemberReq>;
+  @useResult
+  $Res call({String? uid, String name, String phone, int? levelId});
+}
+class _$CreateMemberReqCopyWithImpl<$Res, $Val extends CreateMemberReq>
+    implements $CreateMemberReqCopyWith<$Res> {
+  _$CreateMemberReqCopyWithImpl(this._value, this._then);
+  final $Val _value;
+  final $Res Function($Val) _then;
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? uid = freezed,
+    Object? name = null,
+    Object? phone = null,
+    Object? levelId = freezed,
+  }) {
+    return _then(_value.copyWith(
+      uid: freezed == uid
+          ? _value.uid
+          : uid 
+              as String?,
+      name: null == name
+          ? _value.name
+          : name 
+              as String,
+      phone: null == phone
+          ? _value.phone
+          : phone 
+              as String,
+      levelId: freezed == levelId
+          ? _value.levelId
+          : levelId 
+              as int?,
+    ) as $Val);
+  }
+}
+abstract class _$$CreateMemberReqImplCopyWith<$Res>
+    implements $CreateMemberReqCopyWith<$Res> {
+  factory _$$CreateMemberReqImplCopyWith(_$CreateMemberReqImpl value,
+          $Res Function(_$CreateMemberReqImpl) then) =
+      __$$CreateMemberReqImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String? uid, String name, String phone, int? levelId});
+}
+class __$$CreateMemberReqImplCopyWithImpl<$Res>
+    extends _$CreateMemberReqCopyWithImpl<$Res, _$CreateMemberReqImpl>
+    implements _$$CreateMemberReqImplCopyWith<$Res> {
+  __$$CreateMemberReqImplCopyWithImpl(
+      _$CreateMemberReqImpl _value, $Res Function(_$CreateMemberReqImpl) _then)
+      : super(_value, _then);
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? uid = freezed,
+    Object? name = null,
+    Object? phone = null,
+    Object? levelId = freezed,
+  }) {
+    return _then(_$CreateMemberReqImpl(
+      uid: freezed == uid
+          ? _value.uid
+          : uid 
+              as String?,
+      name: null == name
+          ? _value.name
+          : name 
+              as String,
+      phone: null == phone
+          ? _value.phone
+          : phone 
+              as String,
+      levelId: freezed == levelId
+          ? _value.levelId
+          : levelId 
+              as int?,
+    ));
+  }
+}
+@JsonSerializable()
+class _$CreateMemberReqImpl implements _CreateMemberReq {
+  const _$CreateMemberReqImpl(
+      {this.uid, required this.name, required this.phone, this.levelId});
+  factory _$CreateMemberReqImpl.fromJson(Map<String, dynamic> json) =>
+      _$$CreateMemberReqImplFromJson(json);
+  @override
+  final String? uid;
+  @override
+  final String name;
+  @override
+  final String phone;
+  @override
+  final int? levelId;
+  @override
+  String toString() {
+    return 'CreateMemberReq(uid: $uid, name: $name, phone: $phone, levelId: $levelId)';
+  }
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$CreateMemberReqImpl &&
+            (identical(other.uid, uid) || other.uid == uid) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.phone, phone) || other.phone == phone) &&
+            (identical(other.levelId, levelId) || other.levelId == levelId));
+  }
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, uid, name, phone, levelId);
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$CreateMemberReqImplCopyWith<_$CreateMemberReqImpl> get copyWith =>
+      __$$CreateMemberReqImplCopyWithImpl<_$CreateMemberReqImpl>(
+          this, _$identity);
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$CreateMemberReqImplToJson(
+      this,
+    );
+  }
+}
+abstract class _CreateMemberReq implements CreateMemberReq {
+  const factory _CreateMemberReq(
+      {final String? uid,
+      required final String name,
+      required final String phone,
+      final int? levelId}) = _$CreateMemberReqImpl;
+  factory _CreateMemberReq.fromJson(Map<String, dynamic> json) =
+      _$CreateMemberReqImpl.fromJson;
+  @override
+  String? get uid;
+  @override
+  String get name;
+  @override
+  String get phone;
+  @override
+  int? get levelId;
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$CreateMemberReqImplCopyWith<_$CreateMemberReqImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+UpdateMemberReq _$UpdateMemberReqFromJson(Map<String, dynamic> json) {
+  return _UpdateMemberReq.fromJson(json);
+}
+mixin _$UpdateMemberReq {
+  String? get name => throw _privateConstructorUsedError;
+  String? get phone => throw _privateConstructorUsedError;
+  int? get points => throw _privateConstructorUsedError;
+  int? get level => throw _privateConstructorUsedError;
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $UpdateMemberReqCopyWith<UpdateMemberReq> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+abstract class $UpdateMemberReqCopyWith<$Res> {
+  factory $UpdateMemberReqCopyWith(
+          UpdateMemberReq value, $Res Function(UpdateMemberReq) then) =
+      _$UpdateMemberReqCopyWithImpl<$Res, UpdateMemberReq>;
+  @useResult
+  $Res call({String? name, String? phone, int? points, int? level});
+}
+class _$UpdateMemberReqCopyWithImpl<$Res, $Val extends UpdateMemberReq>
+    implements $UpdateMemberReqCopyWith<$Res> {
+  _$UpdateMemberReqCopyWithImpl(this._value, this._then);
+  final $Val _value;
+  final $Res Function($Val) _then;
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? name = freezed,
+    Object? phone = freezed,
+    Object? points = freezed,
+    Object? level = freezed,
+  }) {
+    return _then(_value.copyWith(
+      name: freezed == name
+          ? _value.name
+          : name 
+              as String?,
+      phone: freezed == phone
+          ? _value.phone
+          : phone 
+              as String?,
+      points: freezed == points
+          ? _value.points
+          : points 
+              as int?,
+      level: freezed == level
+          ? _value.level
+          : level 
+              as int?,
+    ) as $Val);
+  }
+}
+abstract class _$$UpdateMemberReqImplCopyWith<$Res>
+    implements $UpdateMemberReqCopyWith<$Res> {
+  factory _$$UpdateMemberReqImplCopyWith(_$UpdateMemberReqImpl value,
+          $Res Function(_$UpdateMemberReqImpl) then) =
+      __$$UpdateMemberReqImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String? name, String? phone, int? points, int? level});
+}
+class __$$UpdateMemberReqImplCopyWithImpl<$Res>
+    extends _$UpdateMemberReqCopyWithImpl<$Res, _$UpdateMemberReqImpl>
+    implements _$$UpdateMemberReqImplCopyWith<$Res> {
+  __$$UpdateMemberReqImplCopyWithImpl(
+      _$UpdateMemberReqImpl _value, $Res Function(_$UpdateMemberReqImpl) _then)
+      : super(_value, _then);
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? name = freezed,
+    Object? phone = freezed,
+    Object? points = freezed,
+    Object? level = freezed,
+  }) {
+    return _then(_$UpdateMemberReqImpl(
+      name: freezed == name
+          ? _value.name
+          : name 
+              as String?,
+      phone: freezed == phone
+          ? _value.phone
+          : phone 
+              as String?,
+      points: freezed == points
+          ? _value.points
+          : points 
+              as int?,
+      level: freezed == level
+          ? _value.level
+          : level 
+              as int?,
+    ));
+  }
+}
+@JsonSerializable()
+class _$UpdateMemberReqImpl implements _UpdateMemberReq {
+  const _$UpdateMemberReqImpl({this.name, this.phone, this.points, this.level});
+  factory _$UpdateMemberReqImpl.fromJson(Map<String, dynamic> json) =>
+      _$$UpdateMemberReqImplFromJson(json);
+  @override
+  final String? name;
+  @override
+  final String? phone;
+  @override
+  final int? points;
+  @override
+  final int? level;
+  @override
+  String toString() {
+    return 'UpdateMemberReq(name: $name, phone: $phone, points: $points, level: $level)';
+  }
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$UpdateMemberReqImpl &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.phone, phone) || other.phone == phone) &&
+            (identical(other.points, points) || other.points == points) &&
+            (identical(other.level, level) || other.level == level));
+  }
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, name, phone, points, level);
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$UpdateMemberReqImplCopyWith<_$UpdateMemberReqImpl> get copyWith =>
+      __$$UpdateMemberReqImplCopyWithImpl<_$UpdateMemberReqImpl>(
+          this, _$identity);
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$UpdateMemberReqImplToJson(
+      this,
+    );
+  }
+}
+abstract class _UpdateMemberReq implements UpdateMemberReq {
+  const factory _UpdateMemberReq(
+      {final String? name,
+      final String? phone,
+      final int? points,
+      final int? level}) = _$UpdateMemberReqImpl;
+  factory _UpdateMemberReq.fromJson(Map<String, dynamic> json) =
+      _$UpdateMemberReqImpl.fromJson;
+  @override
+  String? get name;
+  @override
+  String? get phone;
+  @override
+  int? get points;
+  @override
+  int? get level;
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$UpdateMemberReqImplCopyWith<_$UpdateMemberReqImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+AdjustBalanceReq _$AdjustBalanceReqFromJson(Map<String, dynamic> json) {
+  return _AdjustBalanceReq.fromJson(json);
+}
+mixin _$AdjustBalanceReq {
+  String get amount => throw _privateConstructorUsedError;
+  int get type => throw _privateConstructorUsedError;
+  String? get remark => throw _privateConstructorUsedError;
+  int? get version => throw _privateConstructorUsedError;
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $AdjustBalanceReqCopyWith<AdjustBalanceReq> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+abstract class $AdjustBalanceReqCopyWith<$Res> {
+  factory $AdjustBalanceReqCopyWith(
+          AdjustBalanceReq value, $Res Function(AdjustBalanceReq) then) =
+      _$AdjustBalanceReqCopyWithImpl<$Res, AdjustBalanceReq>;
+  @useResult
+  $Res call({String amount, int type, String? remark, int? version});
+}
+class _$AdjustBalanceReqCopyWithImpl<$Res, $Val extends AdjustBalanceReq>
+    implements $AdjustBalanceReqCopyWith<$Res> {
+  _$AdjustBalanceReqCopyWithImpl(this._value, this._then);
+  final $Val _value;
+  final $Res Function($Val) _then;
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? amount = null,
+    Object? type = null,
+    Object? remark = freezed,
+    Object? version = freezed,
+  }) {
+    return _then(_value.copyWith(
+      amount: null == amount
+          ? _value.amount
+          : amount 
+              as String,
+      type: null == type
+          ? _value.type
+          : type 
+              as int,
+      remark: freezed == remark
+          ? _value.remark
+          : remark 
+              as String?,
+      version: freezed == version
+          ? _value.version
+          : version 
+              as int?,
+    ) as $Val);
+  }
+}
+abstract class _$$AdjustBalanceReqImplCopyWith<$Res>
+    implements $AdjustBalanceReqCopyWith<$Res> {
+  factory _$$AdjustBalanceReqImplCopyWith(_$AdjustBalanceReqImpl value,
+          $Res Function(_$AdjustBalanceReqImpl) then) =
+      __$$AdjustBalanceReqImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String amount, int type, String? remark, int? version});
+}
+class __$$AdjustBalanceReqImplCopyWithImpl<$Res>
+    extends _$AdjustBalanceReqCopyWithImpl<$Res, _$AdjustBalanceReqImpl>
+    implements _$$AdjustBalanceReqImplCopyWith<$Res> {
+  __$$AdjustBalanceReqImplCopyWithImpl(_$AdjustBalanceReqImpl _value,
+      $Res Function(_$AdjustBalanceReqImpl) _then)
+      : super(_value, _then);
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? amount = null,
+    Object? type = null,
+    Object? remark = freezed,
+    Object? version = freezed,
+  }) {
+    return _then(_$AdjustBalanceReqImpl(
+      amount: null == amount
+          ? _value.amount
+          : amount 
+              as String,
+      type: null == type
+          ? _value.type
+          : type 
+              as int,
+      remark: freezed == remark
+          ? _value.remark
+          : remark 
+              as String?,
+      version: freezed == version
+          ? _value.version
+          : version 
+              as int?,
+    ));
+  }
+}
+@JsonSerializable()
+class _$AdjustBalanceReqImpl implements _AdjustBalanceReq {
+  const _$AdjustBalanceReqImpl(
+      {required this.amount, required this.type, this.remark, this.version});
+  factory _$AdjustBalanceReqImpl.fromJson(Map<String, dynamic> json) =>
+      _$$AdjustBalanceReqImplFromJson(json);
+  @override
+  final String amount;
+  @override
+  final int type;
+  @override
+  final String? remark;
+  @override
+  final int? version;
+  @override
+  String toString() {
+    return 'AdjustBalanceReq(amount: $amount, type: $type, remark: $remark, version: $version)';
+  }
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AdjustBalanceReqImpl &&
+            (identical(other.amount, amount) || other.amount == amount) &&
+            (identical(other.type, type) || other.type == type) &&
+            (identical(other.remark, remark) || other.remark == remark) &&
+            (identical(other.version, version) || other.version == version));
+  }
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, amount, type, remark, version);
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AdjustBalanceReqImplCopyWith<_$AdjustBalanceReqImpl> get copyWith =>
+      __$$AdjustBalanceReqImplCopyWithImpl<_$AdjustBalanceReqImpl>(
+          this, _$identity);
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$AdjustBalanceReqImplToJson(
+      this,
+    );
+  }
+}
+abstract class _AdjustBalanceReq implements AdjustBalanceReq {
+  const factory _AdjustBalanceReq(
+      {required final String amount,
+      required final int type,
+      final String? remark,
+      final int? version}) = _$AdjustBalanceReqImpl;
+  factory _AdjustBalanceReq.fromJson(Map<String, dynamic> json) =
+      _$AdjustBalanceReqImpl.fromJson;
+  @override
+  String get amount;
+  @override
+  int get type;
+  @override
+  String? get remark;
+  @override
+  int? get version;
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$AdjustBalanceReqImplCopyWith<_$AdjustBalanceReqImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+CreateRechargeOrderReq _$CreateRechargeOrderReqFromJson(
+    Map<String, dynamic> json) {
+  return _CreateRechargeOrderReq.fromJson(json);
+}
+mixin _$CreateRechargeOrderReq {
   int get memberId => throw _privateConstructorUsedError;
-  @JsonKey(name: 'pay_amount')
-  double get payAmount => throw _privateConstructorUsedError;
-  @JsonKey(name: 'gift_amount')
-  double? get giftAmount => throw _privateConstructorUsedError;
-  @JsonKey(name: 'pay_type')
+  String get payAmount => throw _privateConstructorUsedError;
+  String? get giftAmount => throw _privateConstructorUsedError;
   int get payType => throw _privateConstructorUsedError;
-  @JsonKey(name: 'remark')
   String? get remark => throw _privateConstructorUsedError;
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $CreateRechargeOrderRequestCopyWith<CreateRechargeOrderRequest>
-      get copyWith => throw _privateConstructorUsedError;
+  $CreateRechargeOrderReqCopyWith<CreateRechargeOrderReq> get copyWith =>
+      throw _privateConstructorUsedError;
 }
-abstract class $CreateRechargeOrderRequestCopyWith<$Res> {
-  factory $CreateRechargeOrderRequestCopyWith(CreateRechargeOrderRequest value,
-          $Res Function(CreateRechargeOrderRequest) then) =
-      _$CreateRechargeOrderRequestCopyWithImpl<$Res,
-          CreateRechargeOrderRequest>;
+abstract class $CreateRechargeOrderReqCopyWith<$Res> {
+  factory $CreateRechargeOrderReqCopyWith(CreateRechargeOrderReq value,
+          $Res Function(CreateRechargeOrderReq) then) =
+      _$CreateRechargeOrderReqCopyWithImpl<$Res, CreateRechargeOrderReq>;
   @useResult
   $Res call(
-      {@JsonKey(name: 'member_id') int memberId,
-      @JsonKey(name: 'pay_amount') double payAmount,
-      @JsonKey(name: 'gift_amount') double? giftAmount,
-      @JsonKey(name: 'pay_type') int payType,
-      @JsonKey(name: 'remark') String? remark});
+      {int memberId,
+      String payAmount,
+      String? giftAmount,
+      int payType,
+      String? remark});
 }
-class _$CreateRechargeOrderRequestCopyWithImpl<$Res,
-        $Val extends CreateRechargeOrderRequest>
-    implements $CreateRechargeOrderRequestCopyWith<$Res> {
-  _$CreateRechargeOrderRequestCopyWithImpl(this._value, this._then);
+class _$CreateRechargeOrderReqCopyWithImpl<$Res,
+        $Val extends CreateRechargeOrderReq>
+    implements $CreateRechargeOrderReqCopyWith<$Res> {
+  _$CreateRechargeOrderReqCopyWithImpl(this._value, this._then);
   final $Val _value;
   final $Res Function($Val) _then;
   @pragma('vm:prefer-inline')
@@ -1981,11 +1536,11 @@ class _$CreateRechargeOrderRequestCopyWithImpl<$Res,
       payAmount: null == payAmount
           ? _value.payAmount
           : payAmount 
-              as double,
+              as String,
       giftAmount: freezed == giftAmount
           ? _value.giftAmount
           : giftAmount 
-              as double?,
+              as String?,
       payType: null == payType
           ? _value.payType
           : payType 
@@ -1997,28 +1552,28 @@ class _$CreateRechargeOrderRequestCopyWithImpl<$Res,
     ) as $Val);
   }
 }
-abstract class _$$CreateRechargeOrderRequestImplCopyWith<$Res>
-    implements $CreateRechargeOrderRequestCopyWith<$Res> {
-  factory _$$CreateRechargeOrderRequestImplCopyWith(
-          _$CreateRechargeOrderRequestImpl value,
-          $Res Function(_$CreateRechargeOrderRequestImpl) then) =
-      __$$CreateRechargeOrderRequestImplCopyWithImpl<$Res>;
+abstract class _$$CreateRechargeOrderReqImplCopyWith<$Res>
+    implements $CreateRechargeOrderReqCopyWith<$Res> {
+  factory _$$CreateRechargeOrderReqImplCopyWith(
+          _$CreateRechargeOrderReqImpl value,
+          $Res Function(_$CreateRechargeOrderReqImpl) then) =
+      __$$CreateRechargeOrderReqImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: 'member_id') int memberId,
-      @JsonKey(name: 'pay_amount') double payAmount,
-      @JsonKey(name: 'gift_amount') double? giftAmount,
-      @JsonKey(name: 'pay_type') int payType,
-      @JsonKey(name: 'remark') String? remark});
+      {int memberId,
+      String payAmount,
+      String? giftAmount,
+      int payType,
+      String? remark});
 }
-class __$$CreateRechargeOrderRequestImplCopyWithImpl<$Res>
-    extends _$CreateRechargeOrderRequestCopyWithImpl<$Res,
-        _$CreateRechargeOrderRequestImpl>
-    implements _$$CreateRechargeOrderRequestImplCopyWith<$Res> {
-  __$$CreateRechargeOrderRequestImplCopyWithImpl(
-      _$CreateRechargeOrderRequestImpl _value,
-      $Res Function(_$CreateRechargeOrderRequestImpl) _then)
+class __$$CreateRechargeOrderReqImplCopyWithImpl<$Res>
+    extends _$CreateRechargeOrderReqCopyWithImpl<$Res,
+        _$CreateRechargeOrderReqImpl>
+    implements _$$CreateRechargeOrderReqImplCopyWith<$Res> {
+  __$$CreateRechargeOrderReqImplCopyWithImpl(
+      _$CreateRechargeOrderReqImpl _value,
+      $Res Function(_$CreateRechargeOrderReqImpl) _then)
       : super(_value, _then);
   @pragma('vm:prefer-inline')
   @override
@@ -2029,7 +1584,7 @@ class __$$CreateRechargeOrderRequestImplCopyWithImpl<$Res>
     Object? payType = null,
     Object? remark = freezed,
   }) {
-    return _then(_$CreateRechargeOrderRequestImpl(
+    return _then(_$CreateRechargeOrderReqImpl(
       memberId: null == memberId
           ? _value.memberId
           : memberId 
@@ -2037,11 +1592,11 @@ class __$$CreateRechargeOrderRequestImplCopyWithImpl<$Res>
       payAmount: null == payAmount
           ? _value.payAmount
           : payAmount 
-              as double,
+              as String,
       giftAmount: freezed == giftAmount
           ? _value.giftAmount
           : giftAmount 
-              as double?,
+              as String?,
       payType: null == payType
           ? _value.payType
           : payType 
@@ -2054,53 +1609,34 @@ class __$$CreateRechargeOrderRequestImplCopyWithImpl<$Res>
   }
 }
 @JsonSerializable()
-class _$CreateRechargeOrderRequestImpl
-    with DiagnosticableTreeMixin
-    implements _CreateRechargeOrderRequest {
-  const _$CreateRechargeOrderRequestImpl(
-      {@JsonKey(name: 'member_id') required this.memberId,
-      @JsonKey(name: 'pay_amount') required this.payAmount,
-      @JsonKey(name: 'gift_amount') this.giftAmount,
-      @JsonKey(name: 'pay_type') required this.payType,
-      @JsonKey(name: 'remark') this.remark});
-  factory _$CreateRechargeOrderRequestImpl.fromJson(
-          Map<String, dynamic> json) =>
-      _$$CreateRechargeOrderRequestImplFromJson(json);
+class _$CreateRechargeOrderReqImpl implements _CreateRechargeOrderReq {
+  const _$CreateRechargeOrderReqImpl(
+      {required this.memberId,
+      required this.payAmount,
+      this.giftAmount,
+      required this.payType,
+      this.remark});
+  factory _$CreateRechargeOrderReqImpl.fromJson(Map<String, dynamic> json) =>
+      _$$CreateRechargeOrderReqImplFromJson(json);
   @override
-  @JsonKey(name: 'member_id')
   final int memberId;
   @override
-  @JsonKey(name: 'pay_amount')
-  final double payAmount;
+  final String payAmount;
   @override
-  @JsonKey(name: 'gift_amount')
-  final double? giftAmount;
+  final String? giftAmount;
   @override
-  @JsonKey(name: 'pay_type')
   final int payType;
   @override
-  @JsonKey(name: 'remark')
   final String? remark;
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'CreateRechargeOrderRequest(memberId: $memberId, payAmount: $payAmount, giftAmount: $giftAmount, payType: $payType, remark: $remark)';
-  }
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'CreateRechargeOrderRequest'))
-      ..add(DiagnosticsProperty('memberId', memberId))
-      ..add(DiagnosticsProperty('payAmount', payAmount))
-      ..add(DiagnosticsProperty('giftAmount', giftAmount))
-      ..add(DiagnosticsProperty('payType', payType))
-      ..add(DiagnosticsProperty('remark', remark));
+  String toString() {
+    return 'CreateRechargeOrderReq(memberId: $memberId, payAmount: $payAmount, giftAmount: $giftAmount, payType: $payType, remark: $remark)';
   }
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$CreateRechargeOrderRequestImpl &&
+            other is _$CreateRechargeOrderReqImpl &&
             (identical(other.memberId, memberId) ||
                 other.memberId == memberId) &&
             (identical(other.payAmount, payAmount) ||
@@ -2117,556 +1653,649 @@ class _$CreateRechargeOrderRequestImpl
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$CreateRechargeOrderRequestImplCopyWith<_$CreateRechargeOrderRequestImpl>
-      get copyWith => __$$CreateRechargeOrderRequestImplCopyWithImpl<
-          _$CreateRechargeOrderRequestImpl>(this, _$identity);
+  _$$CreateRechargeOrderReqImplCopyWith<_$CreateRechargeOrderReqImpl>
+      get copyWith => __$$CreateRechargeOrderReqImplCopyWithImpl<
+          _$CreateRechargeOrderReqImpl>(this, _$identity);
   @override
   Map<String, dynamic> toJson() {
-    return _$$CreateRechargeOrderRequestImplToJson(
+    return _$$CreateRechargeOrderReqImplToJson(
       this,
     );
   }
 }
-abstract class _CreateRechargeOrderRequest
-    implements CreateRechargeOrderRequest {
-  const factory _CreateRechargeOrderRequest(
-          {@JsonKey(name: 'member_id') required final int memberId,
-          @JsonKey(name: 'pay_amount') required final double payAmount,
-          @JsonKey(name: 'gift_amount') final double? giftAmount,
-          @JsonKey(name: 'pay_type') required final int payType,
-          @JsonKey(name: 'remark') final String? remark}) =
-      _$CreateRechargeOrderRequestImpl;
-  factory _CreateRechargeOrderRequest.fromJson(Map<String, dynamic> json) =
-      _$CreateRechargeOrderRequestImpl.fromJson;
+abstract class _CreateRechargeOrderReq implements CreateRechargeOrderReq {
+  const factory _CreateRechargeOrderReq(
+      {required final int memberId,
+      required final String payAmount,
+      final String? giftAmount,
+      required final int payType,
+      final String? remark}) = _$CreateRechargeOrderReqImpl;
+  factory _CreateRechargeOrderReq.fromJson(Map<String, dynamic> json) =
+      _$CreateRechargeOrderReqImpl.fromJson;
   @override
-  @JsonKey(name: 'member_id')
   int get memberId;
   @override
-  @JsonKey(name: 'pay_amount')
-  double get payAmount;
+  String get payAmount;
   @override
-  @JsonKey(name: 'gift_amount')
-  double? get giftAmount;
+  String? get giftAmount;
   @override
-  @JsonKey(name: 'pay_type')
   int get payType;
   @override
-  @JsonKey(name: 'remark')
   String? get remark;
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$CreateRechargeOrderRequestImplCopyWith<_$CreateRechargeOrderRequestImpl>
+  _$$CreateRechargeOrderReqImplCopyWith<_$CreateRechargeOrderReqImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
-PayRechargeOrderRequest _$PayRechargeOrderRequestFromJson(
-    Map<String, dynamic> json) {
-  return _PayRechargeOrderRequest.fromJson(json);
+PayRechargeOrderReq _$PayRechargeOrderReqFromJson(Map<String, dynamic> json) {
+  return _PayRechargeOrderReq.fromJson(json);
 }
-mixin _$PayRechargeOrderRequest {
-  @JsonKey(name: 'pay_type')
-  int get payType => throw _privateConstructorUsedError;
-  @JsonKey(name: 'transaction_no')
-  String? get transactionNo => throw _privateConstructorUsedError;
+mixin _$PayRechargeOrderReq {
+  String get orderNo => throw _privateConstructorUsedError;
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $PayRechargeOrderRequestCopyWith<PayRechargeOrderRequest> get copyWith =>
+  $PayRechargeOrderReqCopyWith<PayRechargeOrderReq> get copyWith =>
       throw _privateConstructorUsedError;
 }
-abstract class $PayRechargeOrderRequestCopyWith<$Res> {
-  factory $PayRechargeOrderRequestCopyWith(PayRechargeOrderRequest value,
-          $Res Function(PayRechargeOrderRequest) then) =
-      _$PayRechargeOrderRequestCopyWithImpl<$Res, PayRechargeOrderRequest>;
+abstract class $PayRechargeOrderReqCopyWith<$Res> {
+  factory $PayRechargeOrderReqCopyWith(
+          PayRechargeOrderReq value, $Res Function(PayRechargeOrderReq) then) =
+      _$PayRechargeOrderReqCopyWithImpl<$Res, PayRechargeOrderReq>;
   @useResult
-  $Res call(
-      {@JsonKey(name: 'pay_type') int payType,
-      @JsonKey(name: 'transaction_no') String? transactionNo});
+  $Res call({String orderNo});
 }
-class _$PayRechargeOrderRequestCopyWithImpl<$Res,
-        $Val extends PayRechargeOrderRequest>
-    implements $PayRechargeOrderRequestCopyWith<$Res> {
-  _$PayRechargeOrderRequestCopyWithImpl(this._value, this._then);
+class _$PayRechargeOrderReqCopyWithImpl<$Res, $Val extends PayRechargeOrderReq>
+    implements $PayRechargeOrderReqCopyWith<$Res> {
+  _$PayRechargeOrderReqCopyWithImpl(this._value, this._then);
   final $Val _value;
   final $Res Function($Val) _then;
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? payType = null,
-    Object? transactionNo = freezed,
+    Object? orderNo = null,
   }) {
     return _then(_value.copyWith(
-      payType: null == payType
-          ? _value.payType
-          : payType 
-              as int,
-      transactionNo: freezed == transactionNo
-          ? _value.transactionNo
-          : transactionNo 
-              as String?,
+      orderNo: null == orderNo
+          ? _value.orderNo
+          : orderNo 
+              as String,
     ) as $Val);
   }
 }
-abstract class _$$PayRechargeOrderRequestImplCopyWith<$Res>
-    implements $PayRechargeOrderRequestCopyWith<$Res> {
-  factory _$$PayRechargeOrderRequestImplCopyWith(
-          _$PayRechargeOrderRequestImpl value,
-          $Res Function(_$PayRechargeOrderRequestImpl) then) =
-      __$$PayRechargeOrderRequestImplCopyWithImpl<$Res>;
+abstract class _$$PayRechargeOrderReqImplCopyWith<$Res>
+    implements $PayRechargeOrderReqCopyWith<$Res> {
+  factory _$$PayRechargeOrderReqImplCopyWith(_$PayRechargeOrderReqImpl value,
+          $Res Function(_$PayRechargeOrderReqImpl) then) =
+      __$$PayRechargeOrderReqImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {@JsonKey(name: 'pay_type') int payType,
-      @JsonKey(name: 'transaction_no') String? transactionNo});
+  $Res call({String orderNo});
 }
-class __$$PayRechargeOrderRequestImplCopyWithImpl<$Res>
-    extends _$PayRechargeOrderRequestCopyWithImpl<$Res,
-        _$PayRechargeOrderRequestImpl>
-    implements _$$PayRechargeOrderRequestImplCopyWith<$Res> {
-  __$$PayRechargeOrderRequestImplCopyWithImpl(
-      _$PayRechargeOrderRequestImpl _value,
-      $Res Function(_$PayRechargeOrderRequestImpl) _then)
+class __$$PayRechargeOrderReqImplCopyWithImpl<$Res>
+    extends _$PayRechargeOrderReqCopyWithImpl<$Res, _$PayRechargeOrderReqImpl>
+    implements _$$PayRechargeOrderReqImplCopyWith<$Res> {
+  __$$PayRechargeOrderReqImplCopyWithImpl(_$PayRechargeOrderReqImpl _value,
+      $Res Function(_$PayRechargeOrderReqImpl) _then)
       : super(_value, _then);
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? payType = null,
-    Object? transactionNo = freezed,
+    Object? orderNo = null,
   }) {
-    return _then(_$PayRechargeOrderRequestImpl(
-      payType: null == payType
-          ? _value.payType
-          : payType 
-              as int,
-      transactionNo: freezed == transactionNo
-          ? _value.transactionNo
-          : transactionNo 
-              as String?,
+    return _then(_$PayRechargeOrderReqImpl(
+      orderNo: null == orderNo
+          ? _value.orderNo
+          : orderNo 
+              as String,
     ));
   }
 }
 @JsonSerializable()
-class _$PayRechargeOrderRequestImpl
-    with DiagnosticableTreeMixin
-    implements _PayRechargeOrderRequest {
-  const _$PayRechargeOrderRequestImpl(
-      {@JsonKey(name: 'pay_type') required this.payType,
-      @JsonKey(name: 'transaction_no') this.transactionNo});
-  factory _$PayRechargeOrderRequestImpl.fromJson(Map<String, dynamic> json) =>
-      _$$PayRechargeOrderRequestImplFromJson(json);
+class _$PayRechargeOrderReqImpl implements _PayRechargeOrderReq {
+  const _$PayRechargeOrderReqImpl({required this.orderNo});
+  factory _$PayRechargeOrderReqImpl.fromJson(Map<String, dynamic> json) =>
+      _$$PayRechargeOrderReqImplFromJson(json);
   @override
-  @JsonKey(name: 'pay_type')
-  final int payType;
+  final String orderNo;
   @override
-  @JsonKey(name: 'transaction_no')
-  final String? transactionNo;
-  @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'PayRechargeOrderRequest(payType: $payType, transactionNo: $transactionNo)';
-  }
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'PayRechargeOrderRequest'))
-      ..add(DiagnosticsProperty('payType', payType))
-      ..add(DiagnosticsProperty('transactionNo', transactionNo));
+  String toString() {
+    return 'PayRechargeOrderReq(orderNo: $orderNo)';
   }
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$PayRechargeOrderRequestImpl &&
-            (identical(other.payType, payType) || other.payType == payType) &&
-            (identical(other.transactionNo, transactionNo) ||
-                other.transactionNo == transactionNo));
+            other is _$PayRechargeOrderReqImpl &&
+            (identical(other.orderNo, orderNo) || other.orderNo == orderNo));
   }
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, payType, transactionNo);
+  int get hashCode => Object.hash(runtimeType, orderNo);
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$PayRechargeOrderRequestImplCopyWith<_$PayRechargeOrderRequestImpl>
-      get copyWith => __$$PayRechargeOrderRequestImplCopyWithImpl<
-          _$PayRechargeOrderRequestImpl>(this, _$identity);
+  _$$PayRechargeOrderReqImplCopyWith<_$PayRechargeOrderReqImpl> get copyWith =>
+      __$$PayRechargeOrderReqImplCopyWithImpl<_$PayRechargeOrderReqImpl>(
+          this, _$identity);
   @override
   Map<String, dynamic> toJson() {
-    return _$$PayRechargeOrderRequestImplToJson(
+    return _$$PayRechargeOrderReqImplToJson(
       this,
     );
   }
 }
-abstract class _PayRechargeOrderRequest implements PayRechargeOrderRequest {
-  const factory _PayRechargeOrderRequest(
-          {@JsonKey(name: 'pay_type') required final int payType,
-          @JsonKey(name: 'transaction_no') final String? transactionNo}) =
-      _$PayRechargeOrderRequestImpl;
-  factory _PayRechargeOrderRequest.fromJson(Map<String, dynamic> json) =
-      _$PayRechargeOrderRequestImpl.fromJson;
+abstract class _PayRechargeOrderReq implements PayRechargeOrderReq {
+  const factory _PayRechargeOrderReq({required final String orderNo}) =
+      _$PayRechargeOrderReqImpl;
+  factory _PayRechargeOrderReq.fromJson(Map<String, dynamic> json) =
+      _$PayRechargeOrderReqImpl.fromJson;
   @override
-  @JsonKey(name: 'pay_type')
-  int get payType;
-  @override
-  @JsonKey(name: 'transaction_no')
-  String? get transactionNo;
+  String get orderNo;
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$PayRechargeOrderRequestImplCopyWith<_$PayRechargeOrderRequestImpl>
-      get copyWith => throw _privateConstructorUsedError;
-}
-MemberLevel _$MemberLevelFromJson(Map<String, dynamic> json) {
-  return _MemberLevel.fromJson(json);
-}
-mixin _$MemberLevel {
-  int get id => throw _privateConstructorUsedError;
-  @JsonKey(name: 'name')
-  String? get name => throw _privateConstructorUsedError;
-  @JsonKey(name: 'discount')
-  int? get discount => throw _privateConstructorUsedError;
-  @JsonKey(name: 'min_amount')
-  double? get minAmount => throw _privateConstructorUsedError;
-  @JsonKey(name: 'status')
-  int? get status => throw _privateConstructorUsedError;
-  @JsonKey(name: 'created_at')
-  String? get createdAt => throw _privateConstructorUsedError;
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  $MemberLevelCopyWith<MemberLevel> get copyWith =>
+  _$$PayRechargeOrderReqImplCopyWith<_$PayRechargeOrderReqImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
-abstract class $MemberLevelCopyWith<$Res> {
-  factory $MemberLevelCopyWith(
-          MemberLevel value, $Res Function(MemberLevel) then) =
-      _$MemberLevelCopyWithImpl<$Res, MemberLevel>;
+ListWalletLogReq _$ListWalletLogReqFromJson(Map<String, dynamic> json) {
+  return _ListWalletLogReq.fromJson(json);
+}
+mixin _$ListWalletLogReq {
+  int? get memberId => throw _privateConstructorUsedError;
+  int? get changeType => throw _privateConstructorUsedError;
+  String? get startTime => throw _privateConstructorUsedError;
+  String? get endTime => throw _privateConstructorUsedError;
+  int? get page => throw _privateConstructorUsedError;
+  int? get pageSize => throw _privateConstructorUsedError;
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $ListWalletLogReqCopyWith<ListWalletLogReq> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+abstract class $ListWalletLogReqCopyWith<$Res> {
+  factory $ListWalletLogReqCopyWith(
+          ListWalletLogReq value, $Res Function(ListWalletLogReq) then) =
+      _$ListWalletLogReqCopyWithImpl<$Res, ListWalletLogReq>;
   @useResult
   $Res call(
-      {int id,
-      @JsonKey(name: 'name') String? name,
-      @JsonKey(name: 'discount') int? discount,
-      @JsonKey(name: 'min_amount') double? minAmount,
-      @JsonKey(name: 'status') int? status,
-      @JsonKey(name: 'created_at') String? createdAt});
+      {int? memberId,
+      int? changeType,
+      String? startTime,
+      String? endTime,
+      int? page,
+      int? pageSize});
 }
-class _$MemberLevelCopyWithImpl<$Res, $Val extends MemberLevel>
-    implements $MemberLevelCopyWith<$Res> {
-  _$MemberLevelCopyWithImpl(this._value, this._then);
+class _$ListWalletLogReqCopyWithImpl<$Res, $Val extends ListWalletLogReq>
+    implements $ListWalletLogReqCopyWith<$Res> {
+  _$ListWalletLogReqCopyWithImpl(this._value, this._then);
   final $Val _value;
   final $Res Function($Val) _then;
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
-    Object? name = freezed,
-    Object? discount = freezed,
-    Object? minAmount = freezed,
-    Object? status = freezed,
-    Object? createdAt = freezed,
+    Object? memberId = freezed,
+    Object? changeType = freezed,
+    Object? startTime = freezed,
+    Object? endTime = freezed,
+    Object? page = freezed,
+    Object? pageSize = freezed,
   }) {
     return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id 
-              as int,
-      name: freezed == name
-          ? _value.name
-          : name 
-              as String?,
-      discount: freezed == discount
-          ? _value.discount
-          : discount 
+      memberId: freezed == memberId
+          ? _value.memberId
+          : memberId 
               as int?,
-      minAmount: freezed == minAmount
-          ? _value.minAmount
-          : minAmount 
-              as double?,
-      status: freezed == status
-          ? _value.status
-          : status 
+      changeType: freezed == changeType
+          ? _value.changeType
+          : changeType 
               as int?,
-      createdAt: freezed == createdAt
-          ? _value.createdAt
-          : createdAt 
+      startTime: freezed == startTime
+          ? _value.startTime
+          : startTime 
               as String?,
+      endTime: freezed == endTime
+          ? _value.endTime
+          : endTime 
+              as String?,
+      page: freezed == page
+          ? _value.page
+          : page 
+              as int?,
+      pageSize: freezed == pageSize
+          ? _value.pageSize
+          : pageSize 
+              as int?,
     ) as $Val);
   }
 }
-abstract class _$$MemberLevelImplCopyWith<$Res>
-    implements $MemberLevelCopyWith<$Res> {
-  factory _$$MemberLevelImplCopyWith(
-          _$MemberLevelImpl value, $Res Function(_$MemberLevelImpl) then) =
-      __$$MemberLevelImplCopyWithImpl<$Res>;
+abstract class _$$ListWalletLogReqImplCopyWith<$Res>
+    implements $ListWalletLogReqCopyWith<$Res> {
+  factory _$$ListWalletLogReqImplCopyWith(_$ListWalletLogReqImpl value,
+          $Res Function(_$ListWalletLogReqImpl) then) =
+      __$$ListWalletLogReqImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
-      {int id,
-      @JsonKey(name: 'name') String? name,
-      @JsonKey(name: 'discount') int? discount,
-      @JsonKey(name: 'min_amount') double? minAmount,
-      @JsonKey(name: 'status') int? status,
-      @JsonKey(name: 'created_at') String? createdAt});
+      {int? memberId,
+      int? changeType,
+      String? startTime,
+      String? endTime,
+      int? page,
+      int? pageSize});
 }
-class __$$MemberLevelImplCopyWithImpl<$Res>
-    extends _$MemberLevelCopyWithImpl<$Res, _$MemberLevelImpl>
-    implements _$$MemberLevelImplCopyWith<$Res> {
-  __$$MemberLevelImplCopyWithImpl(
-      _$MemberLevelImpl _value, $Res Function(_$MemberLevelImpl) _then)
+class __$$ListWalletLogReqImplCopyWithImpl<$Res>
+    extends _$ListWalletLogReqCopyWithImpl<$Res, _$ListWalletLogReqImpl>
+    implements _$$ListWalletLogReqImplCopyWith<$Res> {
+  __$$ListWalletLogReqImplCopyWithImpl(_$ListWalletLogReqImpl _value,
+      $Res Function(_$ListWalletLogReqImpl) _then)
       : super(_value, _then);
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
-    Object? name = freezed,
-    Object? discount = freezed,
-    Object? minAmount = freezed,
-    Object? status = freezed,
-    Object? createdAt = freezed,
+    Object? memberId = freezed,
+    Object? changeType = freezed,
+    Object? startTime = freezed,
+    Object? endTime = freezed,
+    Object? page = freezed,
+    Object? pageSize = freezed,
   }) {
-    return _then(_$MemberLevelImpl(
-      id: null == id
-          ? _value.id
-          : id 
-              as int,
-      name: freezed == name
-          ? _value.name
-          : name 
-              as String?,
-      discount: freezed == discount
-          ? _value.discount
-          : discount 
+    return _then(_$ListWalletLogReqImpl(
+      memberId: freezed == memberId
+          ? _value.memberId
+          : memberId 
               as int?,
-      minAmount: freezed == minAmount
-          ? _value.minAmount
-          : minAmount 
-              as double?,
-      status: freezed == status
-          ? _value.status
-          : status 
+      changeType: freezed == changeType
+          ? _value.changeType
+          : changeType 
               as int?,
-      createdAt: freezed == createdAt
-          ? _value.createdAt
-          : createdAt 
+      startTime: freezed == startTime
+          ? _value.startTime
+          : startTime 
               as String?,
+      endTime: freezed == endTime
+          ? _value.endTime
+          : endTime 
+              as String?,
+      page: freezed == page
+          ? _value.page
+          : page 
+              as int?,
+      pageSize: freezed == pageSize
+          ? _value.pageSize
+          : pageSize 
+              as int?,
     ));
   }
 }
 @JsonSerializable()
-class _$MemberLevelImpl with DiagnosticableTreeMixin implements _MemberLevel {
-  const _$MemberLevelImpl(
-      {required this.id,
-      @JsonKey(name: 'name') this.name,
-      @JsonKey(name: 'discount') this.discount,
-      @JsonKey(name: 'min_amount') this.minAmount,
-      @JsonKey(name: 'status') this.status,
-      @JsonKey(name: 'created_at') this.createdAt});
-  factory _$MemberLevelImpl.fromJson(Map<String, dynamic> json) =>
-      _$$MemberLevelImplFromJson(json);
+class _$ListWalletLogReqImpl implements _ListWalletLogReq {
+  const _$ListWalletLogReqImpl(
+      {this.memberId,
+      this.changeType,
+      this.startTime,
+      this.endTime,
+      this.page,
+      this.pageSize});
+  factory _$ListWalletLogReqImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ListWalletLogReqImplFromJson(json);
   @override
-  final int id;
+  final int? memberId;
   @override
-  @JsonKey(name: 'name')
-  final String? name;
+  final int? changeType;
   @override
-  @JsonKey(name: 'discount')
-  final int? discount;
+  final String? startTime;
   @override
-  @JsonKey(name: 'min_amount')
-  final double? minAmount;
+  final String? endTime;
   @override
-  @JsonKey(name: 'status')
-  final int? status;
+  final int? page;
   @override
-  @JsonKey(name: 'created_at')
-  final String? createdAt;
+  final int? pageSize;
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'MemberLevel(id: $id, name: $name, discount: $discount, minAmount: $minAmount, status: $status, createdAt: $createdAt)';
-  }
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'MemberLevel'))
-      ..add(DiagnosticsProperty('id', id))
-      ..add(DiagnosticsProperty('name', name))
-      ..add(DiagnosticsProperty('discount', discount))
-      ..add(DiagnosticsProperty('minAmount', minAmount))
-      ..add(DiagnosticsProperty('status', status))
-      ..add(DiagnosticsProperty('createdAt', createdAt));
+  String toString() {
+    return 'ListWalletLogReq(memberId: $memberId, changeType: $changeType, startTime: $startTime, endTime: $endTime, page: $page, pageSize: $pageSize)';
   }
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$MemberLevelImpl &&
-            (identical(other.id, id) || other.id == id) &&
-            (identical(other.name, name) || other.name == name) &&
-            (identical(other.discount, discount) ||
-                other.discount == discount) &&
-            (identical(other.minAmount, minAmount) ||
-                other.minAmount == minAmount) &&
-            (identical(other.status, status) || other.status == status) &&
-            (identical(other.createdAt, createdAt) ||
-                other.createdAt == createdAt));
+            other is _$ListWalletLogReqImpl &&
+            (identical(other.memberId, memberId) ||
+                other.memberId == memberId) &&
+            (identical(other.changeType, changeType) ||
+                other.changeType == changeType) &&
+            (identical(other.startTime, startTime) ||
+                other.startTime == startTime) &&
+            (identical(other.endTime, endTime) || other.endTime == endTime) &&
+            (identical(other.page, page) || other.page == page) &&
+            (identical(other.pageSize, pageSize) ||
+                other.pageSize == pageSize));
   }
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType, id, name, discount, minAmount, status, createdAt);
+      runtimeType, memberId, changeType, startTime, endTime, page, pageSize);
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$MemberLevelImplCopyWith<_$MemberLevelImpl> get copyWith =>
-      __$$MemberLevelImplCopyWithImpl<_$MemberLevelImpl>(this, _$identity);
+  _$$ListWalletLogReqImplCopyWith<_$ListWalletLogReqImpl> get copyWith =>
+      __$$ListWalletLogReqImplCopyWithImpl<_$ListWalletLogReqImpl>(
+          this, _$identity);
   @override
   Map<String, dynamic> toJson() {
-    return _$$MemberLevelImplToJson(
+    return _$$ListWalletLogReqImplToJson(
       this,
     );
   }
 }
-abstract class _MemberLevel implements MemberLevel {
-  const factory _MemberLevel(
-          {required final int id,
-          @JsonKey(name: 'name') final String? name,
-          @JsonKey(name: 'discount') final int? discount,
-          @JsonKey(name: 'min_amount') final double? minAmount,
-          @JsonKey(name: 'status') final int? status,
-          @JsonKey(name: 'created_at') final String? createdAt}) =
-      _$MemberLevelImpl;
-  factory _MemberLevel.fromJson(Map<String, dynamic> json) =
-      _$MemberLevelImpl.fromJson;
+abstract class _ListWalletLogReq implements ListWalletLogReq {
+  const factory _ListWalletLogReq(
+      {final int? memberId,
+      final int? changeType,
+      final String? startTime,
+      final String? endTime,
+      final int? page,
+      final int? pageSize}) = _$ListWalletLogReqImpl;
+  factory _ListWalletLogReq.fromJson(Map<String, dynamic> json) =
+      _$ListWalletLogReqImpl.fromJson;
   @override
-  int get id;
+  int? get memberId;
   @override
-  @JsonKey(name: 'name')
-  String? get name;
+  int? get changeType;
   @override
-  @JsonKey(name: 'discount')
-  int? get discount;
+  String? get startTime;
   @override
-  @JsonKey(name: 'min_amount')
-  double? get minAmount;
+  String? get endTime;
   @override
-  @JsonKey(name: 'status')
+  int? get page;
+  @override
+  int? get pageSize;
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$ListWalletLogReqImplCopyWith<_$ListWalletLogReqImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+ListRechargeOrderReq _$ListRechargeOrderReqFromJson(Map<String, dynamic> json) {
+  return _ListRechargeOrderReq.fromJson(json);
+}
+mixin _$ListRechargeOrderReq {
+  int? get memberId => throw _privateConstructorUsedError;
+  int? get status => throw _privateConstructorUsedError;
+  int? get page => throw _privateConstructorUsedError;
+  int? get pageSize => throw _privateConstructorUsedError;
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $ListRechargeOrderReqCopyWith<ListRechargeOrderReq> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+abstract class $ListRechargeOrderReqCopyWith<$Res> {
+  factory $ListRechargeOrderReqCopyWith(ListRechargeOrderReq value,
+          $Res Function(ListRechargeOrderReq) then) =
+      _$ListRechargeOrderReqCopyWithImpl<$Res, ListRechargeOrderReq>;
+  @useResult
+  $Res call({int? memberId, int? status, int? page, int? pageSize});
+}
+class _$ListRechargeOrderReqCopyWithImpl<$Res,
+        $Val extends ListRechargeOrderReq>
+    implements $ListRechargeOrderReqCopyWith<$Res> {
+  _$ListRechargeOrderReqCopyWithImpl(this._value, this._then);
+  final $Val _value;
+  final $Res Function($Val) _then;
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? memberId = freezed,
+    Object? status = freezed,
+    Object? page = freezed,
+    Object? pageSize = freezed,
+  }) {
+    return _then(_value.copyWith(
+      memberId: freezed == memberId
+          ? _value.memberId
+          : memberId 
+              as int?,
+      status: freezed == status
+          ? _value.status
+          : status 
+              as int?,
+      page: freezed == page
+          ? _value.page
+          : page 
+              as int?,
+      pageSize: freezed == pageSize
+          ? _value.pageSize
+          : pageSize 
+              as int?,
+    ) as $Val);
+  }
+}
+abstract class _$$ListRechargeOrderReqImplCopyWith<$Res>
+    implements $ListRechargeOrderReqCopyWith<$Res> {
+  factory _$$ListRechargeOrderReqImplCopyWith(_$ListRechargeOrderReqImpl value,
+          $Res Function(_$ListRechargeOrderReqImpl) then) =
+      __$$ListRechargeOrderReqImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({int? memberId, int? status, int? page, int? pageSize});
+}
+class __$$ListRechargeOrderReqImplCopyWithImpl<$Res>
+    extends _$ListRechargeOrderReqCopyWithImpl<$Res, _$ListRechargeOrderReqImpl>
+    implements _$$ListRechargeOrderReqImplCopyWith<$Res> {
+  __$$ListRechargeOrderReqImplCopyWithImpl(_$ListRechargeOrderReqImpl _value,
+      $Res Function(_$ListRechargeOrderReqImpl) _then)
+      : super(_value, _then);
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? memberId = freezed,
+    Object? status = freezed,
+    Object? page = freezed,
+    Object? pageSize = freezed,
+  }) {
+    return _then(_$ListRechargeOrderReqImpl(
+      memberId: freezed == memberId
+          ? _value.memberId
+          : memberId 
+              as int?,
+      status: freezed == status
+          ? _value.status
+          : status 
+              as int?,
+      page: freezed == page
+          ? _value.page
+          : page 
+              as int?,
+      pageSize: freezed == pageSize
+          ? _value.pageSize
+          : pageSize 
+              as int?,
+    ));
+  }
+}
+@JsonSerializable()
+class _$ListRechargeOrderReqImpl implements _ListRechargeOrderReq {
+  const _$ListRechargeOrderReqImpl(
+      {this.memberId, this.status, this.page, this.pageSize});
+  factory _$ListRechargeOrderReqImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ListRechargeOrderReqImplFromJson(json);
+  @override
+  final int? memberId;
+  @override
+  final int? status;
+  @override
+  final int? page;
+  @override
+  final int? pageSize;
+  @override
+  String toString() {
+    return 'ListRechargeOrderReq(memberId: $memberId, status: $status, page: $page, pageSize: $pageSize)';
+  }
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ListRechargeOrderReqImpl &&
+            (identical(other.memberId, memberId) ||
+                other.memberId == memberId) &&
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.page, page) || other.page == page) &&
+            (identical(other.pageSize, pageSize) ||
+                other.pageSize == pageSize));
+  }
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, memberId, status, page, pageSize);
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ListRechargeOrderReqImplCopyWith<_$ListRechargeOrderReqImpl>
+      get copyWith =>
+          __$$ListRechargeOrderReqImplCopyWithImpl<_$ListRechargeOrderReqImpl>(
+              this, _$identity);
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ListRechargeOrderReqImplToJson(
+      this,
+    );
+  }
+}
+abstract class _ListRechargeOrderReq implements ListRechargeOrderReq {
+  const factory _ListRechargeOrderReq(
+      {final int? memberId,
+      final int? status,
+      final int? page,
+      final int? pageSize}) = _$ListRechargeOrderReqImpl;
+  factory _ListRechargeOrderReq.fromJson(Map<String, dynamic> json) =
+      _$ListRechargeOrderReqImpl.fromJson;
+  @override
+  int? get memberId;
+  @override
   int? get status;
   @override
-  @JsonKey(name: 'created_at')
-  String? get createdAt;
+  int? get page;
+  @override
+  int? get pageSize;
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$MemberLevelImplCopyWith<_$MemberLevelImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  _$$ListRechargeOrderReqImplCopyWith<_$ListRechargeOrderReqImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }
-mixin _$MemberPageResponse {
+MemberListResp _$MemberListRespFromJson(Map<String, dynamic> json) {
+  return _MemberListResp.fromJson(json);
+}
+mixin _$MemberListResp {
   List<Member> get list => throw _privateConstructorUsedError;
-  int get total => throw _privateConstructorUsedError;
+  @JsonKey(name: 'total')
+  int? get total => throw _privateConstructorUsedError;
   @JsonKey(name: 'page')
-  int get page => throw _privateConstructorUsedError;
+  int? get page => throw _privateConstructorUsedError;
   @JsonKey(name: 'page_size')
-  int get pageSize => throw _privateConstructorUsedError;
+  int? get pageSize => throw _privateConstructorUsedError;
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $MemberPageResponseCopyWith<MemberPageResponse> get copyWith =>
+  $MemberListRespCopyWith<MemberListResp> get copyWith =>
       throw _privateConstructorUsedError;
 }
-abstract class $MemberPageResponseCopyWith<$Res> {
-  factory $MemberPageResponseCopyWith(
-          MemberPageResponse value, $Res Function(MemberPageResponse) then) =
-      _$MemberPageResponseCopyWithImpl<$Res, MemberPageResponse>;
+abstract class $MemberListRespCopyWith<$Res> {
+  factory $MemberListRespCopyWith(
+          MemberListResp value, $Res Function(MemberListResp) then) =
+      _$MemberListRespCopyWithImpl<$Res, MemberListResp>;
   @useResult
   $Res call(
       {List<Member> list,
-      int total,
-      @JsonKey(name: 'page') int page,
-      @JsonKey(name: 'page_size') int pageSize});
+      @JsonKey(name: 'total') int? total,
+      @JsonKey(name: 'page') int? page,
+      @JsonKey(name: 'page_size') int? pageSize});
 }
-class _$MemberPageResponseCopyWithImpl<$Res, $Val extends MemberPageResponse>
-    implements $MemberPageResponseCopyWith<$Res> {
-  _$MemberPageResponseCopyWithImpl(this._value, this._then);
+class _$MemberListRespCopyWithImpl<$Res, $Val extends MemberListResp>
+    implements $MemberListRespCopyWith<$Res> {
+  _$MemberListRespCopyWithImpl(this._value, this._then);
   final $Val _value;
   final $Res Function($Val) _then;
   @pragma('vm:prefer-inline')
   @override
   $Res call({
     Object? list = null,
-    Object? total = null,
-    Object? page = null,
-    Object? pageSize = null,
+    Object? total = freezed,
+    Object? page = freezed,
+    Object? pageSize = freezed,
   }) {
     return _then(_value.copyWith(
       list: null == list
           ? _value.list
           : list 
               as List<Member>,
-      total: null == total
+      total: freezed == total
           ? _value.total
           : total 
-              as int,
-      page: null == page
+              as int?,
+      page: freezed == page
           ? _value.page
           : page 
-              as int,
-      pageSize: null == pageSize
+              as int?,
+      pageSize: freezed == pageSize
           ? _value.pageSize
           : pageSize 
-              as int,
+              as int?,
     ) as $Val);
   }
 }
-abstract class _$$MemberPageResponseImplCopyWith<$Res>
-    implements $MemberPageResponseCopyWith<$Res> {
-  factory _$$MemberPageResponseImplCopyWith(_$MemberPageResponseImpl value,
-          $Res Function(_$MemberPageResponseImpl) then) =
-      __$$MemberPageResponseImplCopyWithImpl<$Res>;
+abstract class _$$MemberListRespImplCopyWith<$Res>
+    implements $MemberListRespCopyWith<$Res> {
+  factory _$$MemberListRespImplCopyWith(_$MemberListRespImpl value,
+          $Res Function(_$MemberListRespImpl) then) =
+      __$$MemberListRespImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
       {List<Member> list,
-      int total,
-      @JsonKey(name: 'page') int page,
-      @JsonKey(name: 'page_size') int pageSize});
+      @JsonKey(name: 'total') int? total,
+      @JsonKey(name: 'page') int? page,
+      @JsonKey(name: 'page_size') int? pageSize});
 }
-class __$$MemberPageResponseImplCopyWithImpl<$Res>
-    extends _$MemberPageResponseCopyWithImpl<$Res, _$MemberPageResponseImpl>
-    implements _$$MemberPageResponseImplCopyWith<$Res> {
-  __$$MemberPageResponseImplCopyWithImpl(_$MemberPageResponseImpl _value,
-      $Res Function(_$MemberPageResponseImpl) _then)
+class __$$MemberListRespImplCopyWithImpl<$Res>
+    extends _$MemberListRespCopyWithImpl<$Res, _$MemberListRespImpl>
+    implements _$$MemberListRespImplCopyWith<$Res> {
+  __$$MemberListRespImplCopyWithImpl(
+      _$MemberListRespImpl _value, $Res Function(_$MemberListRespImpl) _then)
       : super(_value, _then);
   @pragma('vm:prefer-inline')
   @override
   $Res call({
     Object? list = null,
-    Object? total = null,
-    Object? page = null,
-    Object? pageSize = null,
+    Object? total = freezed,
+    Object? page = freezed,
+    Object? pageSize = freezed,
   }) {
-    return _then(_$MemberPageResponseImpl(
+    return _then(_$MemberListRespImpl(
       list: null == list
           ? _value._list
           : list 
               as List<Member>,
-      total: null == total
+      total: freezed == total
           ? _value.total
           : total 
-              as int,
-      page: null == page
+              as int?,
+      page: freezed == page
           ? _value.page
           : page 
-              as int,
-      pageSize: null == pageSize
+              as int?,
+      pageSize: freezed == pageSize
           ? _value.pageSize
           : pageSize 
-              as int,
+              as int?,
     ));
   }
 }
-class _$MemberPageResponseImpl
-    with DiagnosticableTreeMixin
-    implements _MemberPageResponse {
-  const _$MemberPageResponseImpl(
+@JsonSerializable()
+class _$MemberListRespImpl implements _MemberListResp {
+  const _$MemberListRespImpl(
       {required final List<Member> list,
-      required this.total,
-      @JsonKey(name: 'page') required this.page,
-      @JsonKey(name: 'page_size') required this.pageSize})
+      @JsonKey(name: 'total') this.total,
+      @JsonKey(name: 'page') this.page,
+      @JsonKey(name: 'page_size') this.pageSize})
       : _list = list;
+  factory _$MemberListRespImpl.fromJson(Map<String, dynamic> json) =>
+      _$$MemberListRespImplFromJson(json);
   final List<Member> _list;
   @override
   List<Member> get list {
@@ -2674,184 +2303,187 @@ class _$MemberPageResponseImpl
     return EqualUnmodifiableListView(_list);
   }
   @override
-  final int total;
+  @JsonKey(name: 'total')
+  final int? total;
   @override
   @JsonKey(name: 'page')
-  final int page;
+  final int? page;
   @override
   @JsonKey(name: 'page_size')
-  final int pageSize;
+  final int? pageSize;
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'MemberPageResponse(list: $list, total: $total, page: $page, pageSize: $pageSize)';
-  }
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'MemberPageResponse'))
-      ..add(DiagnosticsProperty('list', list))
-      ..add(DiagnosticsProperty('total', total))
-      ..add(DiagnosticsProperty('page', page))
-      ..add(DiagnosticsProperty('pageSize', pageSize));
+  String toString() {
+    return 'MemberListResp(list: $list, total: $total, page: $page, pageSize: $pageSize)';
   }
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$MemberPageResponseImpl &&
+            other is _$MemberListRespImpl &&
             const DeepCollectionEquality().equals(other._list, _list) &&
             (identical(other.total, total) || other.total == total) &&
             (identical(other.page, page) || other.page == page) &&
             (identical(other.pageSize, pageSize) ||
                 other.pageSize == pageSize));
   }
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType,
       const DeepCollectionEquality().hash(_list), total, page, pageSize);
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$MemberPageResponseImplCopyWith<_$MemberPageResponseImpl> get copyWith =>
-      __$$MemberPageResponseImplCopyWithImpl<_$MemberPageResponseImpl>(
+  _$$MemberListRespImplCopyWith<_$MemberListRespImpl> get copyWith =>
+      __$$MemberListRespImplCopyWithImpl<_$MemberListRespImpl>(
           this, _$identity);
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$MemberListRespImplToJson(
+      this,
+    );
+  }
 }
-abstract class _MemberPageResponse implements MemberPageResponse {
-  const factory _MemberPageResponse(
-          {required final List<Member> list,
-          required final int total,
-          @JsonKey(name: 'page') required final int page,
-          @JsonKey(name: 'page_size') required final int pageSize}) =
-      _$MemberPageResponseImpl;
+abstract class _MemberListResp implements MemberListResp {
+  const factory _MemberListResp(
+      {required final List<Member> list,
+      @JsonKey(name: 'total') final int? total,
+      @JsonKey(name: 'page') final int? page,
+      @JsonKey(name: 'page_size') final int? pageSize}) = _$MemberListRespImpl;
+  factory _MemberListResp.fromJson(Map<String, dynamic> json) =
+      _$MemberListRespImpl.fromJson;
   @override
   List<Member> get list;
   @override
-  int get total;
+  @JsonKey(name: 'total')
+  int? get total;
   @override
   @JsonKey(name: 'page')
-  int get page;
+  int? get page;
   @override
   @JsonKey(name: 'page_size')
-  int get pageSize;
+  int? get pageSize;
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$MemberPageResponseImplCopyWith<_$MemberPageResponseImpl> get copyWith =>
+  _$$MemberListRespImplCopyWith<_$MemberListRespImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
-mixin _$WalletLogPageResponse {
+WalletLogListResp _$WalletLogListRespFromJson(Map<String, dynamic> json) {
+  return _WalletLogListResp.fromJson(json);
+}
+mixin _$WalletLogListResp {
   List<WalletLog> get list => throw _privateConstructorUsedError;
-  int get total => throw _privateConstructorUsedError;
+  @JsonKey(name: 'total')
+  int? get total => throw _privateConstructorUsedError;
   @JsonKey(name: 'page')
-  int get page => throw _privateConstructorUsedError;
+  int? get page => throw _privateConstructorUsedError;
   @JsonKey(name: 'page_size')
-  int get pageSize => throw _privateConstructorUsedError;
+  int? get pageSize => throw _privateConstructorUsedError;
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $WalletLogPageResponseCopyWith<WalletLogPageResponse> get copyWith =>
+  $WalletLogListRespCopyWith<WalletLogListResp> get copyWith =>
       throw _privateConstructorUsedError;
 }
-abstract class $WalletLogPageResponseCopyWith<$Res> {
-  factory $WalletLogPageResponseCopyWith(WalletLogPageResponse value,
-          $Res Function(WalletLogPageResponse) then) =
-      _$WalletLogPageResponseCopyWithImpl<$Res, WalletLogPageResponse>;
+abstract class $WalletLogListRespCopyWith<$Res> {
+  factory $WalletLogListRespCopyWith(
+          WalletLogListResp value, $Res Function(WalletLogListResp) then) =
+      _$WalletLogListRespCopyWithImpl<$Res, WalletLogListResp>;
   @useResult
   $Res call(
       {List<WalletLog> list,
-      int total,
-      @JsonKey(name: 'page') int page,
-      @JsonKey(name: 'page_size') int pageSize});
+      @JsonKey(name: 'total') int? total,
+      @JsonKey(name: 'page') int? page,
+      @JsonKey(name: 'page_size') int? pageSize});
 }
-class _$WalletLogPageResponseCopyWithImpl<$Res,
-        $Val extends WalletLogPageResponse>
-    implements $WalletLogPageResponseCopyWith<$Res> {
-  _$WalletLogPageResponseCopyWithImpl(this._value, this._then);
+class _$WalletLogListRespCopyWithImpl<$Res, $Val extends WalletLogListResp>
+    implements $WalletLogListRespCopyWith<$Res> {
+  _$WalletLogListRespCopyWithImpl(this._value, this._then);
   final $Val _value;
   final $Res Function($Val) _then;
   @pragma('vm:prefer-inline')
   @override
   $Res call({
     Object? list = null,
-    Object? total = null,
-    Object? page = null,
-    Object? pageSize = null,
+    Object? total = freezed,
+    Object? page = freezed,
+    Object? pageSize = freezed,
   }) {
     return _then(_value.copyWith(
       list: null == list
           ? _value.list
           : list 
               as List<WalletLog>,
-      total: null == total
+      total: freezed == total
           ? _value.total
           : total 
-              as int,
-      page: null == page
+              as int?,
+      page: freezed == page
           ? _value.page
           : page 
-              as int,
-      pageSize: null == pageSize
+              as int?,
+      pageSize: freezed == pageSize
           ? _value.pageSize
           : pageSize 
-              as int,
+              as int?,
     ) as $Val);
   }
 }
-abstract class _$$WalletLogPageResponseImplCopyWith<$Res>
-    implements $WalletLogPageResponseCopyWith<$Res> {
-  factory _$$WalletLogPageResponseImplCopyWith(
-          _$WalletLogPageResponseImpl value,
-          $Res Function(_$WalletLogPageResponseImpl) then) =
-      __$$WalletLogPageResponseImplCopyWithImpl<$Res>;
+abstract class _$$WalletLogListRespImplCopyWith<$Res>
+    implements $WalletLogListRespCopyWith<$Res> {
+  factory _$$WalletLogListRespImplCopyWith(_$WalletLogListRespImpl value,
+          $Res Function(_$WalletLogListRespImpl) then) =
+      __$$WalletLogListRespImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
       {List<WalletLog> list,
-      int total,
-      @JsonKey(name: 'page') int page,
-      @JsonKey(name: 'page_size') int pageSize});
+      @JsonKey(name: 'total') int? total,
+      @JsonKey(name: 'page') int? page,
+      @JsonKey(name: 'page_size') int? pageSize});
 }
-class __$$WalletLogPageResponseImplCopyWithImpl<$Res>
-    extends _$WalletLogPageResponseCopyWithImpl<$Res,
-        _$WalletLogPageResponseImpl>
-    implements _$$WalletLogPageResponseImplCopyWith<$Res> {
-  __$$WalletLogPageResponseImplCopyWithImpl(_$WalletLogPageResponseImpl _value,
-      $Res Function(_$WalletLogPageResponseImpl) _then)
+class __$$WalletLogListRespImplCopyWithImpl<$Res>
+    extends _$WalletLogListRespCopyWithImpl<$Res, _$WalletLogListRespImpl>
+    implements _$$WalletLogListRespImplCopyWith<$Res> {
+  __$$WalletLogListRespImplCopyWithImpl(_$WalletLogListRespImpl _value,
+      $Res Function(_$WalletLogListRespImpl) _then)
       : super(_value, _then);
   @pragma('vm:prefer-inline')
   @override
   $Res call({
     Object? list = null,
-    Object? total = null,
-    Object? page = null,
-    Object? pageSize = null,
+    Object? total = freezed,
+    Object? page = freezed,
+    Object? pageSize = freezed,
   }) {
-    return _then(_$WalletLogPageResponseImpl(
+    return _then(_$WalletLogListRespImpl(
       list: null == list
           ? _value._list
           : list 
               as List<WalletLog>,
-      total: null == total
+      total: freezed == total
           ? _value.total
           : total 
-              as int,
-      page: null == page
+              as int?,
+      page: freezed == page
           ? _value.page
           : page 
-              as int,
-      pageSize: null == pageSize
+              as int?,
+      pageSize: freezed == pageSize
           ? _value.pageSize
           : pageSize 
-              as int,
+              as int?,
     ));
   }
 }
-class _$WalletLogPageResponseImpl
-    with DiagnosticableTreeMixin
-    implements _WalletLogPageResponse {
-  const _$WalletLogPageResponseImpl(
+@JsonSerializable()
+class _$WalletLogListRespImpl implements _WalletLogListResp {
+  const _$WalletLogListRespImpl(
       {required final List<WalletLog> list,
-      required this.total,
-      @JsonKey(name: 'page') required this.page,
-      @JsonKey(name: 'page_size') required this.pageSize})
+      @JsonKey(name: 'total') this.total,
+      @JsonKey(name: 'page') this.page,
+      @JsonKey(name: 'page_size') this.pageSize})
       : _list = list;
+  factory _$WalletLogListRespImpl.fromJson(Map<String, dynamic> json) =>
+      _$$WalletLogListRespImplFromJson(json);
   final List<WalletLog> _list;
   @override
   List<WalletLog> get list {
@@ -2859,185 +2491,192 @@ class _$WalletLogPageResponseImpl
     return EqualUnmodifiableListView(_list);
   }
   @override
-  final int total;
+  @JsonKey(name: 'total')
+  final int? total;
   @override
   @JsonKey(name: 'page')
-  final int page;
+  final int? page;
   @override
   @JsonKey(name: 'page_size')
-  final int pageSize;
+  final int? pageSize;
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'WalletLogPageResponse(list: $list, total: $total, page: $page, pageSize: $pageSize)';
-  }
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'WalletLogPageResponse'))
-      ..add(DiagnosticsProperty('list', list))
-      ..add(DiagnosticsProperty('total', total))
-      ..add(DiagnosticsProperty('page', page))
-      ..add(DiagnosticsProperty('pageSize', pageSize));
+  String toString() {
+    return 'WalletLogListResp(list: $list, total: $total, page: $page, pageSize: $pageSize)';
   }
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$WalletLogPageResponseImpl &&
+            other is _$WalletLogListRespImpl &&
             const DeepCollectionEquality().equals(other._list, _list) &&
             (identical(other.total, total) || other.total == total) &&
             (identical(other.page, page) || other.page == page) &&
             (identical(other.pageSize, pageSize) ||
                 other.pageSize == pageSize));
   }
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType,
       const DeepCollectionEquality().hash(_list), total, page, pageSize);
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$WalletLogPageResponseImplCopyWith<_$WalletLogPageResponseImpl>
-      get copyWith => __$$WalletLogPageResponseImplCopyWithImpl<
-          _$WalletLogPageResponseImpl>(this, _$identity);
+  _$$WalletLogListRespImplCopyWith<_$WalletLogListRespImpl> get copyWith =>
+      __$$WalletLogListRespImplCopyWithImpl<_$WalletLogListRespImpl>(
+          this, _$identity);
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$WalletLogListRespImplToJson(
+      this,
+    );
+  }
 }
-abstract class _WalletLogPageResponse implements WalletLogPageResponse {
-  const factory _WalletLogPageResponse(
+abstract class _WalletLogListResp implements WalletLogListResp {
+  const factory _WalletLogListResp(
           {required final List<WalletLog> list,
-          required final int total,
-          @JsonKey(name: 'page') required final int page,
-          @JsonKey(name: 'page_size') required final int pageSize}) =
-      _$WalletLogPageResponseImpl;
+          @JsonKey(name: 'total') final int? total,
+          @JsonKey(name: 'page') final int? page,
+          @JsonKey(name: 'page_size') final int? pageSize}) =
+      _$WalletLogListRespImpl;
+  factory _WalletLogListResp.fromJson(Map<String, dynamic> json) =
+      _$WalletLogListRespImpl.fromJson;
   @override
   List<WalletLog> get list;
   @override
-  int get total;
+  @JsonKey(name: 'total')
+  int? get total;
   @override
   @JsonKey(name: 'page')
-  int get page;
+  int? get page;
   @override
   @JsonKey(name: 'page_size')
-  int get pageSize;
+  int? get pageSize;
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$WalletLogPageResponseImplCopyWith<_$WalletLogPageResponseImpl>
-      get copyWith => throw _privateConstructorUsedError;
-}
-mixin _$RechargeOrderPageResponse {
-  List<RechargeOrder> get list => throw _privateConstructorUsedError;
-  int get total => throw _privateConstructorUsedError;
-  @JsonKey(name: 'page')
-  int get page => throw _privateConstructorUsedError;
-  @JsonKey(name: 'page_size')
-  int get pageSize => throw _privateConstructorUsedError;
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  $RechargeOrderPageResponseCopyWith<RechargeOrderPageResponse> get copyWith =>
+  _$$WalletLogListRespImplCopyWith<_$WalletLogListRespImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
-abstract class $RechargeOrderPageResponseCopyWith<$Res> {
-  factory $RechargeOrderPageResponseCopyWith(RechargeOrderPageResponse value,
-          $Res Function(RechargeOrderPageResponse) then) =
-      _$RechargeOrderPageResponseCopyWithImpl<$Res, RechargeOrderPageResponse>;
+RechargeOrderListResp _$RechargeOrderListRespFromJson(
+    Map<String, dynamic> json) {
+  return _RechargeOrderListResp.fromJson(json);
+}
+mixin _$RechargeOrderListResp {
+  List<RechargeOrder> get list => throw _privateConstructorUsedError;
+  @JsonKey(name: 'total')
+  int? get total => throw _privateConstructorUsedError;
+  @JsonKey(name: 'page')
+  int? get page => throw _privateConstructorUsedError;
+  @JsonKey(name: 'page_size')
+  int? get pageSize => throw _privateConstructorUsedError;
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $RechargeOrderListRespCopyWith<RechargeOrderListResp> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+abstract class $RechargeOrderListRespCopyWith<$Res> {
+  factory $RechargeOrderListRespCopyWith(RechargeOrderListResp value,
+          $Res Function(RechargeOrderListResp) then) =
+      _$RechargeOrderListRespCopyWithImpl<$Res, RechargeOrderListResp>;
   @useResult
   $Res call(
       {List<RechargeOrder> list,
-      int total,
-      @JsonKey(name: 'page') int page,
-      @JsonKey(name: 'page_size') int pageSize});
+      @JsonKey(name: 'total') int? total,
+      @JsonKey(name: 'page') int? page,
+      @JsonKey(name: 'page_size') int? pageSize});
 }
-class _$RechargeOrderPageResponseCopyWithImpl<$Res,
-        $Val extends RechargeOrderPageResponse>
-    implements $RechargeOrderPageResponseCopyWith<$Res> {
-  _$RechargeOrderPageResponseCopyWithImpl(this._value, this._then);
+class _$RechargeOrderListRespCopyWithImpl<$Res,
+        $Val extends RechargeOrderListResp>
+    implements $RechargeOrderListRespCopyWith<$Res> {
+  _$RechargeOrderListRespCopyWithImpl(this._value, this._then);
   final $Val _value;
   final $Res Function($Val) _then;
   @pragma('vm:prefer-inline')
   @override
   $Res call({
     Object? list = null,
-    Object? total = null,
-    Object? page = null,
-    Object? pageSize = null,
+    Object? total = freezed,
+    Object? page = freezed,
+    Object? pageSize = freezed,
   }) {
     return _then(_value.copyWith(
       list: null == list
           ? _value.list
           : list 
               as List<RechargeOrder>,
-      total: null == total
+      total: freezed == total
           ? _value.total
           : total 
-              as int,
-      page: null == page
+              as int?,
+      page: freezed == page
           ? _value.page
           : page 
-              as int,
-      pageSize: null == pageSize
+              as int?,
+      pageSize: freezed == pageSize
           ? _value.pageSize
           : pageSize 
-              as int,
+              as int?,
     ) as $Val);
   }
 }
-abstract class _$$RechargeOrderPageResponseImplCopyWith<$Res>
-    implements $RechargeOrderPageResponseCopyWith<$Res> {
-  factory _$$RechargeOrderPageResponseImplCopyWith(
-          _$RechargeOrderPageResponseImpl value,
-          $Res Function(_$RechargeOrderPageResponseImpl) then) =
-      __$$RechargeOrderPageResponseImplCopyWithImpl<$Res>;
+abstract class _$$RechargeOrderListRespImplCopyWith<$Res>
+    implements $RechargeOrderListRespCopyWith<$Res> {
+  factory _$$RechargeOrderListRespImplCopyWith(
+          _$RechargeOrderListRespImpl value,
+          $Res Function(_$RechargeOrderListRespImpl) then) =
+      __$$RechargeOrderListRespImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
       {List<RechargeOrder> list,
-      int total,
-      @JsonKey(name: 'page') int page,
-      @JsonKey(name: 'page_size') int pageSize});
+      @JsonKey(name: 'total') int? total,
+      @JsonKey(name: 'page') int? page,
+      @JsonKey(name: 'page_size') int? pageSize});
 }
-class __$$RechargeOrderPageResponseImplCopyWithImpl<$Res>
-    extends _$RechargeOrderPageResponseCopyWithImpl<$Res,
-        _$RechargeOrderPageResponseImpl>
-    implements _$$RechargeOrderPageResponseImplCopyWith<$Res> {
-  __$$RechargeOrderPageResponseImplCopyWithImpl(
-      _$RechargeOrderPageResponseImpl _value,
-      $Res Function(_$RechargeOrderPageResponseImpl) _then)
+class __$$RechargeOrderListRespImplCopyWithImpl<$Res>
+    extends _$RechargeOrderListRespCopyWithImpl<$Res,
+        _$RechargeOrderListRespImpl>
+    implements _$$RechargeOrderListRespImplCopyWith<$Res> {
+  __$$RechargeOrderListRespImplCopyWithImpl(_$RechargeOrderListRespImpl _value,
+      $Res Function(_$RechargeOrderListRespImpl) _then)
       : super(_value, _then);
   @pragma('vm:prefer-inline')
   @override
   $Res call({
     Object? list = null,
-    Object? total = null,
-    Object? page = null,
-    Object? pageSize = null,
+    Object? total = freezed,
+    Object? page = freezed,
+    Object? pageSize = freezed,
   }) {
-    return _then(_$RechargeOrderPageResponseImpl(
+    return _then(_$RechargeOrderListRespImpl(
       list: null == list
           ? _value._list
           : list 
               as List<RechargeOrder>,
-      total: null == total
+      total: freezed == total
           ? _value.total
           : total 
-              as int,
-      page: null == page
+              as int?,
+      page: freezed == page
           ? _value.page
           : page 
-              as int,
-      pageSize: null == pageSize
+              as int?,
+      pageSize: freezed == pageSize
           ? _value.pageSize
           : pageSize 
-              as int,
+              as int?,
     ));
   }
 }
-class _$RechargeOrderPageResponseImpl
-    with DiagnosticableTreeMixin
-    implements _RechargeOrderPageResponse {
-  const _$RechargeOrderPageResponseImpl(
+@JsonSerializable()
+class _$RechargeOrderListRespImpl implements _RechargeOrderListResp {
+  const _$RechargeOrderListRespImpl(
       {required final List<RechargeOrder> list,
-      required this.total,
-      @JsonKey(name: 'page') required this.page,
-      @JsonKey(name: 'page_size') required this.pageSize})
+      @JsonKey(name: 'total') this.total,
+      @JsonKey(name: 'page') this.page,
+      @JsonKey(name: 'page_size') this.pageSize})
       : _list = list;
+  factory _$RechargeOrderListRespImpl.fromJson(Map<String, dynamic> json) =>
+      _$$RechargeOrderListRespImplFromJson(json);
   final List<RechargeOrder> _list;
   @override
   List<RechargeOrder> get list {
@@ -3045,67 +2684,68 @@ class _$RechargeOrderPageResponseImpl
     return EqualUnmodifiableListView(_list);
   }
   @override
-  final int total;
+  @JsonKey(name: 'total')
+  final int? total;
   @override
   @JsonKey(name: 'page')
-  final int page;
+  final int? page;
   @override
   @JsonKey(name: 'page_size')
-  final int pageSize;
+  final int? pageSize;
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'RechargeOrderPageResponse(list: $list, total: $total, page: $page, pageSize: $pageSize)';
-  }
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'RechargeOrderPageResponse'))
-      ..add(DiagnosticsProperty('list', list))
-      ..add(DiagnosticsProperty('total', total))
-      ..add(DiagnosticsProperty('page', page))
-      ..add(DiagnosticsProperty('pageSize', pageSize));
+  String toString() {
+    return 'RechargeOrderListResp(list: $list, total: $total, page: $page, pageSize: $pageSize)';
   }
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$RechargeOrderPageResponseImpl &&
+            other is _$RechargeOrderListRespImpl &&
             const DeepCollectionEquality().equals(other._list, _list) &&
             (identical(other.total, total) || other.total == total) &&
             (identical(other.page, page) || other.page == page) &&
             (identical(other.pageSize, pageSize) ||
                 other.pageSize == pageSize));
   }
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType,
       const DeepCollectionEquality().hash(_list), total, page, pageSize);
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$RechargeOrderPageResponseImplCopyWith<_$RechargeOrderPageResponseImpl>
-      get copyWith => __$$RechargeOrderPageResponseImplCopyWithImpl<
-          _$RechargeOrderPageResponseImpl>(this, _$identity);
+  _$$RechargeOrderListRespImplCopyWith<_$RechargeOrderListRespImpl>
+      get copyWith => __$$RechargeOrderListRespImplCopyWithImpl<
+          _$RechargeOrderListRespImpl>(this, _$identity);
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$RechargeOrderListRespImplToJson(
+      this,
+    );
+  }
 }
-abstract class _RechargeOrderPageResponse implements RechargeOrderPageResponse {
-  const factory _RechargeOrderPageResponse(
+abstract class _RechargeOrderListResp implements RechargeOrderListResp {
+  const factory _RechargeOrderListResp(
           {required final List<RechargeOrder> list,
-          required final int total,
-          @JsonKey(name: 'page') required final int page,
-          @JsonKey(name: 'page_size') required final int pageSize}) =
-      _$RechargeOrderPageResponseImpl;
+          @JsonKey(name: 'total') final int? total,
+          @JsonKey(name: 'page') final int? page,
+          @JsonKey(name: 'page_size') final int? pageSize}) =
+      _$RechargeOrderListRespImpl;
+  factory _RechargeOrderListResp.fromJson(Map<String, dynamic> json) =
+      _$RechargeOrderListRespImpl.fromJson;
   @override
   List<RechargeOrder> get list;
   @override
-  int get total;
+  @JsonKey(name: 'total')
+  int? get total;
   @override
   @JsonKey(name: 'page')
-  int get page;
+  int? get page;
   @override
   @JsonKey(name: 'page_size')
-  int get pageSize;
+  int? get pageSize;
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$RechargeOrderPageResponseImplCopyWith<_$RechargeOrderPageResponseImpl>
+  _$$RechargeOrderListRespImplCopyWith<_$RechargeOrderListRespImpl>
       get copyWith => throw _privateConstructorUsedError;
 }

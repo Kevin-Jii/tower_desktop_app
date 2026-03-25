@@ -21,10 +21,6 @@ class MenuProvider extends ChangeNotifier {
     notifyListeners();
     try {
       final raw = await _api.getUserMenus();
-        print('=== 后端返回菜单数量: ${raw.length} ===');
-          for (var m in raw) {
-      print('菜单: id=${m.id}, parentId=${m.parentId}, title=${m.title}, children=${m.children.length}');
-    }
       final List<String> collectedPerms = [];
       List<MenuItem> filterTree(List<MenuItem> nodes) {
         final result = <MenuItem>[];
@@ -33,7 +29,7 @@ class MenuProvider extends ChangeNotifier {
             if (n.permission != null && n.permission!.isNotEmpty) {
               collectedPerms.add(n.permission!);
             }
-            continue; 
+            continue;
           }
           result.add(n.copyWith(children: filterTree(n.children)));
         }

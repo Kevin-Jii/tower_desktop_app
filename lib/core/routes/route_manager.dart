@@ -8,7 +8,7 @@ import 'package:tower_desktop_app/features/dict/dict_management_page.dart';
 import 'package:tower_desktop_app/features/inventory/inventory_page.dart';
 import 'package:tower_desktop_app/features/store_account/store_account_page.dart';
 import 'package:tower_desktop_app/features/gallery/gallery_page.dart';
-import 'package:tower_desktop_app/features/member/member_page.dart';
+import 'package:tower_desktop_app/features/member/member_management_page.dart';
 import '../../features/menu/models.dart';
 import '../constants/menu_types.dart';
 import '../../features/user/user_management_page.dart';
@@ -30,8 +30,7 @@ class RouteManager {
     'store/inventory/index': () => const InventoryPage(),
     'dingtalk/robot/index': () => const DingTalkManagementPage(),
     'store/account/index': () => const StoreAccountPage(),
-    'store/member/index': () => const MemberPage(),
-    'member/index': () => const MemberPage(),
+    'store/member/index': () => const MemberManagementPage(),
   };
   Widget? getPageForMenuItem(MenuItem menuItem) {
     if (menuItem.type != MenuType.page) return null;

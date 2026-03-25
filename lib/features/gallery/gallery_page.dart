@@ -400,8 +400,7 @@ class _GalleryPageState extends State<GalleryPage> {
     if (url == null || url.isEmpty) {
       return _buildPlaceholder();
     }
-    final isExternalUrl =
-        url.startsWith('http:
+    final isExternalUrl = url.startsWith('http:
     final token = isExternalUrl ? null : SessionManager().token;
     return Image.network(
       url,

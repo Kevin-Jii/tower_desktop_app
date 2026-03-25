@@ -39,6 +39,12 @@ class PermissionCodes {
   static const String dingtalkRobotDelete = 'dingtalk:robot:delete';
   static const String dingtalkRobotTest = 'dingtalk:robot:test';
   static const String dingtalkRobotStatus = 'dingtalk:robot:status';
+  static const String memberList = 'member:list';
+  static const String memberAdd = 'member:add';
+  static const String memberEdit = 'member:edit';
+  static const String memberDelete = 'member:delete';
+  static const String memberRecharge = 'member:recharge';
+  static const String memberAdjustBalance = 'member:adjust';
 }
 class StatusValues {
   static const int enabled = 1;
@@ -74,4 +80,7 @@ class ApiPaths {
   static const String supplierProducts = '/supplier-products';
   static const String storeSuppliers = '/store-suppliers';
   static const String purchaseOrders = '/purchase-orders';
+  static const String members = '/members';
+  static const String walletLogs = '/wallet-logs';
+  static const String rechargeOrders = '/recharge-orders';
 }
