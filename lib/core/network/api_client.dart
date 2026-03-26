@@ -302,18 +302,22 @@ class ApiClient {
     if (data == null) {
       if (method == 'GET') {
         final typeStr = T.toString();
-        if ((typeStr == 'Map<String, dynamic>' || typeStr == 'Map<dynamic, dynamic>') && body.isNotEmpty) {
+        if ((typeStr == 'Map<String, dynamic>' ||
+                typeStr == 'Map<dynamic, dynamic>') &&
+            body.isNotEmpty) {
           return body as T;
         }
         if (typeStr.contains('List') && body.isNotEmpty) {
-          throw ApiException('data 字段为空，但响应体无数据 (GET ${resp.requestOptions.path})');
+          throw ApiException(
+              'data 字段为空，但响应体无数据 (GET ${resp.requestOptions.path})');
         }
         throw ApiException('data 字段为空 (GET ${resp.requestOptions.path})');
       }
       return null as T;
     }
     final typeStr = T.toString();
-    if (typeStr == 'Map<String, dynamic>' || typeStr == 'Map<dynamic, dynamic>') {
+    if (typeStr == 'Map<String, dynamic>' ||
+        typeStr == 'Map<dynamic, dynamic>') {
       if (data is Map) {
         return Map<String, dynamic>.from(data) as T;
       }
@@ -342,7 +346,8 @@ class ApiClient {
     }
     final code = body['code'];
     if (code != null) {
-      final codeInt = code is int ? code : (code is double ? code.toInt() : null);
+      final codeInt =
+          code is int ? code : (code is double ? code.toInt() : null);
       if (codeInt != null && codeInt != 200) {
         final message = body['message'];
         throw ApiException(message?.toString() ?? '请求失败', statusCode: codeInt);
