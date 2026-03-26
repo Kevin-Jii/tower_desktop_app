@@ -2,7 +2,7 @@
   final int code;
   final String message;
   final T? data;
-  final Map<String, dynamic>? meta; 
+  final Map<String, dynamic>? meta;
   ApiResponse({
     required this.code,
     required this.message,
@@ -77,7 +77,8 @@ class PageResponse<T> {
       throw ArgumentError('分页信息 $key 类型错误(${v.runtimeType})');
     }
     return PageResponse(
-      list: actualList.map((e) => itemParser(e as Map<String, dynamic>)).toList(),
+      list:
+          actualList.map((e) => itemParser(e as Map<String, dynamic>)).toList(),
       total: optInt('total') ?? 0,
       page: optInt('page') ?? 1,
       pageSize: optInt('page_size') ?? optInt('size') ?? 20,
