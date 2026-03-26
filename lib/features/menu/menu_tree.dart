@@ -1,22 +1,58 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart' hide Colors, FilledButton;
+import 'package:flutter/material.dart' as material show Colors;
+import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
-
 import '../../core/constants/menu_types.dart';
 import '../../core/theme/tower_colors.dart';
 import 'menu_provider.dart';
 import 'models.dart';
-
+class TdIconMapper {
+  static IconData? getIcon(String? iconName) {
+    if (iconName == null || iconName.isEmpty) return null;
+    switch (iconName) {
+      case 'dashboard':
+      case 'home':
+        return FluentIcons.home;
+      case 'people':
+      case 'user':
+        return FluentIcons.people;
+      case 'store':
+      case 'shop':
+        return FluentIcons.shop;
+      case 'settings':
+        return FluentIcons.settings;
+      case 'menu':
+        return FluentIcons.global_nav_button;
+      case 'category':
+        return FluentIcons.folder;
+      case 'product':
+        return FluentIcons.product;
+      case 'order':
+        return FluentIcons.date_time;
+      case 'inventory':
+        return FluentIcons.bulleted_list;
+      case 'report':
+        return FluentIcons.chart;
+      case 'supplier':
+        return FluentIcons.contact_card;
+      default:
+        return FluentIcons.page;
+    }
+  }
+  static Widget build(String? iconName, {double size = 16, Color? color}) {
+    final icon = getIcon(iconName);
+    if (icon == null) return SizedBox(width: size, height: size);
+    return Icon(icon, size: size, color: color);
+  }
+}
 class MenuTree extends StatelessWidget {
   final void Function(MenuItem item)? onSelect;
-
   const MenuTree({super.key, this.onSelect});
-
   @override
   Widget build(BuildContext context) {
     final towerColors = Theme.of(context).extension<TowerColors>();
     final accent = Theme.of(context).colorScheme.primary;
-    final borderColor = towerColors?.sideBarBorder ?? Colors.grey.shade300;
-
+    final borderColor = towerColors?.sideBarBorder ?? material.Colors.grey.shade300;
     return Consumer<MenuProvider>(
       builder: (context, provider, _) {
         if (provider.loading) {
@@ -29,7 +65,7 @@ class MenuTree extends StatelessWidget {
               children: [
                 Text(
                   '加载失败: ${provider.error}',
-                  style: const TextStyle(color: Colors.red),
+                  style: const TextStyle(color: material.Colors.red),
                 ),
                 const SizedBox(height: 8),
                 FilledButton(onPressed: provider.load, child: const Text('重试')),
@@ -41,7 +77,7 @@ class MenuTree extends StatelessWidget {
           return const SizedBox.shrink();
         }
         return Container(
-          color: towerColors?.sideBarBackground ?? Colors.white,
+          color: towerColors?.sideBarBackground ?? material.Colors.white,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -67,7 +103,6 @@ class MenuTree extends StatelessWidget {
       },
     );
   }
-
   List<Widget> _buildMenuWidgets({
     required MenuProvider provider,
     required TowerColors? towerColors,
@@ -75,13 +110,10 @@ class MenuTree extends StatelessWidget {
   }) {
     final widgets = <Widget>[];
     final roots = provider.tree;
-
     for (int index = 0; index < roots.length; index++) {
       final section = roots[index];
       final hasChildren = section.children.isNotEmpty;
-      // 如果有子节点，无论 type 是什么，都当作目录处理
       final isDirectory = hasChildren;
-
       if (isDirectory) {
         if (widgets.isNotEmpty) {
           widgets.add(const SizedBox(height: 16));
@@ -111,10 +143,8 @@ class MenuTree extends StatelessWidget {
         ));
       }
     }
-
     return widgets;
   }
-
   List<Widget> _buildChildren({
     required List<MenuItem> nodes,
     required MenuProvider provider,
@@ -123,11 +153,8 @@ class MenuTree extends StatelessWidget {
     required int depth,
   }) {
     final widgets = <Widget>[];
-
     for (final node in nodes) {
       final hasChildren = node.children.isNotEmpty;
-
-      // 如果有子节点，无论 type 是什么，都当作目录处理
       if (hasChildren) {
         widgets.add(_MenuSubsectionHeader(
           title: node.title,
@@ -155,20 +182,16 @@ class MenuTree extends StatelessWidget {
         ));
       }
     }
-
     return widgets;
   }
 }
-
 class _SidebarBrand extends StatelessWidget {
   final Color accent;
   final TowerColors? towerColors;
-
   const _SidebarBrand({
     required this.accent,
     required this.towerColors,
   });
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -184,7 +207,7 @@ class _SidebarBrand extends StatelessWidget {
           ),
           child: const Icon(
             Icons.restaurant_menu,
-            color: Colors.white,
+            color: material.Colors.white,
             size: 16,
           ),
         ),
@@ -192,16 +215,13 @@ class _SidebarBrand extends StatelessWidget {
     );
   }
 }
-
 class _MenuSectionHeader extends StatelessWidget {
   final String title;
   final TowerColors? towerColors;
-
   const _MenuSectionHeader({
     required this.title,
     required this.towerColors,
   });
-
   @override
   Widget build(BuildContext context) {
     final baseColor =
@@ -220,18 +240,15 @@ class _MenuSectionHeader extends StatelessWidget {
     );
   }
 }
-
 class _MenuSubsectionHeader extends StatelessWidget {
   final String title;
   final TowerColors? towerColors;
   final int depth;
-
   const _MenuSubsectionHeader({
     required this.title,
     required this.towerColors,
     required this.depth,
   });
-
   @override
   Widget build(BuildContext context) {
     final baseColor =
@@ -249,7 +266,6 @@ class _MenuSubsectionHeader extends StatelessWidget {
     );
   }
 }
-
 class _MenuLeafTile extends StatelessWidget {
   final MenuItem item;
   final bool selected;
@@ -257,7 +273,6 @@ class _MenuLeafTile extends StatelessWidget {
   final Color accent;
   final int depth;
   final VoidCallback onTap;
-
   const _MenuLeafTile({
     required this.item,
     required this.selected,
@@ -266,15 +281,13 @@ class _MenuLeafTile extends StatelessWidget {
     required this.depth,
     required this.onTap,
   });
-
   @override
   Widget build(BuildContext context) {
     final baseTextColor =
         towerColors?.navBarForeground.withOpacity(.8) ??
-            Colors.blueGrey.shade700;
+            material.Colors.blueGrey.shade700;
     final iconColor = selected ? accent : baseTextColor;
-    final backgroundColor = selected ? accent.withOpacity(.15) : Colors.transparent;
-
+    final backgroundColor = selected ? accent.withOpacity(.15) : material.Colors.transparent;
     return Padding(
       padding: EdgeInsets.only(left: depth * 14.0),
       child: InkWell(
@@ -306,7 +319,7 @@ class _MenuLeafTile extends StatelessWidget {
                 width: selected ? 4 : 2,
                 height: selected ? 28 : 24,
                 decoration: BoxDecoration(
-                  color: selected ? accent : Colors.transparent,
+                  color: selected ? accent : material.Colors.transparent,
                   borderRadius: BorderRadius.only(
                     topRight: Radius.circular(selected ? 0 : 2),
                     bottomRight: Radius.circular(selected ? 0 : 2),

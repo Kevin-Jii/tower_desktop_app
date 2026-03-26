@@ -51,3 +51,6 @@ app.*.map.json
 # Kiro specs
 .kiro/
 .claude/
+
+# Test files
+test/

@@ -3,11 +3,12 @@ import 'package:dio/io.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'api_response.dart';
+import '../config/app_config.dart';
 class ApiClient {
   static final ApiClient _instance = ApiClient._internal();
   factory ApiClient() => _instance;
   late final Dio dio;
-  static const String baseUrl = 'http:
+  String get baseUrl => AppConfig.instance.apiBaseUrl;
   String? _token;
   int? _userId;
   int? _storeId;
@@ -20,9 +21,9 @@ class ApiClient {
   }
   ApiClient._internal() {
     dio = Dio(BaseOptions(
-      baseUrl: baseUrl,
-      connectTimeout: const Duration(seconds: 10),
-      receiveTimeout: const Duration(seconds: 15),
+      baseUrl: AppConfig.instance.apiBaseUrl,
+      connectTimeout: Duration(milliseconds: AppConfig.instance.apiTimeout),
+      receiveTimeout: Duration(milliseconds: AppConfig.instance.apiTimeout),
       headers: {
         'Content-Type': 'application/json',
       },
