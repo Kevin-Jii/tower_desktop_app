@@ -1,22 +1,19 @@
-import 'package:fluent_ui/fluent_ui.dart';
+﻿import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
 import '../../core/widgets/fluent_info_bar.dart';
 import 'store_provider.dart';
 import 'models.dart';
 import 'store_form_dialog.dart';
 import '../supplier/store_supplier_binding_page.dart';
-
+import '../printer/printer_management_page.dart';
 class StoreManagementPage extends StatefulWidget {
   const StoreManagementPage({super.key});
-
   @override
   State<StoreManagementPage> createState() => _StoreManagementPageState();
 }
-
 class _StoreManagementPageState extends State<StoreManagementPage> {
   final Set<int> _updatingStores = {};
   final _nameCtrl = TextEditingController();
-
   @override
   void initState() {
     super.initState();
@@ -24,23 +21,19 @@ class _StoreManagementPageState extends State<StoreManagementPage> {
       context.read<StoreProvider>().loadStores();
     });
   }
-
   @override
   void dispose() {
     _nameCtrl.dispose();
     super.dispose();
   }
-
   void _handleSearch() {
     final keyword = _nameCtrl.text.trim();
     context.read<StoreProvider>().loadStores(page: 1, keyword: keyword.isEmpty ? null : keyword);
   }
-
   void _handleReset() {
     _nameCtrl.clear();
     context.read<StoreProvider>().loadStores(page: 1, keyword: null);
   }
-
   void _handleCreate() async {
     final result = await showDialog<CreateStoreRequest>(
       context: context,
@@ -56,7 +49,6 @@ class _StoreManagementPageState extends State<StoreManagementPage> {
       }
     }
   }
-
   void _handleEdit(Store store) async {
     final result = await showDialog<UpdateStoreRequest>(
       context: context,
@@ -72,7 +64,6 @@ class _StoreManagementPageState extends State<StoreManagementPage> {
       }
     }
   }
-
   void _handleDelete(Store store) async {
     final result = await showDialog<bool>(
       context: context,
@@ -92,7 +83,6 @@ class _StoreManagementPageState extends State<StoreManagementPage> {
         ],
       ),
     );
-
     if (result == true && mounted) {
       final success = await context.read<StoreProvider>().deleteStore(store.id);
       if (success && mounted) {
@@ -103,7 +93,6 @@ class _StoreManagementPageState extends State<StoreManagementPage> {
       }
     }
   }
-
   void _handleStatusChange(Store store, bool value) async {
     setState(() => _updatingStores.add(store.id));
     final newStatus = value ? 1 : 0;
@@ -119,7 +108,6 @@ class _StoreManagementPageState extends State<StoreManagementPage> {
       await FluentInfoBarHelper.showError(context, err);
     }
   }
-
   void _handleBindSupplier(Store store) {
     Navigator.push(
       context,
@@ -131,7 +119,17 @@ class _StoreManagementPageState extends State<StoreManagementPage> {
       ),
     );
   }
-
+  void _handlePrinterManagement(Store store) {
+    Navigator.push(
+      context,
+      FluentPageRoute(
+        builder: (context) => PrinterManagementPage(
+          storeId: store.id,
+          storeName: store.name,
+        ),
+      ),
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return ScaffoldPage(
@@ -145,11 +143,9 @@ class _StoreManagementPageState extends State<StoreManagementPage> {
       ),
     );
   }
-
   Widget _buildToolbar() {
     final theme = FluentTheme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       decoration: BoxDecoration(
@@ -170,7 +166,6 @@ class _StoreManagementPageState extends State<StoreManagementPage> {
       ),
       child: Column(
         children: [
-          // 标题行
           Row(
             children: [
               Container(
@@ -233,7 +228,6 @@ class _StoreManagementPageState extends State<StoreManagementPage> {
             ],
           ),
           const SizedBox(height: 16),
-          // 查询行
           Row(
             children: [
               SizedBox(
@@ -278,11 +272,9 @@ class _StoreManagementPageState extends State<StoreManagementPage> {
       ),
     );
   }
-
   Widget _buildContent() {
     final theme = FluentTheme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-
     return Consumer<StoreProvider>(
       builder: (context, provider, _) {
         if (provider.loading) {
@@ -302,23 +294,18 @@ class _StoreManagementPageState extends State<StoreManagementPage> {
             ),
           );
         }
-
         if (provider.error != null) {
           return _buildErrorState(provider);
         }
-
         if (provider.stores.isEmpty) {
           return _buildEmptyState();
         }
-
         return _buildStoreGrid(provider.stores);
       },
     );
   }
-
   Widget _buildErrorState(StoreProvider provider) {
     final theme = FluentTheme.of(context);
-
     return Center(
       child: Container(
         padding: const EdgeInsets.all(32),
@@ -371,10 +358,8 @@ class _StoreManagementPageState extends State<StoreManagementPage> {
       ),
     );
   }
-
   Widget _buildEmptyState() {
     final theme = FluentTheme.of(context);
-
     return Center(
       child: Container(
         padding: const EdgeInsets.all(48),
@@ -434,11 +419,9 @@ class _StoreManagementPageState extends State<StoreManagementPage> {
       ),
     );
   }
-
   Widget _buildStoreGrid(List<Store> stores) {
     final theme = FluentTheme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-
     return Container(
       color: isDark ? const Color(0xFF1F1F1F) : const Color(0xFFF5F7FA),
       child: LayoutBuilder(
@@ -446,7 +429,6 @@ class _StoreManagementPageState extends State<StoreManagementPage> {
           final width = constraints.maxWidth;
           final availableWidth = width - 48;
           final crossAxisCount = width > 900 ? 2 : 1;
-
           return SingleChildScrollView(
             padding: const EdgeInsets.all(24),
             child: Column(
@@ -457,12 +439,10 @@ class _StoreManagementPageState extends State<StoreManagementPage> {
       ),
     );
   }
-
   List<Widget> _buildRows(List<Store> stores, int crossAxisCount, double availableWidth) {
     final List<Widget> rows = [];
     const spacing = 16.0;
     final cardWidth = crossAxisCount == 2 ? (availableWidth - spacing) / 2 : availableWidth;
-
     for (int i = 0; i < stores.length; i += crossAxisCount) {
       final rowStores = stores.skip(i).take(crossAxisCount).toList();
       rows.add(
@@ -485,13 +465,11 @@ class _StoreManagementPageState extends State<StoreManagementPage> {
     }
     return rows;
   }
-
   Widget _buildStoreCard(Store store) {
     final theme = FluentTheme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final isActive = store.status == 1;
     final isUpdating = _updatingStores.contains(store.id);
-
     return HoverButton(
       onPressed: () {},
       builder: (context, states) {
@@ -519,7 +497,6 @@ class _StoreManagementPageState extends State<StoreManagementPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 头部区域
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
@@ -535,7 +512,6 @@ class _StoreManagementPageState extends State<StoreManagementPage> {
                   ),
                   child: Row(
                     children: [
-                      // 门店头像
                       Container(
                         width: 52,
                         height: 52,
@@ -566,7 +542,6 @@ class _StoreManagementPageState extends State<StoreManagementPage> {
                         ),
                       ),
                       const SizedBox(width: 14),
-                      // 门店名称和副标题
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -591,7 +566,6 @@ class _StoreManagementPageState extends State<StoreManagementPage> {
                           ],
                         ),
                       ),
-                      // 状态标签
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
@@ -633,12 +607,10 @@ class _StoreManagementPageState extends State<StoreManagementPage> {
                     ],
                   ),
                 ),
-                // 分隔线
                 Container(
                   height: 1,
                   color: isDark ? Colors.grey[100].withOpacity(0.1) : Colors.grey[30],
                 ),
-                // 信息区域
                 Padding(
                   padding: const EdgeInsets.all(20),
                   child: Column(
@@ -669,7 +641,6 @@ class _StoreManagementPageState extends State<StoreManagementPage> {
                     ],
                   ),
                 ),
-                // 操作区域
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
@@ -679,7 +650,6 @@ class _StoreManagementPageState extends State<StoreManagementPage> {
                   ),
                   child: Row(
                     children: [
-                      // 开关
                       if (isUpdating)
                         const SizedBox(width: 20, height: 20, child: ProgressRing(strokeWidth: 2))
                       else
@@ -693,7 +663,8 @@ class _StoreManagementPageState extends State<StoreManagementPage> {
                         style: TextStyle(fontSize: 12, color: isDark ? Colors.grey[100] : Colors.grey[120]),
                       ),
                       const Spacer(),
-                      // 操作按钮
+                      _buildActionBtn(FluentIcons.print, "打印机", Colors.blue, () => _handlePrinterManagement(store)),
+                      const SizedBox(width: 8),
                       _buildActionBtn(FluentIcons.link, "绑定", Colors.purple, () => _handleBindSupplier(store)),
                       const SizedBox(width: 8),
                       _buildActionBtn(FluentIcons.edit, "编辑", Colors.teal, () => _handleEdit(store)),
@@ -709,7 +680,6 @@ class _StoreManagementPageState extends State<StoreManagementPage> {
       },
     );
   }
-
   Widget _buildInfoRowNew(IconData icon, String label, String value, Color iconColor, bool isDark) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -752,7 +722,6 @@ class _StoreManagementPageState extends State<StoreManagementPage> {
       ],
     );
   }
-
   Widget _buildActionBtn(IconData icon, String label, Color color, VoidCallback onTap) {
     return HoverButton(
       onPressed: onTap,
@@ -776,24 +745,18 @@ class _StoreManagementPageState extends State<StoreManagementPage> {
       },
     );
   }
-
-
-
   Widget _buildPagination() {
     return Consumer<StoreProvider>(
       builder: (context, provider, _) {
         if (provider.stores.isEmpty) {
           return const SizedBox.shrink();
         }
-
         final totalPages = (provider.total / provider.pageSize).ceil();
         if (totalPages <= 1) {
           return const SizedBox.shrink();
         }
-
         final theme = FluentTheme.of(context);
         final isDark = theme.brightness == Brightness.dark;
-
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           decoration: BoxDecoration(

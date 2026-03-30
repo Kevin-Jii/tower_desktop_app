@@ -21,6 +21,7 @@ import 'package:tower_desktop_app/features/store_account/store_account_api.dart'
 import 'package:tower_desktop_app/features/store_account/store_account_repository.dart';
 import 'package:tower_desktop_app/features/gallery/gallery_api.dart';
 import 'package:tower_desktop_app/features/member/member_api.dart';
+import 'package:tower_desktop_app/features/printer/printer_api.dart';
 class ServiceConfig {
   ServiceConfig._();
   static void setupServices() {
@@ -94,6 +95,9 @@ class ServiceConfig {
     );
     locator.registerLazySingleton<MemberApi>(
       () => MemberApi(sl.get<ApiClient>()),
+    );
+    locator.registerLazySingleton<PrinterApi>(
+      () => PrinterApi(sl.get<ApiClient>()),
     );
   }
   static void resetServices() {

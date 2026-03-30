@@ -83,4 +83,5 @@ class ApiPaths {
   static const String members = '/members';
   static const String walletLogs = '/wallet-logs';
   static const String rechargeOrders = '/recharge-orders';
+  static const String printers = '/printers';
 }

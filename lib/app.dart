@@ -28,6 +28,8 @@ import 'features/store_account/store_account_repository.dart';
 import 'features/store_account/store_account_provider.dart';
 import 'features/gallery/gallery_api.dart';
 import 'features/gallery/gallery_provider.dart';
+import 'features/printer/printer_api.dart';
+import 'features/printer/printer_provider.dart';
 import 'features/member/member_api.dart';
 import 'features/member/member_provider.dart';
 import 'core/theme/fluent_theme_provider.dart';
@@ -94,6 +96,7 @@ class _TowerAppState extends State<TowerApp> with TrayListener {
               create: (_) => StoreAccountProvider(storeAccountRepository)),
           ChangeNotifierProvider(create: (_) => GalleryProvider(galleryApi)),
           ChangeNotifierProvider(create: (_) => MemberProvider(memberApi)),
+          ChangeNotifierProvider(create: (_) => PrinterProvider(sl.get<PrinterApi>())),
         ],
         child: FutureBuilder(
           future: _bootstrap(context),

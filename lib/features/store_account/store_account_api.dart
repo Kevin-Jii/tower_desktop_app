@@ -46,10 +46,9 @@ class StoreAccountApi {
       fromJson: StoreAccount.fromJson,
     );
   }
-  Future<List<StoreAccount>> createStoreAccounts(CreateStoreAccountRequest request) async {
+  Future<List<StoreAccount>> createStoreAccounts(
+      CreateStoreAccountRequest request) async {
     final data = request.toJson();
-    print('=== 创建记账请求参数 ===');
-    print(data);
     final response = await _client.postPage<StoreAccount>(
       '/store-accounts',
       data: data,
@@ -57,7 +56,8 @@ class StoreAccountApi {
     );
     return response.list;
   }
-  Future<StoreAccount?> updateStoreAccount(int id, UpdateStoreAccountRequest request) async {
+  Future<StoreAccount?> updateStoreAccount(
+      int id, UpdateStoreAccountRequest request) async {
     return await _client.putSmart<StoreAccount>(
       path: '/store-accounts/$id',
       data: request.toJson(),
