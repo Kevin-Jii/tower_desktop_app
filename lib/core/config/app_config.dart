@@ -11,7 +11,7 @@ const Map<String, Map<String, dynamic>> _envDefaults = {
     'envName': '开发环境',
   },
   'prod': {
-    'apiBaseUrl': 'https:
+    'apiBaseUrl': 'http:
     'apiTimeout': 15000,
     'debugMode': false,
     'envName': '生产环境',
