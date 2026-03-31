@@ -13,7 +13,36 @@ class InventoryPage extends StatefulWidget {
   State<InventoryPage> createState() => _InventoryPageState();
 }
 class _InventoryPageState extends State<InventoryPage> {
-  String _selectedPeriod = 'day'; 
+  String _selectedPeriod = 'day';
+  List<InventoryOrder>? _lastOrders;
+  Map<String, double> _cachedStockIn = {};
+  Map<String, double> _cachedStockOut = {};
+  List<String> _cachedDisplayDates = [];
+  double _cachedMaxValue = 0;
+  void _recomputeChartData(List<InventoryOrder> orders) {
+    if (identical(orders, _lastOrders)) return; 
+    _lastOrders = orders;
+    final stockIn = <String, double>{};
+    final stockOut = <String, double>{};
+    for (final order in orders) {
+      final date = _extractDate(order.createdAt);
+      if (order.type == InventoryRecordType.stockIn) {
+        stockIn[date] = (stockIn[date] ?? 0) + (order.totalQuantity ?? 0);
+      } else {
+        stockOut[date] = (stockOut[date] ?? 0) + (order.totalQuantity ?? 0);
+      }
+    }
+    final allDates = {...stockIn.keys, ...stockOut.keys}.toList()..sort();
+    final displayDates = allDates.length > 7 ? allDates.sublist(allDates.length - 7) : allDates;
+    final maxValue = [
+      ...displayDates.map((d) => stockIn[d] ?? 0),
+      ...displayDates.map((d) => stockOut[d] ?? 0),
+    ].fold<double>(0, (max, v) => v > max ? v : max);
+    _cachedStockIn = stockIn;
+    _cachedStockOut = stockOut;
+    _cachedDisplayDates = displayDates;
+    _cachedMaxValue = maxValue;
+  }
   @override
   void initState() {
     super.initState();
@@ -222,20 +251,29 @@ class _InventoryPageState extends State<InventoryPage> {
   Widget _buildStatsCards(bool isDark) {
     return Consumer<InventoryProvider>(
       builder: (context, provider, _) {
-        final stockInOrders = provider.orders.where((o) => o.type == InventoryRecordType.stockIn).toList();
-        final stockOutOrders = provider.orders.where((o) => o.type == InventoryRecordType.stockOut).toList();
-        final stockInQty = stockInOrders.fold<double>(0, (sum, o) => sum + (o.totalQuantity ?? 0));
-        final stockOutQty = stockOutOrders.fold<double>(0, (sum, o) => sum + (o.totalQuantity ?? 0));
-        final totalQty = provider.inventories.fold<double>(0, (sum, i) => sum + i.quantity);
+        double stockInQty = 0, stockOutQty = 0, totalQty = 0;
+        int stockInCount = 0, stockOutCount = 0;
+        for (final o in provider.orders) {
+          if (o.type == InventoryRecordType.stockIn) {
+            stockInQty += o.totalQuantity ?? 0;
+            stockInCount++;
+          } else {
+            stockOutQty += o.totalQuantity ?? 0;
+            stockOutCount++;
+          }
+        }
+        for (final i in provider.inventories) {
+          totalQty += i.quantity;
+        }
         return Row(
           children: [
             Expanded(child: _buildStatInfoCard('库存商品数', '${provider.inventoryTotal}', '种', FluentIcons.product_list, Colors.blue, isDark)),
             const SizedBox(width: 16),
             Expanded(child: _buildStatInfoCard('总库存量', totalQty.toStringAsFixed(1), '', FluentIcons.database, Colors.teal, isDark)),
             const SizedBox(width: 16),
-            Expanded(child: _buildStatInfoCard('入库单', '${stockInOrders.length}', '单', FluentIcons.add, Colors.green, isDark, subtitle: '+${stockInQty.toStringAsFixed(1)}')),
+            Expanded(child: _buildStatInfoCard('入库单', '$stockInCount', '单', FluentIcons.add, Colors.green, isDark, subtitle: '+${stockInQty.toStringAsFixed(1)}')),
             const SizedBox(width: 16),
-            Expanded(child: _buildStatInfoCard('出库单', '${stockOutOrders.length}', '单', FluentIcons.remove, Colors.orange, isDark, subtitle: '-${stockOutQty.toStringAsFixed(1)}')),
+            Expanded(child: _buildStatInfoCard('出库单', '$stockOutCount', '单', FluentIcons.remove, Colors.orange, isDark, subtitle: '-${stockOutQty.toStringAsFixed(1)}')),
           ],
         );
       },
@@ -356,25 +394,15 @@ class _InventoryPageState extends State<InventoryPage> {
     );
   }
   Widget _buildBarChart(InventoryProvider provider, bool isDark) {
-    final Map<String, double> stockInByDate = {};
-    final Map<String, double> stockOutByDate = {};
-    for (final order in provider.orders) {
-      final date = _extractDate(order.createdAt);
-      if (order.type == InventoryRecordType.stockIn) {
-        stockInByDate[date] = (stockInByDate[date] ?? 0) + (order.totalQuantity ?? 0);
-      } else {
-        stockOutByDate[date] = (stockOutByDate[date] ?? 0) + (order.totalQuantity ?? 0);
-      }
-    }
-    final allDates = {...stockInByDate.keys, ...stockOutByDate.keys}.toList()..sort();
-    if (allDates.isEmpty) {
+    _recomputeChartData(provider.orders);
+    final displayDates = _cachedDisplayDates;
+    final stockInByDate = _cachedStockIn;
+    final stockOutByDate = _cachedStockOut;
+    final maxValue = _cachedMaxValue;
+    if (displayDates.isEmpty) {
       return const Center(child: Text('暂无数据'));
     }
-    final displayDates = allDates.length > 7 ? allDates.sublist(allDates.length - 7) : allDates;
-    final maxValue = [
-      ...displayDates.map((d) => stockInByDate[d] ?? 0),
-      ...displayDates.map((d) => stockOutByDate[d] ?? 0),
-    ].fold<double>(0, (max, v) => v > max ? v : max);
+    const barLabelStyle = TextStyle(fontSize: 11, color: Color(0xFF9E9E9E));
     return LayoutBuilder(
       builder: (context, constraints) {
         final barWidth = (constraints.maxWidth - 40) / displayDates.length / 2.5;
@@ -420,7 +448,7 @@ class _InventoryPageState extends State<InventoryPage> {
                         ],
                       ),
                       const SizedBox(height: 8),
-                      Text(_formatDateLabel(date), style: TextStyle(fontSize: 11, color: Colors.grey[120])),
+                      Text(_formatDateLabel(date), style: barLabelStyle),
                     ],
                   );
                 }).toList(),
@@ -456,6 +484,23 @@ class _InventoryListSubPage extends StatefulWidget {
 }
 class _InventoryListSubPageState extends State<_InventoryListSubPage> {
   String _searchText = '';
+  List<Inventory>? _lastInventories;
+  String? _lastSearchText;
+  List<Inventory> _filteredList = [];
+  List<Inventory> _getFilteredList(List<Inventory> inventories) {
+    if (identical(inventories, _lastInventories) && _searchText == _lastSearchText) {
+      return _filteredList;
+    }
+    _lastInventories = inventories;
+    _lastSearchText = _searchText;
+    _filteredList = _searchText.isEmpty
+        ? inventories
+        : inventories.where((item) => (item.productName ?? '').contains(_searchText)).toList();
+    return _filteredList;
+  }
+  void _onSearchChanged(String value) {
+    setState(() => _searchText = value);
+  }
   @override
   Widget build(BuildContext context) {
     final theme = FluentTheme.of(context);
@@ -506,7 +551,7 @@ class _InventoryListSubPageState extends State<_InventoryListSubPage> {
                       padding: EdgeInsets.only(left: 8),
                       child: Icon(FluentIcons.search, size: 14),
                     ),
-                    onChanged: (value) => setState(() => _searchText = value),
+                    onChanged: (value) => _onSearchChanged(value),
                   ),
                 ),
               ],
@@ -520,10 +565,7 @@ class _InventoryListSubPageState extends State<_InventoryListSubPage> {
                   if (provider.inventoryLoading) {
                     return const Center(child: ProgressRing());
                   }
-                  final filteredList = provider.inventories.where((item) {
-                    final name = item.productName ?? '';
-                    return name.contains(_searchText);
-                  }).toList();
+                  final filteredList = _getFilteredList(provider.inventories);
                   if (filteredList.isEmpty) {
                     return _buildEmptyState();
                   }

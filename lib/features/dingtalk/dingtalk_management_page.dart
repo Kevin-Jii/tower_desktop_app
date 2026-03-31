@@ -396,7 +396,6 @@ class _RobotFormDialogState extends State<RobotFormDialog> {
               label: 'Webhook 地址',
               child: TextBox(
                 controller: _webhookCtrl,
-                placeholder: 'https:
                 maxLines: 2,
               ),
             ),

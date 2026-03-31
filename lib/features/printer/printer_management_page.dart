@@ -387,13 +387,17 @@ class _PrinterManagementPageState extends State<PrinterManagementPage> {
   Widget _buildPrinterList(List<Printer> printers) {
     final theme = FluentTheme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    return Container(
+    return ColoredBox(
       color: isDark ? const Color(0xFF1F1F1F) : const Color(0xFFF5F7FA),
-      child: SingleChildScrollView(
+      child: ListView.builder(
         padding: const EdgeInsets.all(24),
-        child: Column(
-          children: printers.map((printer) => _buildPrinterCard(printer)).toList(),
-        ),
+        itemCount: printers.length,
+        itemBuilder: (context, index) {
+          return Padding(
+            padding: EdgeInsets.only(bottom: index < printers.length - 1 ? 0 : 0),
+            child: _buildPrinterCard(printers[index]),
+          );
+        },
       ),
     );
   }

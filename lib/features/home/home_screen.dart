@@ -1,4 +1,4 @@
-import 'package:fluent_ui/fluent_ui.dart';
+﻿import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
 import '../auth/login_screen.dart';
 import '../auth/session_manager.dart';
@@ -8,44 +8,40 @@ import 'widgets/menu_content.dart';
 import '../../core/widgets/custom_window_title_bar.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/theme/fluent_theme_provider.dart';
-
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
-
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
-
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
-
+  List<NavigationPaneItem>? _cachedNavItems;
+  List<dynamic>? _lastMenuTree; 
+  List<NavigationPaneItem> _getNavigationItems(MenuProvider mp) {
+    if (_cachedNavItems != null && identical(mp.tree, _lastMenuTree)) {
+      return _cachedNavItems!;
+    }
+    _lastMenuTree = mp.tree;
+    _cachedNavItems = _buildNavigationItems(mp);
+    return _cachedNavItems!;
+  }
   void _handleLogout() {
     SessionManager().clear(persist: true);
     Navigator.of(context).pushAndRemoveUntil(
         FluentPageRoute(builder: (_) => const LoginScreen()), (_) => false);
   }
-
   @override
   Widget build(BuildContext context) {
     final mp = context.watch<MenuProvider>();
     final user = SessionManager().userInfo;
     final theme = FluentTheme.of(context);
-
-    // 自定义菜单样式：根据主题自动适配
     final isDark = theme.brightness == Brightness.dark;
-    
-    // 选中状态的颜色 - 更明显的蓝色
     const selectedBgColor = Color.fromRGBO(59, 130, 246, 0.15);
     const selectedBgColorDark = Color.fromRGBO(59, 130, 246, 0.25);
     const selectedTextColor = Color.fromRGBO(59, 130, 246, 1.0);
-    
     final customPaneTheme = NavigationPaneThemeData(
       backgroundColor: isDark ? const Color(0xFF2D2D2D) : Colors.white,
-      
-      // 选中时的高亮色 - 更明显
       highlightColor: isDark ? selectedBgColorDark : selectedBgColor,
-
-      // 背景色控制 - 选中时更明显
       tileColor: WidgetStateProperty.resolveWith<Color?>((states) {
         if (states.contains(WidgetState.selected)) {
           return isDark ? selectedBgColorDark : selectedBgColor;
@@ -57,17 +53,13 @@ class _HomeScreenState extends State<HomeScreen> {
         }
         return Colors.transparent;
       }),
-
-      // 选中时文字颜色 - 蓝色加粗（深色和浅色模式都用蓝色）
       selectedTextStyle: WidgetStateProperty.all(
         const TextStyle(
-          color: Color.fromRGBO(59, 130, 246, 1.0),  // 蓝色
+          color: Color.fromRGBO(59, 130, 246, 1.0),  
           fontWeight: FontWeight.w700,
           fontSize: 14,
         ),
       ),
-      
-      // 未选中时文字颜色
       unselectedTextStyle: WidgetStateProperty.all(
         TextStyle(
           color: isDark ? Colors.white : const Color(0xFF333333),
@@ -75,28 +67,21 @@ class _HomeScreenState extends State<HomeScreen> {
           fontSize: 14,
         ),
       ),
-      
-      // 图标颜色 - 选中时蓝色
       selectedIconColor: WidgetStateProperty.all(
-        const Color.fromRGBO(59, 130, 246, 1.0),  // 蓝色
+        const Color.fromRGBO(59, 130, 246, 1.0),  
       ),
       unselectedIconColor: WidgetStateProperty.all(
         isDark ? Colors.grey[100] : const Color(0xFF666666)
       ),
-
-      // 内边距
       labelPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       iconPadding: const EdgeInsets.only(left: 12, right: 8),
     );
-
     final customTheme = theme.copyWith(
       navigationPaneTheme: customPaneTheme,
-      // 全局：accentColor 统一高亮（让选中更突出）
       accentColor: AccentColor.swatch({
         'normal': const Color.fromRGBO(59, 130, 246, 1.0),
       }),
     );
-
     return FluentTheme(
       data: customTheme,
       child: NavigationView(
@@ -118,7 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
           indicator: const StickyNavigationIndicator(
             color: Color.fromRGBO(59, 130, 246, 1.0),
           ),
-          items: _buildNavigationItems(mp),
+          items: _getNavigationItems(mp),
           autoSuggestBoxReplacement: const Icon(FluentIcons.search),
           footerItems: [
             PaneItemSeparator(),
@@ -135,16 +120,13 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-
   List<NavigationPaneItem> _buildNavigationItems(MenuProvider mp) {
     final List<NavigationPaneItem> items = [];
-
     for (var topMenu in mp.tree) {
-      // 添加分组标题（目录类型）
       if (topMenu.type == 1) {
         items.add(PaneItemHeader(
           header: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 12, 20, 4),  // 紧凑 padding
+            padding: const EdgeInsets.fromLTRB(20, 12, 20, 4),  
             child: Text(
               topMenu.title,
               style: const TextStyle(
@@ -155,12 +137,9 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ));
-
-        // 添加该分组下的子菜单
         if (topMenu.children.isNotEmpty) {
           for (var child in topMenu.children) {
             if (child.type == 2) {
-              // 只添加页面类型
               items.add(PaneItem(
                 icon: _getMenuIcon(child.icon),
                 title: Text(child.title),
@@ -176,7 +155,6 @@ class _HomeScreenState extends State<HomeScreen> {
           }
         }
       } else if (topMenu.type == 2) {
-        // 顶级页面（没有分组）
         items.add(PaneItem(
           icon: _getMenuIcon(topMenu.icon),
           title: Text(topMenu.title),
@@ -190,76 +168,50 @@ class _HomeScreenState extends State<HomeScreen> {
         ));
       }
     }
-
     return items;
   }
-
   Icon _getMenuIcon(String? iconName) {
     switch (iconName) {
-      // 主菜单图标
       case 'dashboard':
       case 'home':
         return const Icon(FluentIcons.home);
-
-      // 菜品相关
       case 'food':
       case 'restaurant':
         return const Icon(FluentIcons.breakfast);
-
-      // 报菜相关
       case 'file-paste':
       case 'clipboard':
         return const Icon(FluentIcons.clipboard_list);
-
-      // 统计相关
       case 'chart':
       case 'chart-bar':
         return const Icon(FluentIcons.chart);
-
-      // 门店相关
       case 'shop':
       case 'store':
         return const Icon(FluentIcons.shop);
-
-      // 用户相关
       case 'user':
       case 'people':
         return const Icon(FluentIcons.people);
-
-      // 角色权限
       case 'usergroup':
       case 'permissions':
         return const Icon(FluentIcons.permissions);
-
-      // 菜单管理
       case 'menu':
       case 'menu-fold':
         return const Icon(FluentIcons.list);
-
-      // 设置
       case 'setting':
       case 'settings':
         return const Icon(FluentIcons.settings);
-
-      // 钉钉
       case 'link':
       case 'robot':
         return const Icon(FluentIcons.robot);
-
-      // 列表
       case 'view-list':
         return const Icon(FluentIcons.bulleted_list);
-
       default:
         return const Icon(FluentIcons.page);
     }
   }
-
   Widget _buildUserMenu(UserInfo? user) {
     final displayName = user?.nickname.isNotEmpty == true
         ? user!.nickname
         : (user?.username.isNotEmpty == true ? user!.username : '未知用户');
-
     return DropDownButton(
         leading: CircleAvatar(
           radius: 16,
@@ -275,14 +227,12 @@ class _HomeScreenState extends State<HomeScreen> {
             leading: const Icon(FluentIcons.contact_info),
             text: const Text('个人信息'),
             onPressed: () {
-              // TODO: 打开个人信息页面
             },
           ),
           MenuFlyoutItem(
             leading: const Icon(FluentIcons.settings),
             text: const Text('设置'),
             onPressed: () {
-              // TODO: 打开设置页面
             },
           ),
           const MenuFlyoutSeparator(),
@@ -294,8 +244,6 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
     );
   }
-
-  /// 构建侧边栏头部（应用图标、名称、用户菜单）——优化阴影和渐变
   Widget _buildPaneHeader(FluentThemeData theme, UserInfo? user) {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -304,7 +252,7 @@ class _HomeScreenState extends State<HomeScreen> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            theme.accentColor.withOpacity(0.06),  // 更 subtle 蓝渐变
+            theme.accentColor.withOpacity(0.06),  
             Colors.transparent,
           ],
         ),
@@ -318,7 +266,6 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 应用图标和名称
           Row(
             children: [
               Container(
@@ -363,20 +310,16 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
           const SizedBox(height: 12),
-          // 用户信息
           _buildUserMenu(user),
         ],
       ),
     );
   }
-
-  /// 构建用户信息卡
   Widget _buildUserInfoCard(FluentThemeData theme, bool isDark, UserInfo? user) {
     final displayName = user?.nickname.isNotEmpty == true
         ? user!.nickname
         : (user?.username.isNotEmpty == true ? user!.username : '未知用户');
     final roleName = user?.role?.name ?? '未分配角色';
-    
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -401,7 +344,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       child: Row(
         children: [
-          // 头像
           Container(
             width: 64,
             height: 64,
@@ -432,7 +374,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           const SizedBox(width: 20),
-          // 用户信息
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -468,7 +409,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
                 const SizedBox(height: 8),
-                // 详细信息行
                 Wrap(
                   spacing: 20,
                   runSpacing: 8,
@@ -498,8 +438,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-
-  /// 构建信息项
   Widget _buildInfoItem(IconData icon, String text, bool isDark) {
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -516,19 +454,15 @@ class _HomeScreenState extends State<HomeScreen> {
       ],
     );
   }
-
-  /// 构建设置页面
   Widget _buildSettingsPage() {
     final theme = FluentTheme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final user = SessionManager().userInfo;
-    
     return Container(
       padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 页面标题
           Row(
             children: [
               Container(
@@ -574,12 +508,8 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
           const SizedBox(height: 32),
-
-          // 用户信息卡
           _buildUserInfoCard(theme, isDark, user),
           const SizedBox(height: 20),
-
-          // 主题设置
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
@@ -656,8 +586,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           const SizedBox(height: 20),
-
-          // 退出登录
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(

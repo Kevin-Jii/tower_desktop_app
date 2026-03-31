@@ -22,7 +22,7 @@ _$StoreAccountImpl _$$StoreAccountImplFromJson(Map<String, dynamic> json) =>
       store: json['store'] == null
           ? null
           : StoreAccountStore.fromJson(json['store'] as Map<String, dynamic>),
-      operator: json['operator'] == null
+      accountOperator: json['operator'] == null
           ? null
           : StoreAccountOperator.fromJson(
               json['operator'] as Map<String, dynamic>),
@@ -45,7 +45,7 @@ Map<String, dynamic> _$$StoreAccountImplToJson(_$StoreAccountImpl instance) =>
       'updated_at': instance.updatedAt,
       'items': instance.items,
       'store': instance.store,
-      'operator': instance.operator,
+      'operator': instance.accountOperator,
     };
 _$StoreAccountItemImpl _$$StoreAccountItemImplFromJson(
         Map<String, dynamic> json) =>

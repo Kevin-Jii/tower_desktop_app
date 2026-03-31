@@ -53,73 +53,77 @@ class _GalleryPageState extends State<GalleryPage> {
     );
   }
   Widget _buildHeader() {
-    final provider = context.watch<GalleryProvider>();
-    final hasSelection = provider.selectedIds.isNotEmpty;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-      decoration: BoxDecoration(
-        color: FluentTheme.of(context).micaBackgroundColor,
-        border: Border(
-          bottom: BorderSide(
-            color: FluentTheme.of(context).resources.dividerStrokeColorDefault,
+    return Consumer<GalleryProvider>(
+      builder: (context, provider, _) {
+        final hasSelection = provider.selectedIds.isNotEmpty;
+        final theme = FluentTheme.of(context);
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          decoration: BoxDecoration(
+            color: theme.micaBackgroundColor,
+            border: Border(
+              bottom: BorderSide(
+                color: theme.resources.dividerStrokeColorDefault,
+              ),
+            ),
           ),
-        ),
-      ),
-      child: Row(
-        children: [
-          const Icon(FluentIcons.picture_library, size: 24),
-          const SizedBox(width: 12),
-          Text('图库管理', style: FluentTheme.of(context).typography.subtitle),
-          const SizedBox(width: 12),
-          Text(
-            '共 ${provider.total} 张',
-            style: TextStyle(color: Colors.grey[100], fontSize: 13),
-          ),
-          if (hasSelection) ...[
-            const SizedBox(width: 16),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              decoration: BoxDecoration(
-                color: Colors.blue.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(4),
+          child: Row(
+            children: [
+              const Icon(FluentIcons.picture_library, size: 24),
+              const SizedBox(width: 12),
+              Text('图库管理', style: theme.typography.subtitle),
+              const SizedBox(width: 12),
+              Text(
+                '共 ${provider.total} 张',
+                style: TextStyle(color: Colors.grey[100], fontSize: 13),
               ),
-              child: Text(
-                '已选择 ${provider.selectedIds.length} 张',
-                style: TextStyle(color: Colors.blue, fontSize: 13),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Button(
-              onPressed: () => provider.clearSelection(),
-              child: const Text('取消'),
-            ),
-            const SizedBox(width: 8),
-            Button(
-              onPressed: () => _batchDelete(),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(FluentIcons.delete, size: 14, color: Colors.red),
-                  const SizedBox(width: 4),
-                  Text('批量删除', style: TextStyle(color: Colors.red)),
-                ],
-              ),
-            ),
-          ],
-          const Spacer(),
-          FilledButton(
-            onPressed: () => _showUploadDialog(),
-            child: const Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(FluentIcons.upload, size: 14),
-                SizedBox(width: 6),
-                Text('上传图片'),
+              if (hasSelection) ...[
+                const SizedBox(width: 16),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    '已选择 ${provider.selectedIds.length} 张',
+                    style: TextStyle(color: Colors.blue, fontSize: 13),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Button(
+                  onPressed: () => provider.clearSelection(),
+                  child: const Text('取消'),
+                ),
+                const SizedBox(width: 8),
+                Button(
+                  onPressed: () => _batchDelete(),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(FluentIcons.delete, size: 14, color: Colors.red),
+                      const SizedBox(width: 4),
+                      Text('批量删除', style: TextStyle(color: Colors.red)),
+                    ],
+                  ),
+                ),
               ],
-            ),
+              const Spacer(),
+              FilledButton(
+                onPressed: () => _showUploadDialog(),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(FluentIcons.upload, size: 14),
+                    SizedBox(width: 6),
+                    Text('上传图片'),
+                  ],
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
   Widget _buildToolbar() {
@@ -261,7 +265,10 @@ class _GalleryPageState extends State<GalleryPage> {
         if (index >= provider.images.length) {
           return const Center(child: ProgressRing());
         }
-        return _buildImageCard(provider.images[index], provider);
+        return RepaintBoundary(
+          key: ValueKey(provider.images[index].id),
+          child: _buildImageCard(provider.images[index], provider),
+        );
       },
     );
   }
@@ -400,7 +407,7 @@ class _GalleryPageState extends State<GalleryPage> {
     if (url == null || url.isEmpty) {
       return _buildPlaceholder();
     }
-    final isExternalUrl = url.startsWith('http:
+    final isExternalUrl = url.startsWith('http');
     final token = isExternalUrl ? null : SessionManager().token;
     return Image.network(
       url,

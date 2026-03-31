@@ -33,7 +33,9 @@ mixin _$StoreAccount {
   String? get updatedAt => throw _privateConstructorUsedError;
   List<StoreAccountItem> get items => throw _privateConstructorUsedError;
   StoreAccountStore? get store => throw _privateConstructorUsedError;
-  StoreAccountOperator? get operator => throw _privateConstructorUsedError;
+  @JsonKey(name: 'operator')
+  StoreAccountOperator? get accountOperator =>
+      throw _privateConstructorUsedError;
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(includeFromJson: false, includeToJson: false)
   $StoreAccountCopyWith<StoreAccount> get copyWith =>
@@ -61,9 +63,9 @@ abstract class $StoreAccountCopyWith<$Res> {
       @JsonKey(name: 'updated_at') String? updatedAt,
       List<StoreAccountItem> items,
       StoreAccountStore? store,
-      StoreAccountOperator? operator});
+      @JsonKey(name: 'operator') StoreAccountOperator? accountOperator});
   $StoreAccountStoreCopyWith<$Res>? get store;
-  $StoreAccountOperatorCopyWith<$Res>? get operator;
+  $StoreAccountOperatorCopyWith<$Res>? get accountOperator;
 }
 class _$StoreAccountCopyWithImpl<$Res, $Val extends StoreAccount>
     implements $StoreAccountCopyWith<$Res> {
@@ -89,7 +91,7 @@ class _$StoreAccountCopyWithImpl<$Res, $Val extends StoreAccount>
     Object? updatedAt = freezed,
     Object? items = null,
     Object? store = freezed,
-    Object? operator = freezed,
+    Object? accountOperator = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -156,9 +158,9 @@ class _$StoreAccountCopyWithImpl<$Res, $Val extends StoreAccount>
           ? _value.store
           : store 
               as StoreAccountStore?,
-      operator: freezed == operator
-          ? _value.operator
-          : operator 
+      accountOperator: freezed == accountOperator
+          ? _value.accountOperator
+          : accountOperator 
               as StoreAccountOperator?,
     ) as $Val);
   }
@@ -174,12 +176,13 @@ class _$StoreAccountCopyWithImpl<$Res, $Val extends StoreAccount>
   }
   @override
   @pragma('vm:prefer-inline')
-  $StoreAccountOperatorCopyWith<$Res>? get operator {
-    if (_value.operator == null) {
+  $StoreAccountOperatorCopyWith<$Res>? get accountOperator {
+    if (_value.accountOperator == null) {
       return null;
     }
-    return $StoreAccountOperatorCopyWith<$Res>(_value.operator!, (value) {
-      return _then(_value.copyWith(operator: value) as $Val);
+    return $StoreAccountOperatorCopyWith<$Res>(_value.accountOperator!,
+        (value) {
+      return _then(_value.copyWith(accountOperator: value) as $Val);
     });
   }
 }
@@ -207,11 +210,11 @@ abstract class _$$StoreAccountImplCopyWith<$Res>
       @JsonKey(name: 'updated_at') String? updatedAt,
       List<StoreAccountItem> items,
       StoreAccountStore? store,
-      StoreAccountOperator? operator});
+      @JsonKey(name: 'operator') StoreAccountOperator? accountOperator});
   @override
   $StoreAccountStoreCopyWith<$Res>? get store;
   @override
-  $StoreAccountOperatorCopyWith<$Res>? get operator;
+  $StoreAccountOperatorCopyWith<$Res>? get accountOperator;
 }
 class __$$StoreAccountImplCopyWithImpl<$Res>
     extends _$StoreAccountCopyWithImpl<$Res, _$StoreAccountImpl>
@@ -238,7 +241,7 @@ class __$$StoreAccountImplCopyWithImpl<$Res>
     Object? updatedAt = freezed,
     Object? items = null,
     Object? store = freezed,
-    Object? operator = freezed,
+    Object? accountOperator = freezed,
   }) {
     return _then(_$StoreAccountImpl(
       id: null == id
@@ -305,9 +308,9 @@ class __$$StoreAccountImplCopyWithImpl<$Res>
           ? _value.store
           : store 
               as StoreAccountStore?,
-      operator: freezed == operator
-          ? _value.operator
-          : operator 
+      accountOperator: freezed == accountOperator
+          ? _value.accountOperator
+          : accountOperator 
               as StoreAccountOperator?,
     ));
   }
@@ -331,7 +334,7 @@ class _$StoreAccountImpl extends _StoreAccount {
       @JsonKey(name: 'updated_at') this.updatedAt,
       final List<StoreAccountItem> items = const [],
       this.store,
-      this.operator})
+      @JsonKey(name: 'operator') this.accountOperator})
       : _items = items,
         super._();
   factory _$StoreAccountImpl.fromJson(Map<String, dynamic> json) =>
@@ -385,10 +388,11 @@ class _$StoreAccountImpl extends _StoreAccount {
   @override
   final StoreAccountStore? store;
   @override
-  final StoreAccountOperator? operator;
+  @JsonKey(name: 'operator')
+  final StoreAccountOperator? accountOperator;
   @override
   String toString() {
-    return 'StoreAccount(id: $id, accountNo: $accountNo, storeId: $storeId, channel: $channel, orderNo: $orderNo, totalAmount: $totalAmount, itemCount: $itemCount, tagCode: $tagCode, tagName: $tagName, remark: $remark, operatorId: $operatorId, accountDate: $accountDate, createdAt: $createdAt, updatedAt: $updatedAt, items: $items, store: $store, operator: $operator)';
+    return 'StoreAccount(id: $id, accountNo: $accountNo, storeId: $storeId, channel: $channel, orderNo: $orderNo, totalAmount: $totalAmount, itemCount: $itemCount, tagCode: $tagCode, tagName: $tagName, remark: $remark, operatorId: $operatorId, accountDate: $accountDate, createdAt: $createdAt, updatedAt: $updatedAt, items: $items, store: $store, accountOperator: $accountOperator)';
   }
   @override
   bool operator ==(Object other) {
@@ -418,8 +422,8 @@ class _$StoreAccountImpl extends _StoreAccount {
                 other.updatedAt == updatedAt) &&
             const DeepCollectionEquality().equals(other._items, _items) &&
             (identical(other.store, store) || other.store == store) &&
-            (identical(other.operator, operator) ||
-                other.operator == operator));
+            (identical(other.accountOperator, accountOperator) ||
+                other.accountOperator == accountOperator));
   }
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
@@ -441,7 +445,7 @@ class _$StoreAccountImpl extends _StoreAccount {
       updatedAt,
       const DeepCollectionEquality().hash(_items),
       store,
-      operator);
+      accountOperator);
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
@@ -472,7 +476,8 @@ abstract class _StoreAccount extends StoreAccount {
       @JsonKey(name: 'updated_at') final String? updatedAt,
       final List<StoreAccountItem> items,
       final StoreAccountStore? store,
-      final StoreAccountOperator? operator}) = _$StoreAccountImpl;
+      @JsonKey(name: 'operator')
+      final StoreAccountOperator? accountOperator}) = _$StoreAccountImpl;
   const _StoreAccount._() : super._();
   factory _StoreAccount.fromJson(Map<String, dynamic> json) =
       _$StoreAccountImpl.fromJson;
@@ -520,7 +525,8 @@ abstract class _StoreAccount extends StoreAccount {
   @override
   StoreAccountStore? get store;
   @override
-  StoreAccountOperator? get operator;
+  @JsonKey(name: 'operator')
+  StoreAccountOperator? get accountOperator;
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$StoreAccountImplCopyWith<_$StoreAccountImpl> get copyWith =>

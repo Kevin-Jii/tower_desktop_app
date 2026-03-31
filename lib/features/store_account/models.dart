@@ -21,12 +21,12 @@ class StoreAccount with _$StoreAccount {
     @JsonKey(name: 'updated_at') String? updatedAt,
     @Default([]) List<StoreAccountItem> items,
     StoreAccountStore? store,
-    StoreAccountOperator? operator,
+    @JsonKey(name: 'operator') StoreAccountOperator? accountOperator,
   }) = _StoreAccount;
   factory StoreAccount.fromJson(Map<String, dynamic> json) =>
       _$StoreAccountFromJson(json);
   String? get storeName => store?.name;
-  String? get operatorName => operator?.nickname ?? operator?.username;
+  String? get operatorName => accountOperator?.nickname ?? accountOperator?.username;
 }
 @freezed
 class StoreAccountItem with _$StoreAccountItem {
