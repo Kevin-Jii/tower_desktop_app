@@ -69,17 +69,50 @@ class _$MemberCopyWithImpl<$Res, $Val extends Member>
     Object? updatedAt = freezed,
   }) {
     return _then(_value.copyWith(
-      id: null == id ? _value.id : id as int,
-      uid: freezed == uid ? _value.uid : uid as String?,
-      name: freezed == name ? _value.name : name as String?,
-      phone: freezed == phone ? _value.phone : phone as String?,
-      levelId: freezed == levelId ? _value.levelId : levelId as int?,
-      levelName: freezed == levelName ? _value.levelName : levelName as String?,
-      balance: freezed == balance ? _value.balance : balance as String?,
-      points: freezed == points ? _value.points : points as int?,
-      version: freezed == version ? _value.version : version as int?,
-      createdAt: freezed == createdAt ? _value.createdAt : createdAt as String?,
-      updatedAt: freezed == updatedAt ? _value.updatedAt : updatedAt as String?,
+      id: null == id
+          ? _value.id
+          : id 
+              as int,
+      uid: freezed == uid
+          ? _value.uid
+          : uid 
+              as String?,
+      name: freezed == name
+          ? _value.name
+          : name 
+              as String?,
+      phone: freezed == phone
+          ? _value.phone
+          : phone 
+              as String?,
+      levelId: freezed == levelId
+          ? _value.levelId
+          : levelId 
+              as int?,
+      levelName: freezed == levelName
+          ? _value.levelName
+          : levelName 
+              as String?,
+      balance: freezed == balance
+          ? _value.balance
+          : balance 
+              as String?,
+      points: freezed == points
+          ? _value.points
+          : points 
+              as int?,
+      version: freezed == version
+          ? _value.version
+          : version 
+              as int?,
+      createdAt: freezed == createdAt
+          ? _value.createdAt
+          : createdAt 
+              as String?,
+      updatedAt: freezed == updatedAt
+          ? _value.updatedAt
+          : updatedAt 
+              as String?,
     ) as $Val);
   }
 }
@@ -124,17 +157,50 @@ class __$$MemberImplCopyWithImpl<$Res>
     Object? updatedAt = freezed,
   }) {
     return _then(_$MemberImpl(
-      id: null == id ? _value.id : id as int,
-      uid: freezed == uid ? _value.uid : uid as String?,
-      name: freezed == name ? _value.name : name as String?,
-      phone: freezed == phone ? _value.phone : phone as String?,
-      levelId: freezed == levelId ? _value.levelId : levelId as int?,
-      levelName: freezed == levelName ? _value.levelName : levelName as String?,
-      balance: freezed == balance ? _value.balance : balance as String?,
-      points: freezed == points ? _value.points : points as int?,
-      version: freezed == version ? _value.version : version as int?,
-      createdAt: freezed == createdAt ? _value.createdAt : createdAt as String?,
-      updatedAt: freezed == updatedAt ? _value.updatedAt : updatedAt as String?,
+      id: null == id
+          ? _value.id
+          : id 
+              as int,
+      uid: freezed == uid
+          ? _value.uid
+          : uid 
+              as String?,
+      name: freezed == name
+          ? _value.name
+          : name 
+              as String?,
+      phone: freezed == phone
+          ? _value.phone
+          : phone 
+              as String?,
+      levelId: freezed == levelId
+          ? _value.levelId
+          : levelId 
+              as int?,
+      levelName: freezed == levelName
+          ? _value.levelName
+          : levelName 
+              as String?,
+      balance: freezed == balance
+          ? _value.balance
+          : balance 
+              as String?,
+      points: freezed == points
+          ? _value.points
+          : points 
+              as int?,
+      version: freezed == version
+          ? _value.version
+          : version 
+              as int?,
+      createdAt: freezed == createdAt
+          ? _value.createdAt
+          : createdAt 
+              as String?,
+      updatedAt: freezed == updatedAt
+          ? _value.updatedAt
+          : updatedAt 
+              as String?,
     ));
   }
 }
@@ -337,25 +403,42 @@ class _$WalletLogCopyWithImpl<$Res, $Val extends WalletLog>
     Object? createTime = freezed,
   }) {
     return _then(_value.copyWith(
-      id: null == id ? _value.id : id as int,
-      memberId: freezed == memberId ? _value.memberId : memberId as int?,
-      changeType:
-          freezed == changeType ? _value.changeType : changeType as int?,
+      id: null == id
+          ? _value.id
+          : id 
+              as int,
+      memberId: freezed == memberId
+          ? _value.memberId
+          : memberId 
+              as int?,
+      changeType: freezed == changeType
+          ? _value.changeType
+          : changeType 
+              as int?,
       changeAmount: freezed == changeAmount
           ? _value.changeAmount
-          : changeAmount as String?,
+          : changeAmount 
+              as String?,
       balanceBefore: freezed == balanceBefore
           ? _value.balanceBefore
-          : balanceBefore as String?,
+          : balanceBefore 
+              as String?,
       balanceAfter: freezed == balanceAfter
           ? _value.balanceAfter
-          : balanceAfter as String?,
+          : balanceAfter 
+              as String?,
       relatedOrderNo: freezed == relatedOrderNo
           ? _value.relatedOrderNo
-          : relatedOrderNo as String?,
-      remark: freezed == remark ? _value.remark : remark as String?,
-      createTime:
-          freezed == createTime ? _value.createTime : createTime as String?,
+          : relatedOrderNo 
+              as String?,
+      remark: freezed == remark
+          ? _value.remark
+          : remark 
+              as String?,
+      createTime: freezed == createTime
+          ? _value.createTime
+          : createTime 
+              as String?,
     ) as $Val);
   }
 }
@@ -397,25 +480,42 @@ class __$$WalletLogImplCopyWithImpl<$Res>
     Object? createTime = freezed,
   }) {
     return _then(_$WalletLogImpl(
-      id: null == id ? _value.id : id as int,
-      memberId: freezed == memberId ? _value.memberId : memberId as int?,
-      changeType:
-          freezed == changeType ? _value.changeType : changeType as int?,
+      id: null == id
+          ? _value.id
+          : id 
+              as int,
+      memberId: freezed == memberId
+          ? _value.memberId
+          : memberId 
+              as int?,
+      changeType: freezed == changeType
+          ? _value.changeType
+          : changeType 
+              as int?,
       changeAmount: freezed == changeAmount
           ? _value.changeAmount
-          : changeAmount as String?,
+          : changeAmount 
+              as String?,
       balanceBefore: freezed == balanceBefore
           ? _value.balanceBefore
-          : balanceBefore as String?,
+          : balanceBefore 
+              as String?,
       balanceAfter: freezed == balanceAfter
           ? _value.balanceAfter
-          : balanceAfter as String?,
+          : balanceAfter 
+              as String?,
       relatedOrderNo: freezed == relatedOrderNo
           ? _value.relatedOrderNo
-          : relatedOrderNo as String?,
-      remark: freezed == remark ? _value.remark : remark as String?,
-      createTime:
-          freezed == createTime ? _value.createTime : createTime as String?,
+          : relatedOrderNo 
+              as String?,
+      remark: freezed == remark
+          ? _value.remark
+          : remark 
+              as String?,
+      createTime: freezed == createTime
+          ? _value.createTime
+          : createTime 
+              as String?,
     ));
   }
 }
@@ -639,27 +739,66 @@ class _$RechargeOrderCopyWithImpl<$Res, $Val extends RechargeOrder>
     Object? createdAt = freezed,
   }) {
     return _then(_value.copyWith(
-      id: null == id ? _value.id : id as int,
-      orderNo: freezed == orderNo ? _value.orderNo : orderNo as String?,
-      memberId: freezed == memberId ? _value.memberId : memberId as int?,
-      memberName:
-          freezed == memberName ? _value.memberName : memberName as String?,
-      memberPhone:
-          freezed == memberPhone ? _value.memberPhone : memberPhone as String?,
-      payAmount: freezed == payAmount ? _value.payAmount : payAmount as String?,
-      giftAmount:
-          freezed == giftAmount ? _value.giftAmount : giftAmount as String?,
-      totalAmount:
-          freezed == totalAmount ? _value.totalAmount : totalAmount as String?,
-      payType: freezed == payType ? _value.payType : payType as int?,
-      payTypeName:
-          freezed == payTypeName ? _value.payTypeName : payTypeName as String?,
-      payStatus: freezed == payStatus ? _value.payStatus : payStatus as int?,
-      statusName:
-          freezed == statusName ? _value.statusName : statusName as String?,
-      payTime: freezed == payTime ? _value.payTime : payTime as String?,
-      remark: freezed == remark ? _value.remark : remark as String?,
-      createdAt: freezed == createdAt ? _value.createdAt : createdAt as String?,
+      id: null == id
+          ? _value.id
+          : id 
+              as int,
+      orderNo: freezed == orderNo
+          ? _value.orderNo
+          : orderNo 
+              as String?,
+      memberId: freezed == memberId
+          ? _value.memberId
+          : memberId 
+              as int?,
+      memberName: freezed == memberName
+          ? _value.memberName
+          : memberName 
+              as String?,
+      memberPhone: freezed == memberPhone
+          ? _value.memberPhone
+          : memberPhone 
+              as String?,
+      payAmount: freezed == payAmount
+          ? _value.payAmount
+          : payAmount 
+              as String?,
+      giftAmount: freezed == giftAmount
+          ? _value.giftAmount
+          : giftAmount 
+              as String?,
+      totalAmount: freezed == totalAmount
+          ? _value.totalAmount
+          : totalAmount 
+              as String?,
+      payType: freezed == payType
+          ? _value.payType
+          : payType 
+              as int?,
+      payTypeName: freezed == payTypeName
+          ? _value.payTypeName
+          : payTypeName 
+              as String?,
+      payStatus: freezed == payStatus
+          ? _value.payStatus
+          : payStatus 
+              as int?,
+      statusName: freezed == statusName
+          ? _value.statusName
+          : statusName 
+              as String?,
+      payTime: freezed == payTime
+          ? _value.payTime
+          : payTime 
+              as String?,
+      remark: freezed == remark
+          ? _value.remark
+          : remark 
+              as String?,
+      createdAt: freezed == createdAt
+          ? _value.createdAt
+          : createdAt 
+              as String?,
     ) as $Val);
   }
 }
@@ -713,27 +852,66 @@ class __$$RechargeOrderImplCopyWithImpl<$Res>
     Object? createdAt = freezed,
   }) {
     return _then(_$RechargeOrderImpl(
-      id: null == id ? _value.id : id as int,
-      orderNo: freezed == orderNo ? _value.orderNo : orderNo as String?,
-      memberId: freezed == memberId ? _value.memberId : memberId as int?,
-      memberName:
-          freezed == memberName ? _value.memberName : memberName as String?,
-      memberPhone:
-          freezed == memberPhone ? _value.memberPhone : memberPhone as String?,
-      payAmount: freezed == payAmount ? _value.payAmount : payAmount as String?,
-      giftAmount:
-          freezed == giftAmount ? _value.giftAmount : giftAmount as String?,
-      totalAmount:
-          freezed == totalAmount ? _value.totalAmount : totalAmount as String?,
-      payType: freezed == payType ? _value.payType : payType as int?,
-      payTypeName:
-          freezed == payTypeName ? _value.payTypeName : payTypeName as String?,
-      payStatus: freezed == payStatus ? _value.payStatus : payStatus as int?,
-      statusName:
-          freezed == statusName ? _value.statusName : statusName as String?,
-      payTime: freezed == payTime ? _value.payTime : payTime as String?,
-      remark: freezed == remark ? _value.remark : remark as String?,
-      createdAt: freezed == createdAt ? _value.createdAt : createdAt as String?,
+      id: null == id
+          ? _value.id
+          : id 
+              as int,
+      orderNo: freezed == orderNo
+          ? _value.orderNo
+          : orderNo 
+              as String?,
+      memberId: freezed == memberId
+          ? _value.memberId
+          : memberId 
+              as int?,
+      memberName: freezed == memberName
+          ? _value.memberName
+          : memberName 
+              as String?,
+      memberPhone: freezed == memberPhone
+          ? _value.memberPhone
+          : memberPhone 
+              as String?,
+      payAmount: freezed == payAmount
+          ? _value.payAmount
+          : payAmount 
+              as String?,
+      giftAmount: freezed == giftAmount
+          ? _value.giftAmount
+          : giftAmount 
+              as String?,
+      totalAmount: freezed == totalAmount
+          ? _value.totalAmount
+          : totalAmount 
+              as String?,
+      payType: freezed == payType
+          ? _value.payType
+          : payType 
+              as int?,
+      payTypeName: freezed == payTypeName
+          ? _value.payTypeName
+          : payTypeName 
+              as String?,
+      payStatus: freezed == payStatus
+          ? _value.payStatus
+          : payStatus 
+              as int?,
+      statusName: freezed == statusName
+          ? _value.statusName
+          : statusName 
+              as String?,
+      payTime: freezed == payTime
+          ? _value.payTime
+          : payTime 
+              as String?,
+      remark: freezed == remark
+          ? _value.remark
+          : remark 
+              as String?,
+      createdAt: freezed == createdAt
+          ? _value.createdAt
+          : createdAt 
+              as String?,
     ));
   }
 }
@@ -970,10 +1148,22 @@ class _$CreateMemberReqCopyWithImpl<$Res, $Val extends CreateMemberReq>
     Object? levelId = freezed,
   }) {
     return _then(_value.copyWith(
-      uid: freezed == uid ? _value.uid : uid as String?,
-      name: null == name ? _value.name : name as String,
-      phone: null == phone ? _value.phone : phone as String,
-      levelId: freezed == levelId ? _value.levelId : levelId as int?,
+      uid: freezed == uid
+          ? _value.uid
+          : uid 
+              as String?,
+      name: null == name
+          ? _value.name
+          : name 
+              as String,
+      phone: null == phone
+          ? _value.phone
+          : phone 
+              as String,
+      levelId: freezed == levelId
+          ? _value.levelId
+          : levelId 
+              as int?,
     ) as $Val);
   }
 }
@@ -1001,10 +1191,22 @@ class __$$CreateMemberReqImplCopyWithImpl<$Res>
     Object? levelId = freezed,
   }) {
     return _then(_$CreateMemberReqImpl(
-      uid: freezed == uid ? _value.uid : uid as String?,
-      name: null == name ? _value.name : name as String,
-      phone: null == phone ? _value.phone : phone as String,
-      levelId: freezed == levelId ? _value.levelId : levelId as int?,
+      uid: freezed == uid
+          ? _value.uid
+          : uid 
+              as String?,
+      name: null == name
+          ? _value.name
+          : name 
+              as String,
+      phone: null == phone
+          ? _value.phone
+          : phone 
+              as String,
+      levelId: freezed == levelId
+          ? _value.levelId
+          : levelId 
+              as int?,
     ));
   }
 }
@@ -1107,10 +1309,22 @@ class _$UpdateMemberReqCopyWithImpl<$Res, $Val extends UpdateMemberReq>
     Object? level = freezed,
   }) {
     return _then(_value.copyWith(
-      name: freezed == name ? _value.name : name as String?,
-      phone: freezed == phone ? _value.phone : phone as String?,
-      points: freezed == points ? _value.points : points as int?,
-      level: freezed == level ? _value.level : level as int?,
+      name: freezed == name
+          ? _value.name
+          : name 
+              as String?,
+      phone: freezed == phone
+          ? _value.phone
+          : phone 
+              as String?,
+      points: freezed == points
+          ? _value.points
+          : points 
+              as int?,
+      level: freezed == level
+          ? _value.level
+          : level 
+              as int?,
     ) as $Val);
   }
 }
@@ -1138,10 +1352,22 @@ class __$$UpdateMemberReqImplCopyWithImpl<$Res>
     Object? level = freezed,
   }) {
     return _then(_$UpdateMemberReqImpl(
-      name: freezed == name ? _value.name : name as String?,
-      phone: freezed == phone ? _value.phone : phone as String?,
-      points: freezed == points ? _value.points : points as int?,
-      level: freezed == level ? _value.level : level as int?,
+      name: freezed == name
+          ? _value.name
+          : name 
+              as String?,
+      phone: freezed == phone
+          ? _value.phone
+          : phone 
+              as String?,
+      points: freezed == points
+          ? _value.points
+          : points 
+              as int?,
+      level: freezed == level
+          ? _value.level
+          : level 
+              as int?,
     ));
   }
 }
@@ -1243,10 +1469,22 @@ class _$AdjustBalanceReqCopyWithImpl<$Res, $Val extends AdjustBalanceReq>
     Object? version = freezed,
   }) {
     return _then(_value.copyWith(
-      amount: null == amount ? _value.amount : amount as String,
-      type: null == type ? _value.type : type as int,
-      remark: freezed == remark ? _value.remark : remark as String?,
-      version: freezed == version ? _value.version : version as int?,
+      amount: null == amount
+          ? _value.amount
+          : amount 
+              as String,
+      type: null == type
+          ? _value.type
+          : type 
+              as int,
+      remark: freezed == remark
+          ? _value.remark
+          : remark 
+              as String?,
+      version: freezed == version
+          ? _value.version
+          : version 
+              as int?,
     ) as $Val);
   }
 }
@@ -1274,10 +1512,22 @@ class __$$AdjustBalanceReqImplCopyWithImpl<$Res>
     Object? version = freezed,
   }) {
     return _then(_$AdjustBalanceReqImpl(
-      amount: null == amount ? _value.amount : amount as String,
-      type: null == type ? _value.type : type as int,
-      remark: freezed == remark ? _value.remark : remark as String?,
-      version: freezed == version ? _value.version : version as int?,
+      amount: null == amount
+          ? _value.amount
+          : amount 
+              as String,
+      type: null == type
+          ? _value.type
+          : type 
+              as int,
+      remark: freezed == remark
+          ? _value.remark
+          : remark 
+              as String?,
+      version: freezed == version
+          ? _value.version
+          : version 
+              as int?,
     ));
   }
 }
@@ -1389,12 +1639,26 @@ class _$CreateRechargeOrderReqCopyWithImpl<$Res,
     Object? remark = freezed,
   }) {
     return _then(_value.copyWith(
-      memberId: null == memberId ? _value.memberId : memberId as int,
-      payAmount: null == payAmount ? _value.payAmount : payAmount as String,
-      giftAmount:
-          freezed == giftAmount ? _value.giftAmount : giftAmount as String?,
-      payType: null == payType ? _value.payType : payType as int,
-      remark: freezed == remark ? _value.remark : remark as String?,
+      memberId: null == memberId
+          ? _value.memberId
+          : memberId 
+              as int,
+      payAmount: null == payAmount
+          ? _value.payAmount
+          : payAmount 
+              as String,
+      giftAmount: freezed == giftAmount
+          ? _value.giftAmount
+          : giftAmount 
+              as String?,
+      payType: null == payType
+          ? _value.payType
+          : payType 
+              as int,
+      remark: freezed == remark
+          ? _value.remark
+          : remark 
+              as String?,
     ) as $Val);
   }
 }
@@ -1431,12 +1695,26 @@ class __$$CreateRechargeOrderReqImplCopyWithImpl<$Res>
     Object? remark = freezed,
   }) {
     return _then(_$CreateRechargeOrderReqImpl(
-      memberId: null == memberId ? _value.memberId : memberId as int,
-      payAmount: null == payAmount ? _value.payAmount : payAmount as String,
-      giftAmount:
-          freezed == giftAmount ? _value.giftAmount : giftAmount as String?,
-      payType: null == payType ? _value.payType : payType as int,
-      remark: freezed == remark ? _value.remark : remark as String?,
+      memberId: null == memberId
+          ? _value.memberId
+          : memberId 
+              as int,
+      payAmount: null == payAmount
+          ? _value.payAmount
+          : payAmount 
+              as String,
+      giftAmount: freezed == giftAmount
+          ? _value.giftAmount
+          : giftAmount 
+              as String?,
+      payType: null == payType
+          ? _value.payType
+          : payType 
+              as int,
+      remark: freezed == remark
+          ? _value.remark
+          : remark 
+              as String?,
     ));
   }
 }
@@ -1547,7 +1825,10 @@ class _$PayRechargeOrderReqCopyWithImpl<$Res, $Val extends PayRechargeOrderReq>
     Object? orderNo = null,
   }) {
     return _then(_value.copyWith(
-      orderNo: null == orderNo ? _value.orderNo : orderNo as String,
+      orderNo: null == orderNo
+          ? _value.orderNo
+          : orderNo 
+              as String,
     ) as $Val);
   }
 }
@@ -1572,7 +1853,10 @@ class __$$PayRechargeOrderReqImplCopyWithImpl<$Res>
     Object? orderNo = null,
   }) {
     return _then(_$PayRechargeOrderReqImpl(
-      orderNo: null == orderNo ? _value.orderNo : orderNo as String,
+      orderNo: null == orderNo
+          ? _value.orderNo
+          : orderNo 
+              as String,
     ));
   }
 }
@@ -1666,13 +1950,30 @@ class _$ListWalletLogReqCopyWithImpl<$Res, $Val extends ListWalletLogReq>
     Object? pageSize = freezed,
   }) {
     return _then(_value.copyWith(
-      memberId: freezed == memberId ? _value.memberId : memberId as int?,
-      changeType:
-          freezed == changeType ? _value.changeType : changeType as int?,
-      startTime: freezed == startTime ? _value.startTime : startTime as String?,
-      endTime: freezed == endTime ? _value.endTime : endTime as String?,
-      page: freezed == page ? _value.page : page as int?,
-      pageSize: freezed == pageSize ? _value.pageSize : pageSize as int?,
+      memberId: freezed == memberId
+          ? _value.memberId
+          : memberId 
+              as int?,
+      changeType: freezed == changeType
+          ? _value.changeType
+          : changeType 
+              as int?,
+      startTime: freezed == startTime
+          ? _value.startTime
+          : startTime 
+              as String?,
+      endTime: freezed == endTime
+          ? _value.endTime
+          : endTime 
+              as String?,
+      page: freezed == page
+          ? _value.page
+          : page 
+              as int?,
+      pageSize: freezed == pageSize
+          ? _value.pageSize
+          : pageSize 
+              as int?,
     ) as $Val);
   }
 }
@@ -1708,13 +2009,30 @@ class __$$ListWalletLogReqImplCopyWithImpl<$Res>
     Object? pageSize = freezed,
   }) {
     return _then(_$ListWalletLogReqImpl(
-      memberId: freezed == memberId ? _value.memberId : memberId as int?,
-      changeType:
-          freezed == changeType ? _value.changeType : changeType as int?,
-      startTime: freezed == startTime ? _value.startTime : startTime as String?,
-      endTime: freezed == endTime ? _value.endTime : endTime as String?,
-      page: freezed == page ? _value.page : page as int?,
-      pageSize: freezed == pageSize ? _value.pageSize : pageSize as int?,
+      memberId: freezed == memberId
+          ? _value.memberId
+          : memberId 
+              as int?,
+      changeType: freezed == changeType
+          ? _value.changeType
+          : changeType 
+              as int?,
+      startTime: freezed == startTime
+          ? _value.startTime
+          : startTime 
+              as String?,
+      endTime: freezed == endTime
+          ? _value.endTime
+          : endTime 
+              as String?,
+      page: freezed == page
+          ? _value.page
+          : page 
+              as int?,
+      pageSize: freezed == pageSize
+          ? _value.pageSize
+          : pageSize 
+              as int?,
     ));
   }
 }
@@ -1840,10 +2158,22 @@ class _$ListRechargeOrderReqCopyWithImpl<$Res,
     Object? pageSize = freezed,
   }) {
     return _then(_value.copyWith(
-      memberId: freezed == memberId ? _value.memberId : memberId as int?,
-      status: freezed == status ? _value.status : status as int?,
-      page: freezed == page ? _value.page : page as int?,
-      pageSize: freezed == pageSize ? _value.pageSize : pageSize as int?,
+      memberId: freezed == memberId
+          ? _value.memberId
+          : memberId 
+              as int?,
+      status: freezed == status
+          ? _value.status
+          : status 
+              as int?,
+      page: freezed == page
+          ? _value.page
+          : page 
+              as int?,
+      pageSize: freezed == pageSize
+          ? _value.pageSize
+          : pageSize 
+              as int?,
     ) as $Val);
   }
 }
@@ -1871,10 +2201,22 @@ class __$$ListRechargeOrderReqImplCopyWithImpl<$Res>
     Object? pageSize = freezed,
   }) {
     return _then(_$ListRechargeOrderReqImpl(
-      memberId: freezed == memberId ? _value.memberId : memberId as int?,
-      status: freezed == status ? _value.status : status as int?,
-      page: freezed == page ? _value.page : page as int?,
-      pageSize: freezed == pageSize ? _value.pageSize : pageSize as int?,
+      memberId: freezed == memberId
+          ? _value.memberId
+          : memberId 
+              as int?,
+      status: freezed == status
+          ? _value.status
+          : status 
+              as int?,
+      page: freezed == page
+          ? _value.page
+          : page 
+              as int?,
+      pageSize: freezed == pageSize
+          ? _value.pageSize
+          : pageSize 
+              as int?,
     ));
   }
 }
@@ -1988,10 +2330,22 @@ class _$MemberListRespCopyWithImpl<$Res, $Val extends MemberListResp>
     Object? pageSize = freezed,
   }) {
     return _then(_value.copyWith(
-      list: null == list ? _value.list : list as List<Member>,
-      total: freezed == total ? _value.total : total as int?,
-      page: freezed == page ? _value.page : page as int?,
-      pageSize: freezed == pageSize ? _value.pageSize : pageSize as int?,
+      list: null == list
+          ? _value.list
+          : list 
+              as List<Member>,
+      total: freezed == total
+          ? _value.total
+          : total 
+              as int?,
+      page: freezed == page
+          ? _value.page
+          : page 
+              as int?,
+      pageSize: freezed == pageSize
+          ? _value.pageSize
+          : pageSize 
+              as int?,
     ) as $Val);
   }
 }
@@ -2023,10 +2377,22 @@ class __$$MemberListRespImplCopyWithImpl<$Res>
     Object? pageSize = freezed,
   }) {
     return _then(_$MemberListRespImpl(
-      list: null == list ? _value._list : list as List<Member>,
-      total: freezed == total ? _value.total : total as int?,
-      page: freezed == page ? _value.page : page as int?,
-      pageSize: freezed == pageSize ? _value.pageSize : pageSize as int?,
+      list: null == list
+          ? _value._list
+          : list 
+              as List<Member>,
+      total: freezed == total
+          ? _value.total
+          : total 
+              as int?,
+      page: freezed == page
+          ? _value.page
+          : page 
+              as int?,
+      pageSize: freezed == pageSize
+          ? _value.pageSize
+          : pageSize 
+              as int?,
     ));
   }
 }
@@ -2152,10 +2518,22 @@ class _$WalletLogListRespCopyWithImpl<$Res, $Val extends WalletLogListResp>
     Object? pageSize = freezed,
   }) {
     return _then(_value.copyWith(
-      list: null == list ? _value.list : list as List<WalletLog>,
-      total: freezed == total ? _value.total : total as int?,
-      page: freezed == page ? _value.page : page as int?,
-      pageSize: freezed == pageSize ? _value.pageSize : pageSize as int?,
+      list: null == list
+          ? _value.list
+          : list 
+              as List<WalletLog>,
+      total: freezed == total
+          ? _value.total
+          : total 
+              as int?,
+      page: freezed == page
+          ? _value.page
+          : page 
+              as int?,
+      pageSize: freezed == pageSize
+          ? _value.pageSize
+          : pageSize 
+              as int?,
     ) as $Val);
   }
 }
@@ -2187,10 +2565,22 @@ class __$$WalletLogListRespImplCopyWithImpl<$Res>
     Object? pageSize = freezed,
   }) {
     return _then(_$WalletLogListRespImpl(
-      list: null == list ? _value._list : list as List<WalletLog>,
-      total: freezed == total ? _value.total : total as int?,
-      page: freezed == page ? _value.page : page as int?,
-      pageSize: freezed == pageSize ? _value.pageSize : pageSize as int?,
+      list: null == list
+          ? _value._list
+          : list 
+              as List<WalletLog>,
+      total: freezed == total
+          ? _value.total
+          : total 
+              as int?,
+      page: freezed == page
+          ? _value.page
+          : page 
+              as int?,
+      pageSize: freezed == pageSize
+          ? _value.pageSize
+          : pageSize 
+              as int?,
     ));
   }
 }
@@ -2319,10 +2709,22 @@ class _$RechargeOrderListRespCopyWithImpl<$Res,
     Object? pageSize = freezed,
   }) {
     return _then(_value.copyWith(
-      list: null == list ? _value.list : list as List<RechargeOrder>,
-      total: freezed == total ? _value.total : total as int?,
-      page: freezed == page ? _value.page : page as int?,
-      pageSize: freezed == pageSize ? _value.pageSize : pageSize as int?,
+      list: null == list
+          ? _value.list
+          : list 
+              as List<RechargeOrder>,
+      total: freezed == total
+          ? _value.total
+          : total 
+              as int?,
+      page: freezed == page
+          ? _value.page
+          : page 
+              as int?,
+      pageSize: freezed == pageSize
+          ? _value.pageSize
+          : pageSize 
+              as int?,
     ) as $Val);
   }
 }
@@ -2356,10 +2758,22 @@ class __$$RechargeOrderListRespImplCopyWithImpl<$Res>
     Object? pageSize = freezed,
   }) {
     return _then(_$RechargeOrderListRespImpl(
-      list: null == list ? _value._list : list as List<RechargeOrder>,
-      total: freezed == total ? _value.total : total as int?,
-      page: freezed == page ? _value.page : page as int?,
-      pageSize: freezed == pageSize ? _value.pageSize : pageSize as int?,
+      list: null == list
+          ? _value._list
+          : list 
+              as List<RechargeOrder>,
+      total: freezed == total
+          ? _value.total
+          : total 
+              as int?,
+      page: freezed == page
+          ? _value.page
+          : page 
+              as int?,
+      pageSize: freezed == pageSize
+          ? _value.pageSize
+          : pageSize 
+              as int?,
     ));
   }
 }

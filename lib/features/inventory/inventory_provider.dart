@@ -4,6 +4,15 @@ import 'models.dart';
 class InventoryProvider with ChangeNotifier {
   final InventoryRepository _repository;
   InventoryProvider(this._repository);
+  bool _disposed = false;
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
+  }
+  void _safeNotify() {
+    if (!_disposed) notifyListeners();
+  }
   List<Inventory> _inventories = [];
   List<Inventory> get inventories => _inventories;
   int _inventoryPage = 1;
@@ -135,7 +144,7 @@ class InventoryProvider with ChangeNotifier {
       success: (_) {
         loadInventories(page: 1);
         loadOrders(page: 1);
-        notifyListeners();
+        _safeNotify();
         return true;
       },
       failure: (err) {
@@ -193,7 +202,7 @@ class InventoryProvider with ChangeNotifier {
       success: (_) {
         loadInventories(page: 1);
         loadRecords(page: 1);
-        notifyListeners();
+        _safeNotify();
         return true;
       },
       failure: (err) {

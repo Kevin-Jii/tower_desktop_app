@@ -17,6 +17,17 @@ class _InventoryStockPageState extends State<InventoryStockPage> {
   final Set<int> _expandedSuppliers = {};
   final Map<int, int?> _selectedCategories = {};
   bool _submitting = false;
+  final Map<int, TextEditingController> _reasonControllers = {};
+  TextEditingController _reasonCtrlFor(int productId, String initialReason) {
+    return _reasonControllers.putIfAbsent(
+      productId,
+      () => TextEditingController(text: initialReason),
+    );
+  }
+  void _removeProduct(int productId) {
+    _reasonControllers.remove(productId)?.dispose();
+    setState(() => _selectedProducts.remove(productId));
+  }
   bool get isStockIn => widget.type == InventoryRecordType.stockIn;
   Color get typeColor => isStockIn ? Colors.green : Colors.orange;
   String get typeLabel => isStockIn ? '入库' : '出库';
@@ -33,6 +44,9 @@ class _InventoryStockPageState extends State<InventoryStockPage> {
   @override
   void dispose() {
     _searchController.dispose();
+    for (final ctrl in _reasonControllers.values) {
+      ctrl.dispose();
+    }
     super.dispose();
   }
   void _loadProducts() {
@@ -172,6 +186,7 @@ class _InventoryStockPageState extends State<InventoryStockPage> {
       context: context,
       builder: (context) => _buildConfirmDialog(),
     );
+    if (!mounted) return; 
     if (confirmed != true) return;
     setState(() => _submitting = true);
     final items = _selectedProducts.values.map((item) {
@@ -904,7 +919,7 @@ class _InventoryStockPageState extends State<InventoryStockPage> {
               Expanded(
                 child: TextBox(
                   placeholder: isStockIn ? '如：采购入库' : '如：销售出库',
-                  controller: TextEditingController(text: item.reason),
+                  controller: _reasonCtrlFor(productId, item.reason),
                   onChanged: (v) => _updateReason(productId, v),
                   maxLength: 100,
                 ),

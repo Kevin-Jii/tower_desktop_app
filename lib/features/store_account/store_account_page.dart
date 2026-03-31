@@ -365,7 +365,9 @@ class _StoreAccountPageState extends State<StoreAccountPage> {
       ),
     );
     if (confirmed == true) {
+      if (!mounted) return; 
       final success = await context.read<StoreAccountProvider>().deleteAccount(id);
+      if (!mounted) return; 
       if (success) {
         _refreshAccounts();
       }
@@ -471,6 +473,7 @@ class _AccountDrawerState extends State<_AccountDrawer> with SingleTickerProvide
       accountDate: dateStr,
       items: _selectedItems,
     );
+    if (!mounted) return; 
     setState(() => _saving = false);
     if (success) {
       widget.onSaved();

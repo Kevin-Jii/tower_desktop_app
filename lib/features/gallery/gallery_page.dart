@@ -31,6 +31,7 @@ class _GalleryPageState extends State<GalleryPage> {
     super.dispose();
   }
   void _onScroll() {
+    if (!mounted) return; 
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 200) {
       final provider = context.read<GalleryProvider>();
@@ -505,6 +506,7 @@ class _GalleryPageState extends State<GalleryPage> {
       type: FileType.image,
       allowMultiple: true,
     );
+    if (!mounted) return; 
     if (result != null && result.files.isNotEmpty) {
       final provider = context.read<GalleryProvider>();
       int successCount = 0;
@@ -515,6 +517,7 @@ class _GalleryPageState extends State<GalleryPage> {
             category: category,
             remark: remark,
           );
+          if (!mounted) return; 
           if (success) successCount++;
         }
       }
@@ -778,8 +781,10 @@ class _GalleryPageState extends State<GalleryPage> {
       ),
     );
     if (result == true) {
+      if (!mounted) return; 
       final success =
           await context.read<GalleryProvider>().deleteImage(image.id);
+      if (!mounted) return; 
       if (success) {
         await FluentInfoBarHelper.showSuccess(context, '删除成功');
       } else {
@@ -809,7 +814,9 @@ class _GalleryPageState extends State<GalleryPage> {
       ),
     );
     if (result == true) {
+      if (!mounted) return; 
       final success = await provider.batchDelete();
+      if (!mounted) return; 
       if (success) {
         await FluentInfoBarHelper.showSuccess(context, '批量删除成功');
       } else {

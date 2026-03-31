@@ -59,6 +59,7 @@ class _InventoryPageState extends State<InventoryPage> {
     final result = await Navigator.of(context).push<bool>(
       FluentPageRoute(builder: (context) => InventoryStockPage(type: type)),
     );
+    if (!mounted) return; 
     if (result == true) {
       _loadData();
     }
@@ -734,8 +735,24 @@ class _InventoryRecordSubPage extends StatefulWidget {
   State<_InventoryRecordSubPage> createState() => _InventoryRecordSubPageState();
 }
 class _InventoryRecordSubPageState extends State<_InventoryRecordSubPage> {
-  String _selectedPeriod = 'day'; 
-  int? _selectedType; 
+  String _selectedPeriod = 'day';
+  int? _selectedType;
+  List<InventoryOrder>? _lastOrdersForFilter;
+  String? _lastPeriodFilter;
+  int? _lastTypeFilter;
+  List<InventoryOrder> _filteredOrdersCache = [];
+  List<InventoryOrder> _getCachedFilteredOrders(List<InventoryOrder> orders) {
+    if (identical(orders, _lastOrdersForFilter) &&
+        _selectedPeriod == _lastPeriodFilter &&
+        _selectedType == _lastTypeFilter) {
+      return _filteredOrdersCache;
+    }
+    _lastOrdersForFilter = orders;
+    _lastPeriodFilter = _selectedPeriod;
+    _lastTypeFilter = _selectedType;
+    _filteredOrdersCache = _filterOrders(orders);
+    return _filteredOrdersCache;
+  }
   @override
   void initState() {
     super.initState();
@@ -747,6 +764,7 @@ class _InventoryRecordSubPageState extends State<_InventoryRecordSubPage> {
     final result = await Navigator.of(context).push<bool>(
       FluentPageRoute(builder: (context) => InventoryStockPage(type: type)),
     );
+    if (!mounted) return; 
     if (result == true) {
       context.read<InventoryProvider>().loadOrders();
     }
@@ -802,7 +820,7 @@ class _InventoryRecordSubPageState extends State<_InventoryRecordSubPage> {
                 if (provider.orderLoading) {
                   return const Center(child: ProgressRing());
                 }
-                final filteredOrders = _filterOrders(provider.orders);
+                final filteredOrders = _getCachedFilteredOrders(provider.orders);
                 if (filteredOrders.isEmpty) {
                   return Center(
                     child: Column(

@@ -248,8 +248,10 @@ class _DingTalkManagementPageState extends State<DingTalkManagementPage> {
       ),
     );
     if (result == true) {
+      if (!mounted) return; 
       final provider = context.read<DingTalkProvider>();
       final success = await provider.deleteRobot(robot);
+      if (!mounted) return; 
       if (success) {
         await FluentInfoBarHelper.showSuccess(context, '机器人删除成功');
       } else {
@@ -266,6 +268,7 @@ class _DingTalkManagementPageState extends State<DingTalkManagementPage> {
       isEnabled: !robot.isEnabled,
     );
     final success = await provider.updateRobot(robot, updateRequest);
+    if (!mounted) return; 
     if (success) {
       await FluentInfoBarHelper.showSuccess(
         context,
@@ -287,6 +290,7 @@ class _DingTalkManagementPageState extends State<DingTalkManagementPage> {
     try {
       final provider = context.read<DingTalkProvider>();
       final success = await provider.testPush(robot);
+      if (!mounted) return; 
       Navigator.of(context).pop();
       if (success) {
         await FluentInfoBarHelper.showSuccess(context, '测试推送成功');
@@ -297,6 +301,7 @@ class _DingTalkManagementPageState extends State<DingTalkManagementPage> {
         );
       }
     } catch (e) {
+      if (!mounted) return; 
       Navigator.of(context).pop();
       await FluentInfoBarHelper.showError(context, '测试失败: $e');
     }
