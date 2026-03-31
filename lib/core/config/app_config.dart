@@ -5,13 +5,13 @@ import 'package:path_provider/path_provider.dart';
 const String _env = String.fromEnvironment('ENV', defaultValue: 'dev');
 const Map<String, Map<String, dynamic>> _envDefaults = {
   'dev': {
-    'apiBaseUrl': 'http:
+    'apiBaseUrl': "http:
     'apiTimeout': 15000,
     'debugMode': true,
     'envName': '开发环境',
   },
   'prod': {
-    'apiBaseUrl': 'http:
+    'apiBaseUrl': "http:
     'apiTimeout': 15000,
     'debugMode': false,
     'envName': '生产环境',
